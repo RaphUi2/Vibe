@@ -125,9 +125,9 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const Home: React.FC<{ user: User }> = ({ user }) => {
+const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' | 'vibeos' }> = ({ user, initialFeedType = 'for-you' }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [feedType, setFeedType] = useState<'for-you' | 'following' | 'boost'>('for-you');
+  const [feedType, setFeedType] = useState<'for-you' | 'following' | 'vibeos'>(initialFeedType);
   const [searchQuery, setSearchQuery] = useState('');
 
   const refresh = () => {
@@ -142,6 +142,8 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
 
     if (feedType === 'following') {
       all = all.filter(p => user.friends.includes(p.userId) || p.userId === user.id);
+    } else if (feedType === 'vibeos') {
+      all = all.filter(p => p.mediaType === 'video');
     }
     setPosts(all);
   };
@@ -178,7 +180,7 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
            {[
              { id: 'for-you', label: 'Pour vous' },
              { id: 'following', label: 'Suivis' },
-             { id: 'boost', label: 'Boost' }
+             { id: 'vibeos', label: 'Vibeos' }
            ].map(tab => (
              <button 
               key={tab.id}
@@ -192,29 +194,23 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
       </div>
 
       <div className="px-2 md:px-0 divide-y divide-white/5 pb-24">
-        {feedType === 'boost' ? (
-          <div className="p-4">
-            <Boost user={user} />
-          </div>
-        ) : (
-          <div className="p-4 space-y-6">
-            {feedType === 'for-you' && !searchQuery && (
-              <>
-                <AuraProWidget user={user} />
-                <VibeScore user={user} />
-              </>
-            )}
-            {posts.map(post => <PostCard key={post.id} post={post} user={user} refresh={refresh} />)}
-            {posts.length === 0 && (
-              <div className="py-32 text-center space-y-4">
-                 <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto opacity-20">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" /></svg>
-                 </div>
-                 <p className="vibe-logo text-xs text-slate-700 font-black tracking-widest uppercase">Signal Nexus vide</p>
-              </div>
-            )}
-          </div>
-        )}
+        <div className="p-4 space-y-6">
+          {feedType === 'for-you' && !searchQuery && (
+            <>
+              <AuraProWidget user={user} />
+              <VibeScore user={user} />
+            </>
+          )}
+          {posts.map(post => <PostCard key={post.id} post={post} user={user} refresh={refresh} />)}
+          {posts.length === 0 && (
+            <div className="py-32 text-center space-y-4">
+               <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto opacity-20">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" /></svg>
+               </div>
+               <p className="vibe-logo text-xs text-slate-700 font-black tracking-widest uppercase">Signal Nexus vide</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -232,9 +228,9 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
   const originalAuthor = post.repostOf ? storage.getUsers().find(x => x.id === originalPost?.userId) : author;
 
   const liked = originalPost?.likes?.includes(user.id);
-  const boosted = originalPost?.boosts?.includes(user.id);
-  const reposted = originalPost?.reposts?.includes(user.id);
-  const saved = user.savedPosts?.includes(originalPost.id);
+  const boosted = originalPost?.boosts?.includes(user.id) || false;
+  const reposted = originalPost?.reposts?.includes(user.id) || false;
+  const saved = user.savedPosts?.includes(originalPost.id) || false;
 
   const openProfile = (e: React.MouseEvent, uid: string) => {
       e.stopPropagation();
@@ -246,18 +242,21 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
   
   const handleBoost = (e: React.MouseEvent) => { 
     e.stopPropagation(); 
-    if (boosted) return;
+    if (isBoosting) return; // Prevent double-clicks
     
     setIsBoosting(true);
-    const result = storage.boostPost(originalPost!.id, user.id);
+    const result = storage.toggleBoost(originalPost!.id, user.id);
+    
     if (result.success) {
+      // Refresh immediately to show the new count/state
+      refresh();
+      // Keep the animation state for a bit
       setTimeout(() => {
         setIsBoosting(false);
-        refresh();
-      }, 600);
+      }, 500);
     } else {
       setIsBoosting(false);
-      alert(result.message);
+      if (result.message) alert(result.message);
     }
   };
 
@@ -343,17 +342,7 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
               <div className="p-2.5 group-hover:bg-rose-500/10 rounded-full transition-all"><svg className="w-5 h-5" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
               <span className="text-xs font-black">{originalPost.likes?.length || 0}</span>
             </button>
-            <button 
-              onClick={handleBoost} 
-              className={`flex items-center gap-2 group transition-all ${boosted ? 'text-blue-400' : 'hover:text-blue-400'} ${isBoosting ? 'animate-boost' : ''}`}
-            >
-              <div className={`p-2.5 group-hover:bg-blue-400/10 rounded-full transition-all ${boosted ? 'bg-blue-500/10' : ''}`}>
-                <svg className="w-5 h-5" fill={boosted ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <span className="text-xs font-black uppercase tracking-widest">{originalPost.boosts?.length || 0}</span>
-            </button>
+            {/* Boost temporarily removed */}
           </div>
 
           {commenting && (

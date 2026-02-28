@@ -6,15 +6,30 @@ import { storage } from '../services/storageService.ts';
 const Games: React.FC<{ user: User }> = ({ user }) => {
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [showUltimateModal, setShowUltimateModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const games = [
-    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'bg-slate-900', accent: 'text-blue-400', desc: 'Générez des crédits via impulsions neuronales.', difficulty: 'Easy', premium: false },
-    { id: 'snake', name: 'Neural Snake', icon: '🐍', color: 'bg-slate-900', accent: 'text-emerald-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', premium: true },
-    { id: 'matrix', name: 'Memory Matrix', icon: '💠', color: 'bg-slate-900', accent: 'text-purple-400', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', premium: true },
-    { id: 'math', name: 'Fast Math', icon: '🧮', color: 'bg-slate-900', accent: 'text-rose-400', desc: 'Résolvez les équations du Nexus en temps record.', difficulty: 'Medium', premium: true },
+    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'bg-blue-600', accent: 'text-blue-400', desc: 'Générez des crédits via impulsions neuronales.', difficulty: 'Easy', premium: false, players: '1.2k', rating: '94%' },
+    { id: 'snake', name: 'Neural Snake', icon: '🐍', color: 'bg-emerald-600', accent: 'text-emerald-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', premium: true, players: '850', rating: '88%' },
+    { id: 'matrix', name: 'Memory Matrix', icon: '💠', color: 'bg-purple-600', accent: 'text-purple-400', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', premium: true, players: '420', rating: '91%' },
+    { id: 'math', name: 'Fast Math', icon: '🧮', color: 'bg-rose-600', accent: 'text-rose-400', desc: 'Résolvez les équations du Nexus en temps record.', difficulty: 'Medium', premium: true, players: '2.1k', rating: '96%' },
+    { id: 'runner', name: 'Nexus Runner', icon: '🏃', color: 'bg-orange-600', accent: 'text-orange-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', premium: false, players: '3.4k', rating: '92%', comingSoon: true },
+    { id: 'battle', name: 'Aura Battle', icon: '⚔️', color: 'bg-indigo-600', accent: 'text-indigo-400', desc: 'Combattez d\'autres utilisateurs dans l\'arène Aura.', difficulty: 'Hard', premium: true, players: '5.6k', rating: '98%', comingSoon: true },
+    { id: 'jump', name: 'Neon Jump', icon: '🚀', color: 'bg-cyan-600', accent: 'text-cyan-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', premium: false, players: '1.5k', rating: '90%', comingSoon: true },
+    { id: 'dodge', name: 'Data Dodge', icon: '🛡️', color: 'bg-yellow-600', accent: 'text-yellow-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', premium: false, players: '2.3k', rating: '93%', comingSoon: true },
+    { id: 'quiz', name: 'Vibe Quiz', icon: '❓', color: 'bg-pink-600', accent: 'text-pink-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', premium: false, players: '900', rating: '85%', comingSoon: true },
+    { id: 'tower', name: 'Aura Tower', icon: '🏰', color: 'bg-violet-600', accent: 'text-violet-400', desc: 'Construisez la plus haute tour de données.', difficulty: 'Hard', premium: true, players: '1.1k', rating: '89%', comingSoon: true },
+  ];
+
+  const categories = [
+    { id: 'recommended', label: 'Recommended for You' },
+    { id: 'popular', label: 'Popular' },
+    { id: 'top-rated', label: 'Top Rated' },
+    { id: 'new', label: 'New' },
   ];
 
   const handleGameSelect = (game: any) => {
+    if (game.comingSoon) return;
     if (game.premium && !user.isUltimate) {
       setShowUltimateModal(true);
       return;
@@ -23,64 +38,92 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] animate-in fade-in duration-700 pb-32">
-      {/* Hero Header - Minimal & Modern */}
-      <div className="relative px-6 py-20 overflow-hidden border-b border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(30,58,138,0.1),transparent_70%)] pointer-events-none"></div>
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
-           <h2 className="vibe-logo text-8xl font-black text-white tracking-tighter leading-none">VIBEGAMES</h2>
-           <div className="flex items-center justify-center gap-8">
-              <div className="flex items-center gap-3">
-                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Systems: Nominal</span>
-              </div>
-              <div className="w-px h-4 bg-white/10"></div>
-              <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Network Jackpot: 50,000 C</span>
-           </div>
-        </div>
+    <div className="min-h-screen bg-[#F2F4F5] dark:bg-[#111216] animate-in fade-in duration-700 pb-32">
+      {/* Roblox-style Top Bar */}
+      <div className="sticky top-0 z-[100] bg-white dark:bg-[#1B1D22] border-b border-black/5 dark:border-white/5 px-6 py-3 flex items-center justify-between shadow-sm">
+         <div className="flex items-center gap-6">
+            <h2 className="text-xl font-black text-black dark:text-white tracking-tight">Discover</h2>
+            <div className="hidden md:flex items-center gap-4">
+               {categories.map(cat => (
+                 <button key={cat.id} className="text-xs font-bold text-slate-500 hover:text-black dark:hover:text-white transition-colors">{cat.label}</button>
+               ))}
+            </div>
+         </div>
+         <div className="relative w-64">
+            <input 
+              type="text" 
+              placeholder="Search Games" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-100 dark:bg-[#25272D] border-none rounded-lg px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 transition-all"
+            />
+         </div>
       </div>
 
-      {/* Games Selection Grid */}
-      <div className="max-w-5xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-10">
-        {games.map(game => (
-          <button 
-            key={game.id} 
-            onClick={() => handleGameSelect(game)} 
-            className={`relative overflow-hidden p-12 rounded-[3rem] ${game.color} border border-white/5 group transition-all hover:border-white/20 hover:translate-y-[-4px] active:scale-[0.98] shadow-2xl text-left min-h-[320px] flex flex-col justify-between`}
-          >
-            {/* Background Icon */}
-            <div className="absolute top-[-10%] right-[-5%] opacity-[0.03] group-hover:opacity-[0.07] group-hover:scale-110 transition-all duration-700 pointer-events-none">
-              <span className="text-[240px] leading-none">{game.icon}</span>
-            </div>
-            
-            <div className="relative z-10 space-y-6">
-               <div className="flex items-center gap-4">
-                  <span className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-widest">{game.difficulty}</span>
-                  {game.premium && (
-                    <span className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full text-[9px] font-black uppercase tracking-widest">ULTIMATE</span>
-                  )}
-               </div>
-               <div className="space-y-2">
-                  <h3 className="text-5xl font-black text-white vibe-logo tracking-tight group-hover:text-blue-400 transition-colors">{game.name}</h3>
-                  <p className="text-slate-400 text-sm font-medium max-w-[85%] leading-relaxed">{game.desc}</p>
+      {/* Hero Banner - Roblox Style */}
+      <div className="px-6 py-8">
+         <div className="max-w-7xl mx-auto">
+            <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 shadow-xl group cursor-pointer">
+               <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/games/1200/400')] bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-1000"></div>
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+               <div className="absolute bottom-8 left-8 space-y-2">
+                  <span className="px-3 py-1 bg-blue-500 text-white text-[10px] font-black rounded-md uppercase tracking-widest">Featured</span>
+                  <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">SYNTH CLICKER 2.0</h1>
+                  <p className="text-white/80 text-sm font-bold max-w-md">The biggest update yet! New neurons, faster sync, and bigger rewards.</p>
                </div>
             </div>
+         </div>
+      </div>
 
-            <div className="relative z-10 flex items-center justify-between mt-8">
-               <div className="flex -space-x-3">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">
-                      {String.fromCharCode(64 + i)}
-                    </div>
-                  ))}
-                  <div className="w-10 h-10 rounded-full border-2 border-slate-900 bg-blue-600 flex items-center justify-center text-[10px] font-black text-white">+12</div>
-               </div>
-               <div className="px-10 py-5 bg-white text-black rounded-2xl font-black vibe-logo text-[11px] uppercase tracking-[0.2em] shadow-xl group-hover:bg-blue-50 transition-all">
-                  {game.premium && !user.isUltimate ? '🔒 Locked' : 'Connect'}
-               </div>
-            </div>
-          </button>
-        ))}
+      {/* Games Grid - Roblox Style */}
+      <div className="px-6 py-4 max-w-7xl mx-auto space-y-12">
+         {categories.map(cat => (
+           <div key={cat.id} className="space-y-6">
+              <div className="flex items-center justify-between">
+                 <h3 className="text-xl font-black text-black dark:text-white">{cat.label}</h3>
+                 <button className="text-xs font-bold text-blue-500 hover:underline">See All</button>
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
+                 {games.filter(g => searchQuery ? g.name.toLowerCase().includes(searchQuery.toLowerCase()) : true).map(game => (
+                   <div 
+                    key={game.id} 
+                    onClick={() => handleGameSelect(game)}
+                    className="group cursor-pointer space-y-2"
+                   >
+                      <div className={`aspect-square rounded-xl ${game.color} flex items-center justify-center text-4xl shadow-md group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300 relative overflow-hidden`}>
+                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                         {game.icon}
+                         {game.premium && (
+                           <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-blue-500 rounded-md flex items-center justify-center shadow-lg">
+                              <span className="text-[8px]">💎</span>
+                           </div>
+                         )}
+                         {game.comingSoon && (
+                           <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
+                              <span className="text-[8px] font-black text-white uppercase tracking-widest rotate-[-12deg] border border-white/20 px-1.5 py-0.5">Soon</span>
+                           </div>
+                         )}
+                      </div>
+                      <div className="space-y-0.5">
+                         <h4 className="font-black text-[11px] text-black dark:text-white truncate group-hover:text-blue-500 transition-colors">{game.name}</h4>
+                         <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500">
+                            <div className="flex items-center gap-1">
+                               <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
+                               {game.players}
+                            </div>
+                            <span>•</span>
+                            <div className="flex items-center gap-1">
+                               <svg className="w-2.5 h-2.5 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                               {game.rating}
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                 ))}
+              </div>
+           </div>
+         ))}
       </div>
 
       {showUltimateModal && (
@@ -144,80 +187,84 @@ const GameEngine: React.FC<{ id: string, user: User, onClose: () => void }> = ({
   }, [score, user.id]);
 
   return (
-    <div className="fixed inset-0 z-[1200] bg-[#020617] flex items-center justify-center animate-in fade-in duration-500">
-      <div className="w-full h-full max-w-7xl mx-auto flex flex-col p-6 md:p-12 gap-10">
+    <div className="fixed inset-0 z-[1200] bg-[#020617] flex items-center justify-center animate-in fade-in duration-500 p-2 md:p-6">
+      <div className="w-full h-full max-w-5xl mx-auto flex flex-col p-4 md:p-8 gap-6 bg-slate-950 rounded-[2rem] border border-white/5 shadow-4xl">
         
         {/* Top Control Bar */}
-        <div className="flex justify-between items-center border-b border-white/5 pb-10">
-           <div className="flex items-center gap-8">
-              <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center text-4xl shadow-2xl">
+        <div className="flex justify-between items-center border-b border-white/5 pb-6">
+           <div className="flex items-center gap-4">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-2xl shadow-2xl">
                 {id === 'snake' ? '🐍' : id === 'matrix' ? '💠' : id === 'math' ? '🧮' : '⚡'}
               </div>
               <div>
-                <h3 className="vibe-logo text-5xl font-black text-white tracking-tighter">{id.toUpperCase()} PROTOCOL</h3>
-                <div className="flex items-center gap-4 mt-1">
-                   <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Active Link: @{user.username}</span>
-                   <div className="w-1 h-1 bg-white/20 rounded-full"></div>
-                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Latency: 14ms</span>
+                <h3 className="vibe-logo text-xl md:text-3xl font-black text-white tracking-tighter">{id.toUpperCase()} PROTOCOL</h3>
+                <div className="flex items-center gap-3 mt-0.5">
+                   <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest">Active Link: @{user.username}</span>
+                   <div className="w-0.5 h-0.5 bg-white/20 rounded-full"></div>
+                   <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Latency: 14ms</span>
                 </div>
               </div>
            </div>
-           <button onClick={onClose} className="p-5 bg-white/5 border border-white/10 rounded-3xl hover:bg-rose-500/10 hover:border-rose-500/20 text-slate-400 hover:text-rose-500 transition-all group">
-             <svg className="w-10 h-10 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+           <button onClick={onClose} className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-rose-500/10 hover:border-rose-500/20 text-slate-400 hover:text-rose-500 transition-all group">
+             <svg className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
            </button>
         </div>
 
         {/* Game Canvas / Area */}
-        <div className="flex-1 relative bg-slate-900/50 rounded-[4rem] border border-white/5 shadow-inner overflow-hidden flex flex-col items-center justify-center">
+        <div className="flex-1 relative bg-slate-900/50 rounded-[2rem] border border-white/5 shadow-inner overflow-hidden flex flex-col items-center justify-center">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(30,58,138,0.05),transparent_70%)] pointer-events-none"></div>
             
             {gameState === 'start' && (
-                <div className="text-center space-y-12 animate-in zoom-in duration-500 relative z-10">
-                    <div className="space-y-4">
-                       <p className="vibe-logo text-sm text-slate-500 tracking-[0.8em] uppercase">Establishing Neural Link</p>
-                       <div className="w-48 h-1 bg-white/5 mx-auto rounded-full overflow-hidden">
+                <div className="text-center space-y-8 animate-in zoom-in duration-500 relative z-10">
+                    <div className="space-y-3">
+                       <p className="vibe-logo text-[10px] text-slate-500 tracking-[0.5em] uppercase">Establishing Neural Link</p>
+                       <div className="w-32 h-1 bg-white/5 mx-auto rounded-full overflow-hidden">
                           <div className="h-full bg-blue-500 w-1/3 animate-[loading_2s_infinite]"></div>
                        </div>
                     </div>
                     <button 
                         onClick={() => setGameState('playing')}
-                        className="px-24 py-10 bg-white text-black rounded-[2.5rem] font-black vibe-logo text-3xl shadow-4xl hover:scale-105 active:scale-95 transition-all"
+                        className="px-12 py-5 bg-white text-black rounded-2xl font-black vibe-logo text-xl shadow-4xl hover:scale-105 active:scale-95 transition-all"
                     >
                         INITIALIZE
                     </button>
                 </div>
             )}
 
-            {gameState === 'playing' && renderGame()}
+            {gameState === 'playing' && (
+              <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                {renderGame()}
+              </div>
+            )}
 
             {gameState === 'end' && (
-                <div className="text-center space-y-12 animate-in fade-in duration-500 relative z-10">
-                    <h4 className="vibe-logo text-8xl font-black text-white tracking-tighter leading-none">LINK SEVERED</h4>
-                    <div className="space-y-4">
-                       <p className="text-slate-500 font-black uppercase tracking-[0.4em] text-xs">Final Synchronization Score</p>
-                       <p className="text-[12rem] font-black text-white leading-none tracking-tighter">{score}</p>
+                <div className="text-center space-y-8 animate-in fade-in duration-500 relative z-10">
+                    <h4 className="vibe-logo text-4xl md:text-6xl font-black text-white tracking-tighter leading-none">LINK SEVERED</h4>
+                    <div className="space-y-2">
+                       <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[8px]">Final Synchronization Score</p>
+                       <p className="text-8xl font-black text-white leading-none tracking-tighter">{score}</p>
                     </div>
-                    <div className="flex gap-6 justify-center">
-                        <button onClick={() => { setScore(0); setGameState('playing'); }} className="px-16 py-7 bg-blue-600 text-white rounded-3xl font-black vibe-logo text-sm uppercase tracking-widest transition-all hover:bg-blue-500 shadow-2xl">Retry Link</button>
-                        <button onClick={onClose} className="px-16 py-7 bg-white/5 border border-white/10 text-white rounded-3xl font-black vibe-logo text-sm uppercase tracking-widest transition-all hover:bg-white/10">Terminate</button>
+                    <div className="flex gap-4 justify-center">
+                        <button onClick={() => { setScore(0); setGameState('playing'); }} className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black vibe-logo text-[10px] uppercase tracking-widest transition-all hover:bg-blue-500 shadow-2xl">Retry Link</button>
+                        <button onClick={onClose} className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-black vibe-logo text-[10px] uppercase tracking-widest transition-all hover:bg-white/10">Terminate</button>
                     </div>
                 </div>
             )}
         </div>
 
         {/* Real-time Stats Footer */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white/5 border border-white/10 p-10 rounded-[3rem] flex flex-col items-center justify-center space-y-2">
-                <span className="vibe-logo text-[10px] text-slate-500 uppercase tracking-widest">Current Score</span>
-                <span className="text-6xl font-black text-white tracking-tighter">{score}</span>
+        <div className="grid grid-cols-3 gap-4">
+            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center justify-center space-y-1">
+                <span className="vibe-logo text-[8px] text-slate-500 uppercase tracking-widest">Score</span>
+                <span className="text-2xl font-black text-white tracking-tighter">{score}</span>
             </div>
-            <div className="bg-white/5 border border-white/10 p-10 rounded-[3rem] flex flex-col items-center justify-center space-y-2">
-                <span className="vibe-logo text-[10px] text-slate-500 uppercase tracking-widest">XP Sync</span>
-                <span className="text-6xl font-black text-indigo-400 tracking-tighter">+{earnedXp}</span>
+            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center justify-center space-y-1">
+                <span className="vibe-logo text-[8px] text-slate-500 uppercase tracking-widest">XP Sync</span>
+                <span className="text-2xl font-black text-indigo-400 tracking-tighter">+{earnedXp}</span>
             </div>
-            <div className="bg-white/5 border border-white/10 p-10 rounded-[3rem] flex flex-col items-center justify-center space-y-2">
-                <span className="vibe-logo text-[10px] text-slate-500 uppercase tracking-widest">Credits Earned</span>
-                <span className="text-6xl font-black text-blue-500 tracking-tighter">+{earnedCredits}</span>
+            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center justify-center space-y-1">
+                <span className="vibe-logo text-[8px] text-slate-500 uppercase tracking-widest">Credits</span>
+                <span className="text-2xl font-black text-blue-500 tracking-tighter">+{earnedCredits}</span>
             </div>
         </div>
       </div>

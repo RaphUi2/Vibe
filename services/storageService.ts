@@ -157,7 +157,15 @@ export const storage = {
 
   addPost: (post: Post) => {
     const posts = storage.getPosts();
-    posts.unshift({ ...post, views: 0, reposts: [] });
+    posts.unshift({ 
+      ...post, 
+      views: 0, 
+      reposts: post.reposts || [], 
+      boosts: post.boosts || [], 
+      likes: post.likes || [], 
+      comments: post.comments || [], 
+      savedBy: post.savedBy || [] 
+    });
     storage.savePosts(posts);
     storage.addReward(post.userId, 100, 250);
     storage.updateVibeScore(post.userId);
@@ -228,62 +236,94 @@ export const storage = {
     }
   },
 
-  boostPost: (postId: string, userId: string): { success: boolean, message?: string } => {
+  addProfileComment: (userId: string, authorId: string, content: string) => {
+    const users = storage.getUsers();
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      if (!user.profileComments) user.profileComments = [];
+      user.profileComments.push({
+        id: Math.random().toString(36).substr(2, 9),
+        userId,
+        authorId,
+        content,
+        createdAt: Date.now()
+      });
+      storage.saveUsers(users);
+      storage.addReward(authorId, 10, 30);
+    }
+  },
+
+  toggleBoost: (postId: string, userId: string): { success: boolean, message?: string, action?: 'added' | 'removed' } => {
     const users = storage.getUsers();
     const userIndex = users.findIndex(u => u.id === userId);
     if (userIndex === -1) return { success: false };
     const user = users[userIndex];
 
-    const now = Date.now();
-    const today = new Date().setHours(0, 0, 0, 0);
-    
-    if (user.lastBoostReset !== today) {
-      user.dailyBoostsCount = 0;
-      user.lastBoostReset = today;
-    }
-
-    const limit = user.isUltimate ? 10 : 3;
-    if (user.dailyBoostsCount >= limit) {
-      return { success: false, message: `Limite de boost quotidienne atteinte (${limit}/${limit}).` };
-    }
-    
     const posts = storage.getPosts();
     const post = posts.find(p => p.id === postId);
-    if (post) {
-      if (!post.boosts) post.boosts = [];
-      if (!post.boosts.includes(userId)) {
-        const cost = user.isUltimate ? 100 : 250;
-        if (user.credits < cost) return { success: false, message: `Crédits insuffisants (${cost} C requis).` };
-        
-        post.boosts.push(userId);
-        user.credits -= cost;
-        user.xp += 500;
-        user.dailyBoostsCount += 1;
-        
-        // Level up check
-        const nextLevelXp = user.level * 1000;
-        if (user.xp >= nextLevelXp) {
-          user.level += 1;
-          user.xp -= nextLevelXp;
-        }
+    if (!post) return { success: false, message: "Diffusion non trouvée." };
 
-        users[userIndex] = { ...user };
-        storage.saveUsers(users);
-        storage.savePosts(posts);
-        storage.setCurrentUser(user);
-        storage.updateVibeScore(userId);
-        storage.updateVibeScore(post.userId);
-        
-        // Quest check: Propulseur
-        storage.completeQuest(userId, 'q4');
-        
-        window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
-        window.dispatchEvent(new CustomEvent('vibeRewardToast', { detail: { credits: -cost, xp: 500 } }));
-        
-        return { success: true };
+    if (!post.boosts) post.boosts = [];
+    const index = post.boosts.indexOf(userId);
+
+    if (index === -1) {
+      const now = Date.now();
+      const today = new Date().setHours(0, 0, 0, 0);
+      
+      if (user.lastBoostReset !== today) {
+        user.dailyBoostsCount = 0;
+        user.lastBoostReset = today;
       }
+
+      const limit = user.isUltimate ? 10 : 3;
+      if (user.dailyBoostsCount >= limit) {
+        return { success: false, message: `Limite de boost quotidienne atteinte (${limit}/${limit}).` };
+      }
+      
+      const cost = user.isUltimate ? 100 : 250;
+      if (user.credits < cost) return { success: false, message: `Crédits insuffisants (${cost} C requis).` };
+      
+      post.boosts.push(userId);
+      user.credits -= cost;
+      user.xp += 500;
+      user.dailyBoostsCount += 1;
+      
+      // Level up check
+      const nextLevelXp = user.level * 1000;
+      if (user.xp >= nextLevelXp) {
+        user.level += 1;
+        user.xp -= nextLevelXp;
+      }
+
+      users[userIndex] = { ...user };
+      storage.saveUsers(users);
+      storage.savePosts(posts);
+      storage.setCurrentUser(user);
+      storage.updateVibeScore(userId);
+      storage.updateVibeScore(post.userId);
+      
+      // Quest check: Propulseur
+      storage.completeQuest(userId, 'q4');
+      
+      window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
+      window.dispatchEvent(new CustomEvent('vibeRewardToast', { detail: { credits: -cost, xp: 500 } }));
+      
+      return { success: true, action: 'added' };
+    } else {
+      // Unboost
+      post.boosts.splice(index, 1);
+      // No refund for unboost to prevent abuse
+      users[userIndex] = { ...user };
+      storage.saveUsers(users);
+      storage.savePosts(posts);
+      storage.setCurrentUser(user);
+      storage.updateVibeScore(userId);
+      storage.updateVibeScore(post.userId);
+      
+      window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
+      
+      return { success: true, action: 'removed' };
     }
-    return { success: false, message: "Diffusion déjà boostée." };
   },
 
   getCurrentUser: (): User | null => {

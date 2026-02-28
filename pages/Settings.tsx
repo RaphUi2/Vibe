@@ -101,28 +101,29 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
         <div className="bg-white/5 rounded-[2rem] border border-white/10 p-6 space-y-4">
            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                 <span className="text-xs font-black text-white vibe-logo">v2.6.0 - Refonte Visuelle</span>
-                 <span className="text-[8px] font-bold text-blue-400 uppercase">Aujourd'hui</span>
+                 <span className="text-xs font-black text-white vibe-logo">v3.0.0 - L'Éveil du Nexus</span>
+                 <span className="text-[8px] font-bold text-blue-400 uppercase">Nouveau</span>
               </div>
               <ul className="text-[10px] text-slate-500 space-y-1 font-medium list-disc ml-4">
-                 <li>Suppression définitive des messages de retraite de Vibeos.</li>
-                 <li>Nouvelle identité visuelle : Retrait des termes "Nexus" et "Flux".</li>
-                 <li>**Boutique dédiée** : Centralisation des abonnements et thèmes.</li>
-                 <li>**Thèmes payants** : Les thèmes doivent maintenant être débloqués avec des crédits.</li>
-                 <li>Réduction drastique des prix Ultimate (10k) et Ultimate+ (50k).</li>
-                 <li>Nouveaux icônes pour l'IA, les Jeux et le Boost.</li>
-                 <li>Refonte du bouton de création de post.</li>
+                 <li>**Refonte VibeGames** : Interface style Roblox avec catégories et recherche.</li>
+                 <li>**Mur de Profil** : Laissez des messages sur les profils de vos amis.</li>
+                 <li>**Quêtes de Profil** : Accès rapide aux quêtes depuis votre profil.</li>
+                 <li>**Certification Officielle** : Badge "V" pour les comptes vérifiés.</li>
+                 <li>**Nouveaux Jeux** : Ajout de 4 nouveaux titres en développement.</li>
+                 <li>**Boost Animé** : Effets visuels améliorés pour le boost de post.</li>
+                 <li>**Galerie Média** : Nouveau système d'upload pour images et vidéos.</li>
               </ul>
            </div>
            <div className="w-px h-full bg-white/5" />
            <div className="space-y-2 opacity-50">
               <div className="flex items-center justify-between">
-                 <span className="text-xs font-black text-white vibe-logo">v2.5.0 - VibeGames</span>
-                 <span className="text-[8px] font-bold text-slate-500 uppercase">27 Fév 2026</span>
+                 <span className="text-xs font-black text-white vibe-logo">v2.6.0 - Refonte Visuelle</span>
+                 <span className="text-[8px] font-bold text-slate-500 uppercase">Ancien</span>
               </div>
               <ul className="text-[10px] text-slate-600 space-y-1 font-medium list-disc ml-4">
-                 <li>Lancement de l'arcade VibeGames.</li>
-                 <li>Intégration du système de crédits pour les jeux.</li>
+                 <li>Suppression définitive des messages de retraite de Vibeos.</li>
+                 <li>Nouvelle identité visuelle : Retrait des termes "Nexus" et "Flux".</li>
+                 <li>**Boutique dédiée** : Centralisation des abonnements et thèmes.</li>
               </ul>
            </div>
         </div>

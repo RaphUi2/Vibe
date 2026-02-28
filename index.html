@@ -68,11 +68,17 @@
     .bg-pulse-blue { animation: pulse-blue 4s infinite ease-in-out; }
 
     @keyframes boost-glow {
-      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); transform: scale(1); }
-      50% { box-shadow: 0 0 20px 10px rgba(59, 130, 246, 0); transform: scale(1.1); }
-      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); }
+      0% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 0px rgba(59, 130, 246, 0)); }
+      50% { transform: scale(1.15); filter: brightness(1.2) drop-shadow(0 0 10px rgba(59, 130, 246, 0.8)); }
+      100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 0px rgba(59, 130, 246, 0)); }
     }
-    .animate-boost { animation: boost-glow 0.6s ease-out; }
+    .animate-boost { animation: boost-glow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    @keyframes boost-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.3)); }
+      50% { transform: scale(1.02); opacity: 0.9; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6)); }
+    }
+    .animate-boost-pulse { animation: boost-pulse 3s infinite ease-in-out; }
 
     /* Themes */
     .theme-default { --vibe-accent: #3b82f6; }

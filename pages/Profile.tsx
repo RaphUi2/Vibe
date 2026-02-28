@@ -7,11 +7,12 @@ import Quests from './Quests';
 import VibeScore from '../components/VibeScore';
 
 const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User) => void }> = ({ user, viewUserId, onUpdate }) => {
-  const [activeTab, setActiveTab] = useState<'posts' | 'reposts' | 'media' | 'likes'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'reposts' | 'media' | 'likes' | 'saved' | 'wall'>('posts');
   const [profileUser, setProfileUser] = useState<User | null>(null);
   const [profilePosts, setProfilePosts] = useState<Post[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
+  const [commentText, setCommentText] = useState('');
 
   const [editName, setEditName] = useState('');
   const [editBio, setEditBio] = useState('');
@@ -54,6 +55,15 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       storage.updateUser(updated);
       onUpdate(updated);
       setIsEditing(false);
+  };
+
+  const handleAddWallComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    storage.addProfileComment(viewUserId, user.id, commentText);
+    setCommentText('');
+    const updatedUser = storage.getUsers().find(u => u.id === viewUserId);
+    if (updatedUser) setProfileUser(updatedUser);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'banner') => {
@@ -100,11 +110,19 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
            <div className="flex gap-2 pb-2">
                {isSelf ? (
                    <div className="flex gap-2">
-                    <button onClick={() => setActiveTab('quests' as any)} className="p-2.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <button 
+                      onClick={() => setActiveTab('quests' as any)} 
+                      className={`p-2.5 rounded-2xl border transition-all flex items-center gap-2 ${activeTab === 'quests' as any ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-white/5 border-white/10 text-blue-400 hover:bg-white/10'}`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">Quêtes</span>
                     </button>
-                    <button onClick={() => setActiveTab('settings' as any)} className="p-2.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
-                      <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <button 
+                      onClick={() => setActiveTab('settings' as any)} 
+                      className={`p-2.5 rounded-2xl border transition-all flex items-center gap-2 ${activeTab === 'settings' as any ? 'bg-slate-700 border-slate-600 text-white shadow-lg shadow-slate-900/50' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">Paramètres</span>
                     </button>
                     <button onClick={() => setIsEditing(true)} className="px-5 py-2 rounded-2xl border border-white/20 font-black text-xs text-white hover:bg-white/5 backdrop-blur-md transition-all">Éditer</button>
                    </div>
@@ -165,7 +183,8 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
           { id: 'reposts', label: 'Reposts' },
           { id: 'media', label: 'Médias' },
           { id: 'likes', label: 'J\'aime' },
-          { id: 'saved', label: 'Sauvegardés' }
+          { id: 'saved', label: 'Sauvegardés' },
+          { id: 'wall', label: 'Mur' }
         ].map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className="flex-1 min-w-[100px] py-4 text-center relative group transition-all">
             <span className={`text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-white'}`}>{tab.label}</span>
@@ -179,6 +198,41 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
             <Settings user={user} onUpdate={onUpdate} />
           ) : activeTab === 'quests' && isSelf ? (
             <Quests user={user} />
+          ) : activeTab === 'wall' ? (
+            <div className="p-6 space-y-8">
+               <form onSubmit={handleAddWallComment} className="space-y-4">
+                  <textarea 
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Laissez un message sur ce mur..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-blue-500/50 transition-all resize-none h-24"
+                  />
+                  <div className="flex justify-end">
+                     <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-full font-black text-xs uppercase tracking-widest shadow-lg hover:bg-blue-500 transition-all">Envoyer</button>
+                  </div>
+               </form>
+
+               <div className="space-y-6">
+                  {profileUser.profileComments?.slice().reverse().map(comment => {
+                    const author = storage.getUsers().find(u => u.id === comment.authorId);
+                    return (
+                      <div key={comment.id} className="flex gap-4 p-4 bg-white/2 rounded-2xl border border-white/5">
+                         <img src={author?.avatar} className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                         <div className="flex-1 space-y-1">
+                            <div className="flex items-center justify-between">
+                               <span className="font-black text-white text-xs">@{author?.username}</span>
+                               <span className="text-[10px] text-slate-600 font-bold">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <p className="text-slate-300 text-sm leading-relaxed">{comment.content}</p>
+                         </div>
+                      </div>
+                    );
+                  })}
+                  {(!profileUser.profileComments || profileUser.profileComments.length === 0) && (
+                    <div className="py-12 text-center text-slate-600 text-[10px] font-black uppercase tracking-widest">Aucun message pour le moment</div>
+                  )}
+               </div>
+            </div>
           ) : (
             <>
               {['posts', 'reposts', 'media', 'likes', 'saved'].includes(activeTab) && (

@@ -115,16 +115,7 @@ const App: React.FC = () => {
         <div className="max-w-2xl mx-auto">
           {activeTab === 'home' && <Home user={currentUser} />}
           {activeTab === 'ia' && <AIHub user={currentUser} />}
-          {activeTab === 'vibeos' && (
-            <div className="h-[70vh] flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in duration-500">
-               <div className="w-24 h-24 bg-pink-500/20 rounded-[2rem] flex items-center justify-center border border-pink-500/30 shadow-2xl shadow-pink-500/20">
-                  <svg className="w-12 h-12 text-pink-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-               </div>
-               <h2 className="vibe-logo text-3xl font-black text-white tracking-widest">VIBEOS</h2>
-               <p className="text-pink-400 font-black uppercase tracking-[0.3em] text-sm">Coming Soon</p>
-               <p className="text-slate-500 text-xs font-bold max-w-xs text-center leading-relaxed">Préparez-vous pour une nouvelle expérience vidéo immersive. Bientôt disponible sur Vibe Nexus.</p>
-            </div>
-          )}
+          {activeTab === 'vibeos' && <Home user={currentUser} initialFeedType="vibeos" />}
           {activeTab === 'profile' && (
               <Profile 
                 user={currentUser} 
@@ -141,7 +132,7 @@ const App: React.FC = () => {
       {activeTab === 'home' && (
           <button 
             onClick={() => setIsPostModalOpen(true)}
-            className="fixed bottom-28 right-6 md:right-12 w-16 h-16 bg-white text-black rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all z-[650] border-4 border-black/5"
+            className="fixed bottom-28 right-6 md:right-12 w-16 h-16 liquid-glass text-blue-400 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all z-[650] border border-white/20"
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />

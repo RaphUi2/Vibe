@@ -32,6 +32,15 @@ export interface User {
   vibeRank: string;
   vibeMetrics: VibeMetrics;
   isCertified?: boolean;
+  profileComments?: ProfileComment[];
+}
+
+export interface ProfileComment {
+  id: string;
+  userId: string;
+  authorId: string;
+  content: string;
+  createdAt: number;
 }
 
 export interface Post {
