@@ -55,6 +55,19 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       setIsEditing(false);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'banner') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        if (type === 'avatar') setEditAvatar(base64String);
+        else setEditBanner(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (!profileUser) return null;
   const xpPercent = Math.min((profileUser.xp / (profileUser.level * 1000)) * 100, 100);
 
@@ -183,34 +196,59 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       {/* EDIT MODAL */}
       {isEditing && (
           <div className="fixed inset-0 z-[2000] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6 animate-in fade-in duration-300">
-            <div className="w-full max-w-lg liquid-glass rounded-[3rem] p-10 border border-white/10 space-y-8 shadow-4xl">
+            <div className="w-full max-w-lg liquid-glass rounded-[3rem] p-8 md:p-10 border border-white/10 space-y-6 shadow-4xl">
                 <div className="flex justify-between items-center">
                     <h3 className="vibe-logo text-xl font-black text-white">ÉDITION NEXUS</h3>
                     <button onClick={() => setIsEditing(false)} className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all">
                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
-                <div className="space-y-6">
+                <div className="space-y-5">
                     <div className="space-y-1.5">
                        <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Nom d'affichage</label>
                        <input value={editName} onChange={e=>setEditName(e.target.value)} placeholder="Nom visible par tous" className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-blue-500 shadow-inner" />
                     </div>
                     <div className="space-y-1.5">
                        <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Bio-Signature</label>
-                       <textarea value={editBio} onChange={e=>setEditBio(e.target.value)} placeholder="Partagez votre fréquence..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-blue-500 h-28 resize-none shadow-inner" />
+                       <textarea value={editBio} onChange={e=>setEditBio(e.target.value)} placeholder="Partagez votre fréquence..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-blue-500 h-24 resize-none shadow-inner" />
                     </div>
+                    
                     <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Lien Avatar</label>
-                          <input value={editAvatar} onChange={e=>setEditAvatar(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-xs outline-none focus:border-blue-500 shadow-inner" />
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Avatar</label>
+                          <div className="relative group/edit-avatar">
+                             <div className="w-full aspect-square rounded-2xl bg-black/40 border border-white/10 overflow-hidden relative">
+                                <img src={editAvatar} className="w-full h-full object-cover opacity-50 group-hover/edit-avatar:opacity-30 transition-opacity" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                   <label className="cursor-pointer p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all">
+                                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'avatar')} />
+                                   </label>
+                                </div>
+                             </div>
+                          </div>
                        </div>
-                       <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Lien Bannière</label>
-                          <input value={editBanner} onChange={e=>setEditBanner(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-xs outline-none focus:border-blue-500 shadow-inner" />
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Bannière</label>
+                          <div className="relative group/edit-banner">
+                             <div className="w-full aspect-square rounded-2xl bg-black/40 border border-white/10 overflow-hidden relative">
+                                {editBanner ? (
+                                   <img src={editBanner} className="w-full h-full object-cover opacity-50 group-hover/edit-banner:opacity-30 transition-opacity" />
+                                ) : (
+                                   <div className="w-full h-full bg-white/5" />
+                                )}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                   <label className="cursor-pointer p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all">
+                                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'banner')} />
+                                   </label>
+                                </div>
+                             </div>
+                          </div>
                        </div>
                     </div>
                 </div>
-                <button onClick={saveProfile} className="w-full py-5 bg-white text-black rounded-2xl font-black vibe-logo uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all">Sauvegarder les modifications</button>
+                <button onClick={saveProfile} className="w-full py-5 bg-white text-black rounded-2xl font-black vibe-logo uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all">Sauvegarder</button>
             </div>
           </div>
       )}
