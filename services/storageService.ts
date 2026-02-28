@@ -41,8 +41,10 @@ export const storage = {
     const userIndex = users.findIndex(u => u.id === userId);
     if (userIndex !== -1) {
       const user = users[userIndex];
-      user.credits += credits;
-      user.xp += xp;
+      // Boosted rewards: 2x for everyone, 3x for Ultimate
+      const multiplier = user.isUltimate ? 3 : 2;
+      user.credits += credits * multiplier;
+      user.xp += xp * multiplier;
       
       const nextLevelXp = user.level * 1000;
       if (user.xp >= nextLevelXp) {
@@ -57,7 +59,7 @@ export const storage = {
       if (current?.id === userId) {
         storage.setCurrentUser(user);
         window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
-        window.dispatchEvent(new CustomEvent('vibeRewardToast', { detail: { credits, xp } }));
+        window.dispatchEvent(new CustomEvent('vibeRewardToast', { detail: { credits: credits * multiplier, xp: xp * multiplier } }));
       }
       return user;
     }
@@ -352,11 +354,13 @@ export const storage = {
   },
 
   getQuests: (): Quest[] => [
-    { id: 'q1', title: 'Premier Pas', description: 'Créez votre première diffusion.', reward: 500, xpReward: 1000, type: 'post', goal: 1 },
-    { id: 'q2', title: 'Socialiseur', description: 'Ajoutez votre premier ami.', reward: 300, xpReward: 500, type: 'daily', goal: 1 },
-    { id: 'q3', title: 'Philanthrope', description: 'Aimez 5 diffusions.', reward: 200, xpReward: 400, type: 'like', goal: 5 },
-    { id: 'q4', title: 'Propulseur', description: 'Boostez une diffusion.', reward: 1000, xpReward: 2000, type: 'boost', goal: 1 },
-    { id: 'q5', title: 'Bavard', description: 'Envoyez un message (IA ou Ami).', reward: 150, xpReward: 300, type: 'chat', goal: 1 },
+    { id: 'q1', title: 'Premier Pas', description: 'Créez votre première diffusion.', reward: 1000, xpReward: 2000, type: 'post', goal: 1 },
+    { id: 'q2', title: 'Socialiseur', description: 'Ajoutez votre premier ami.', reward: 600, xpReward: 1000, type: 'daily', goal: 1 },
+    { id: 'q3', title: 'Philanthrope', description: 'Aimez 5 diffusions.', reward: 400, xpReward: 800, type: 'like', goal: 5 },
+    { id: 'q4', title: 'Propulseur', description: 'Boostez une diffusion.', reward: 2000, xpReward: 4000, type: 'boost', goal: 1 },
+    { id: 'q5', title: 'Bavard', description: 'Envoyez un message (IA ou Ami).', reward: 300, xpReward: 600, type: 'chat', goal: 1 },
+    { id: 'u1', title: 'Maître Ultimate', description: 'Générez 5 images IA.', reward: 5000, xpReward: 10000, type: 'daily', goal: 5, ultimate: true },
+    { id: 'u2', title: 'Visionnaire', description: 'Créez une vidéo IA.', reward: 10000, xpReward: 20000, type: 'daily', goal: 1, ultimate: true },
   ],
 
   completeQuest: (userId: string, questId: string) => {
@@ -382,26 +386,27 @@ export const storage = {
         username: 'vibe_official',
         name: 'Vibe HQ',
         bio: 'Bienvenue sur Vibe. Vidéos, Jeux, IA : Tout est là.',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200&h=200',
+        avatar: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=200&h=200',
         email: 'contact@vibe.ai',
-        credits: 1000, xp: 0, level: 1,
+        credits: 100000, xp: 0, level: 100,
         activeTheme: 'default', isInfinite: true, isUltimate: true, isUltimatePlus: true, lastBoosts: [],
         friends: [],
         savedPosts: [],
         unlockedThemes: ['default'],
         completedQuests: [],
-        boostLimit: 10,
+        boostLimit: 100,
         dailyBoostsCount: 0,
         lastBoostReset: new Date().setHours(0, 0, 0, 0),
-        vibeScore: 999,
-        vibeRank: 'Top 1% des créateurs ce mois',
-        vibeMetrics: { energy: 98, flow: 95, impact: 99 }
+        vibeScore: 9999,
+        vibeRank: 'Fondateur du Nexus',
+        vibeMetrics: { energy: 99, flow: 99, impact: 99 },
+        isCertified: true
       };
       storage.saveUsers([auraBot]);
       
       const sampleVids: Post[] = [
-        { id: 'v1', userId: 'aura_bot', content: 'Explorez l\'infini de Vibe. #VibeStyle', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-city-at-night-with-neon-lights-2189-large.mp4', mediaType: 'video', createdAt: Date.now(), likes: [], boosts: [], reposts: [], comments: [], views: 15400, savedBy: [] },
-        { id: 'v2', userId: 'aura_bot', content: 'Nouveau flux visuel - Vibe v12 Alpha', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-flowing-teal-and-pink-colors-1100-large.mp4', mediaType: 'video', createdAt: Date.now() - 5000, likes: [], boosts: [], reposts: [], comments: [], views: 8200, savedBy: [] },
+        { id: 'v1', userId: 'aura_bot', content: 'UPDATE 3.0: Le Nexus évolue. Nouveau design, Ultimate Shop, et plus encore ! #Vibe3.0', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-city-at-night-with-neon-lights-2189-large.mp4', mediaType: 'video', createdAt: Date.now(), likes: [], boosts: [], reposts: [], comments: [], views: 15400, savedBy: [] },
+        { id: 'v2', userId: 'aura_bot', content: 'Nouveau flux visuel - Vibe v3.0 Alpha', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-flowing-teal-and-pink-colors-1100-large.mp4', mediaType: 'video', createdAt: Date.now() - 5000, likes: [], boosts: [], reposts: [], comments: [], views: 8200, savedBy: [] },
         { id: 'vp1', userId: 'aura_bot', content: 'EXCLUSIF ULTIMATE: Voyage au cœur de l\'application.', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4', mediaType: 'video', createdAt: Date.now() - 10000, likes: [], boosts: [], reposts: [], comments: [], views: 500, isPremium: true, savedBy: [] },
         { id: 'vp2', userId: 'aura_bot', content: 'MASTERCLASS: Maîtriser l\'IA Vibe.', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-man-working-on-a-computer-in-a-dark-room-4245-large.mp4', mediaType: 'video', createdAt: Date.now() - 20000, likes: [], boosts: [], reposts: [], comments: [], views: 300, isPremium: true, savedBy: [] },
       ];

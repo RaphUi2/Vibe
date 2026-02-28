@@ -31,6 +31,7 @@ export interface User {
   vibeScore: number;
   vibeRank: string;
   vibeMetrics: VibeMetrics;
+  isCertified?: boolean;
 }
 
 export interface Post {
@@ -73,6 +74,7 @@ export interface Quest {
   xpReward: number;
   type: 'post' | 'like' | 'boost' | 'chat' | 'daily';
   goal: number;
+  ultimate?: boolean;
 }
 
 export interface Trend {

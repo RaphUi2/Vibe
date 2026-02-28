@@ -1,26 +1,147 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Post, User, Comment } from '../types.ts';
+import { Post, User, Comment, AIService } from '../types.ts';
 import { storage } from '../services/storageService.ts';
+import { gemini } from '../services/geminiService.ts';
 import Boost from './Boost';
 import VibeScore from '../components/VibeScore';
+import Logo from '../components/Logo';
+
+const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [activeMode, setActiveMode] = useState<AIService>(AIService.CHAT);
+
+  const handleAuraAction = async () => {
+    if (!input.trim()) return;
+    setLoading(true);
+    setResult(null);
+    try {
+      let res;
+      if (activeMode === AIService.CHAT) {
+        res = await gemini.chat(input);
+        setResult({ text: res, type: 'text' });
+        storage.addReward(user.id, 5, 20);
+      } else if (activeMode === AIService.SEARCH) {
+        const searchRes = await gemini.search(input);
+        setResult({ ...searchRes, type: 'search' });
+        storage.addReward(user.id, 10, 30);
+      } else if (activeMode === AIService.IMAGE_GEN) {
+        if (!user.isUltimate) {
+          alert("Ultimate requis pour la génération d'images.");
+          setLoading(false);
+          return;
+        }
+        res = await gemini.generateImage(input);
+        setResult({ mediaUrl: res, type: 'image' });
+        storage.addReward(user.id, -500, 50);
+      }
+      setInput('');
+    } catch (err: any) {
+      alert("Erreur Aura: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mb-6 animate-in slide-in-from-top-4 duration-700">
+      <div className="liquid-glass-blue rounded-[2.5rem] p-6 border border-blue-500/30 shadow-[0_0_50px_rgba(59,130,246,0.15)] relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity">
+           <div className="w-24 h-24 bg-blue-500/20 blur-3xl rounded-full animate-neural-pulse"></div>
+        </div>
+
+        <div className="flex items-center justify-between mb-4">
+           <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+              <div className="flex flex-col">
+                 <span className="vibe-logo text-[9px] font-black text-blue-400 uppercase tracking-widest">Aura Pro Intelligence</span>
+                 <span className="text-[7px] font-black text-slate-500 uppercase tracking-[0.3em]">Nexus v2.6 • Online</span>
+              </div>
+           </div>
+           <div className="flex gap-1 bg-black/20 p-1 rounded-xl border border-white/5">
+              {[
+                { id: AIService.CHAT, icon: '💬' },
+                { id: AIService.SEARCH, icon: '🔍' },
+                { id: AIService.IMAGE_GEN, icon: '🖼️' }
+              ].map(m => (
+                <button 
+                  key={m.id}
+                  onClick={() => setActiveMode(m.id)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${activeMode === m.id ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                >
+                  <span className="text-sm">{m.icon}</span>
+                </button>
+              ))}
+           </div>
+        </div>
+
+        <div className="relative">
+           <input 
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAuraAction()}
+            placeholder={activeMode === AIService.CHAT ? "Demandez n'importe quoi à Aura..." : activeMode === AIService.SEARCH ? "Recherche Nexus en temps réel..." : "Imaginez une image..."}
+            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-700 pr-16"
+           />
+           <button 
+            onClick={handleAuraAction}
+            disabled={loading || !input.trim()}
+            className={`absolute right-2 top-2 bottom-2 px-4 rounded-xl flex items-center justify-center transition-all ${loading || !input.trim() ? 'text-slate-700' : 'text-blue-400 hover:bg-blue-400/10'}`}
+           >
+             {loading ? (
+               <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+             ) : (
+               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
+             )}
+           </button>
+        </div>
+
+        {result && (
+          <div className="mt-4 p-5 bg-white/5 rounded-2xl border border-white/5 animate-in zoom-in-95 duration-300 relative">
+             <button onClick={() => setResult(null)} className="absolute top-3 right-3 text-slate-600 hover:text-white"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg></button>
+             {result.type === 'image' ? (
+               <img src={result.mediaUrl} className="w-full rounded-xl border border-white/10 shadow-2xl" />
+             ) : (
+               <div className="space-y-3">
+                 <p className="text-sm font-bold text-slate-200 leading-relaxed">{result.text}</p>
+                 {result.grounding?.length > 0 && (
+                   <div className="flex flex-wrap gap-2 pt-3 border-t border-white/5">
+                      {result.grounding.map((g: any, i: number) => (
+                        <a key={i} href={g.uri} target="_blank" className="text-[8px] font-black uppercase tracking-widest text-blue-400 hover:underline">{g.title}</a>
+                      ))}
+                   </div>
+                 )}
+               </div>
+             )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Home: React.FC<{ user: User }> = ({ user }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [feedType, setFeedType] = useState<'for-you' | 'following' | 'saved' | 'boost'>('for-you');
+  const [feedType, setFeedType] = useState<'for-you' | 'following' | 'boost'>('for-you');
   const [searchQuery, setSearchQuery] = useState('');
 
   const refresh = () => {
     let all = storage.getPosts();
     
     if (searchQuery) {
-      all = all.filter(p => p.content.toLowerCase().includes(searchQuery.toLowerCase()));
+      all = all.filter(p => 
+        p.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        storage.getUsers().find(u => u.id === p.userId)?.username.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
 
     if (feedType === 'following') {
       all = all.filter(p => user.friends.includes(p.userId) || p.userId === user.id);
-    } else if (feedType === 'saved') {
-      all = all.filter(p => user.savedPosts?.includes(p.id));
     }
     setPosts(all);
   };
@@ -34,7 +155,7 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
       window.removeEventListener('refreshFeed', handleRef);
       window.removeEventListener('vibeUserUpdated', handleRef);
     };
-  }, [feedType, searchQuery, user.friends, user.savedPosts]);
+  }, [feedType, searchQuery, user.friends]);
 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-700">
@@ -57,7 +178,6 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
            {[
              { id: 'for-you', label: 'Pour vous' },
              { id: 'following', label: 'Suivis' },
-             { id: 'saved', label: 'Sauvegardés' },
              { id: 'boost', label: 'Boost' }
            ].map(tab => (
              <button 
@@ -77,11 +197,12 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
             <Boost user={user} />
           </div>
         ) : (
-          <>
+          <div className="p-4 space-y-6">
             {feedType === 'for-you' && !searchQuery && (
-              <div className="p-4 space-y-6 mb-4 animate-in fade-in slide-in-from-top-4 duration-1000">
+              <>
+                <AuraProWidget user={user} />
                 <VibeScore user={user} />
-              </div>
+              </>
             )}
             {posts.map(post => <PostCard key={post.id} post={post} user={user} refresh={refresh} />)}
             {posts.length === 0 && (
@@ -92,7 +213,7 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
                  <p className="vibe-logo text-xs text-slate-700 font-black tracking-widest uppercase">Signal Nexus vide</p>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
@@ -101,6 +222,7 @@ const Home: React.FC<{ user: User }> = ({ user }) => {
 
 const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ post, user, refresh }) => {
   const [commenting, setCommenting] = useState(false);
+  const [commentText, setCommentText] = useState('');
   const [isBoosting, setIsBoosting] = useState(false);
   
   const originalPost = post.repostOf ? storage.getPosts().find(p => p.id === post.repostOf) : post;
@@ -140,6 +262,19 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
   };
 
   const handleRepost = (e: React.MouseEvent) => { e.stopPropagation(); storage.toggleRepost(originalPost!.id, user.id); refresh(); };
+
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    storage.addComment(originalPost!.id, {
+      id: Math.random().toString(36).substr(2, 9),
+      userId: user.id,
+      content: commentText,
+      createdAt: Date.now()
+    });
+    setCommentText('');
+    refresh();
+  };
   
   return (
     <div className="p-4 md:p-6 hover:bg-white/[0.03] transition-all cursor-pointer group mb-1" onClick={() => {}}>
@@ -160,10 +295,13 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 mb-0.5">
               <span 
-                  className="font-black text-white hover:underline truncate vibe-logo text-sm" 
+                  className="font-black text-white hover:underline truncate vibe-logo text-sm flex items-center gap-1" 
                   onClick={(e) => openProfile(e, originalAuthor!.id)}
               >
                   {originalAuthor?.name}
+                  {originalAuthor?.isCertified && (
+                    <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center text-[8px] font-black text-white shadow-lg shadow-blue-500/20">V</div>
+                  )}
               </span>
               <span className="text-slate-500 text-xs truncate">@{originalAuthor?.username}</span>
               <span className="text-slate-700 text-[10px]">•</span>
@@ -193,7 +331,7 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
           )}
           
           <div className="flex items-center justify-between mt-5 text-slate-500 max-w-sm">
-            <button onClick={() => setCommenting(!commenting)} className="flex items-center gap-2 group hover:text-blue-400 transition-colors">
+            <button onClick={(e) => { e.stopPropagation(); setCommenting(!commenting); }} className="flex items-center gap-2 group hover:text-blue-400 transition-colors">
               <div className="p-2.5 group-hover:bg-blue-400/10 rounded-full transition-all"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg></div>
               <span className="text-xs font-black">{originalPost.comments?.length || 0}</span>
             </button>
@@ -217,10 +355,47 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
               <span className="text-xs font-black uppercase tracking-widest">{originalPost.boosts?.length || 0}</span>
             </button>
           </div>
+
+          {commenting && (
+            <div className="mt-4 space-y-4 animate-in slide-in-from-top-2 duration-300" onClick={(e) => e.stopPropagation()}>
+               <form onSubmit={handleAddComment} className="flex gap-3">
+                  <img src={user.avatar} className="w-8 h-8 rounded-full border border-white/5" />
+                  <div className="flex-1 relative">
+                    <input 
+                      type="text" 
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      placeholder="Votre réponse..."
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-blue-500/50"
+                    />
+                    <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-400 font-black text-[10px] uppercase tracking-widest hover:text-white">Répondre</button>
+                  </div>
+               </form>
+               
+               <div className="space-y-3 pl-11">
+                  {originalPost.comments?.slice().reverse().map(c => {
+                    const cAuthor = storage.getUsers().find(u => u.id === c.userId);
+                    return (
+                      <div key={c.id} className="flex gap-3">
+                         <img src={cAuthor?.avatar} className="w-6 h-6 rounded-full border border-white/5" />
+                         <div className="flex-1 bg-white/5 rounded-2xl p-3 border border-white/5">
+                            <div className="flex items-center gap-2 mb-1">
+                               <span className="text-[10px] font-black text-white">{cAuthor?.name}</span>
+                               <span className="text-[8px] text-slate-500">@{cAuthor?.username}</span>
+                            </div>
+                            <p className="text-xs text-slate-300">{c.content}</p>
+                         </div>
+                      </div>
+                    );
+                  })}
+               </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
 
 export default Home;

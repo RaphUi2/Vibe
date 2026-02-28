@@ -13,7 +13,7 @@ import Logo from './components/Logo.tsx';
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'home' | 'ia' | 'profile' | 'store' | 'games'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'ia' | 'profile' | 'store' | 'games' | 'vibeos'>('home');
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [rewardToast, setRewardToast] = useState<{credits: number, xp: number, title?: string} | null>(null);
   const [viewingProfileId, setViewingProfileId] = useState<string | null>(null);
@@ -81,7 +81,7 @@ const App: React.FC = () => {
             <Logo size="sm" />
           </div>
           <h1 className="vibe-logo text-base font-black tracking-tighter hidden sm:block">
-              {activeTab === 'home' ? 'Accueil' : activeTab.toUpperCase()}
+              {activeTab === 'home' ? 'Accueil' : activeTab === 'vibeos' ? 'Vibeos' : activeTab.toUpperCase()}
           </h1>
         </div>
 
@@ -115,6 +115,16 @@ const App: React.FC = () => {
         <div className="max-w-2xl mx-auto">
           {activeTab === 'home' && <Home user={currentUser} />}
           {activeTab === 'ia' && <AIHub user={currentUser} />}
+          {activeTab === 'vibeos' && (
+            <div className="h-[70vh] flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in duration-500">
+               <div className="w-24 h-24 bg-pink-500/20 rounded-[2rem] flex items-center justify-center border border-pink-500/30 shadow-2xl shadow-pink-500/20">
+                  <svg className="w-12 h-12 text-pink-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+               </div>
+               <h2 className="vibe-logo text-3xl font-black text-white tracking-widest">VIBEOS</h2>
+               <p className="text-pink-400 font-black uppercase tracking-[0.3em] text-sm">Coming Soon</p>
+               <p className="text-slate-500 text-xs font-bold max-w-xs text-center leading-relaxed">Préparez-vous pour une nouvelle expérience vidéo immersive. Bientôt disponible sur Vibe Nexus.</p>
+            </div>
+          )}
           {activeTab === 'profile' && (
               <Profile 
                 user={currentUser} 
@@ -142,6 +152,7 @@ const App: React.FC = () => {
       <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 liquid-glass rounded-[2rem] flex items-center justify-around z-[550] px-4 shadow-4xl border border-white/10">
         {[
           { id: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+          { id: 'vibeos', icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
           { id: 'games', icon: 'M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z' },
           { id: 'store', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
           { id: 'ia', icon: 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z' },
@@ -164,8 +175,8 @@ const App: React.FC = () => {
       </nav>
 
       {isPostModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-10 md:pt-24 p-4 md:p-6 bg-black/90 backdrop-blur-2xl animate-in fade-in duration-300">
-           <div className="w-full max-w-xl liquid-glass rounded-[3rem] p-6 md:p-8 border border-white/10 shadow-4xl relative">
+        <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-10 md:pt-24 p-4 md:p-6 bg-black/90 backdrop-blur-2xl animate-in fade-in duration-300 overflow-y-auto">
+           <div className="w-full max-w-xl liquid-glass rounded-[3rem] p-6 md:p-8 border border-white/10 shadow-4xl relative mb-10">
               <div className="flex justify-between items-center mb-8">
                   <button onClick={() => setIsPostModalOpen(false)} className="text-slate-400 font-bold hover:text-white px-4">Fermer</button>
                   <button 
@@ -211,6 +222,18 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
     onCreated();
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMediaUrl(reader.result as string);
+        setMediaType(type);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="flex gap-4">
       <img src={user.avatar} className="w-14 h-14 rounded-full shrink-0 object-cover border border-white/5" />
@@ -229,7 +252,7 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
                 {mediaType === 'video' ? (
-                  <video src={mediaUrl} className="w-full max-h-72 object-cover" />
+                  <video src={mediaUrl} className="w-full max-h-72 object-cover" controls />
                 ) : (
                   <img src={mediaUrl} className="w-full max-h-72 object-cover" />
                 )}
@@ -237,13 +260,17 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
         )}
 
         <div className="flex items-center justify-between pt-6 border-t border-white/5">
-            <div className="flex gap-2">
-                <button onClick={() => { const url = prompt("URL de l'image :"); if(url) {setMediaUrl(url); setMediaType('image');} }} className="p-3 text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all">
+            <div className="flex gap-4">
+                <label className="p-3 text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all cursor-pointer flex items-center gap-2">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                </button>
-                <button onClick={() => { const url = prompt("URL de la vidéo :"); if(url) {setMediaUrl(url); setMediaType('video');} }} className="p-3 text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all">
+                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Image</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'image')} />
+                </label>
+                <label className="p-3 text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all cursor-pointer flex items-center gap-2">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </button>
+                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Vidéo</span>
+                    <input type="file" accept="video/*" className="hidden" onChange={(e) => handleFileChange(e, 'video')} />
+                </label>
             </div>
             <div className="text-[10px] font-black vibe-logo tracking-widest text-slate-500">
                 {content.length}/280

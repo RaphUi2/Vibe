@@ -37,6 +37,7 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       case 'reposts': filtered = all.filter(p => p.userId === viewUserId && p.repostOf); break;
       case 'media': filtered = all.filter(p => p.userId === viewUserId && p.mediaUrl); break;
       case 'likes': filtered = all.filter(p => p.likes?.includes(viewUserId)); break;
+      case 'saved': filtered = all.filter(p => user.savedPosts?.includes(p.id)); break;
       default: filtered = [];
     }
     setProfilePosts(filtered);
@@ -123,7 +124,10 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
          <div className="space-y-1">
             <h2 className="text-2xl font-black text-white flex items-center gap-2 vibe-logo tracking-tight">
                 {profileUser.name}
-                {profileUser.isUltimate && (
+                {profileUser.isCertified && (
+                  <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-lg shadow-blue-500/20">V</div>
+                )}
+                {profileUser.isUltimate && !profileUser.isCertified && (
                   <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" /></svg>
                 )}
             </h2>
@@ -160,7 +164,8 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
           { id: 'posts', label: 'Vibe' },
           { id: 'reposts', label: 'Reposts' },
           { id: 'media', label: 'Médias' },
-          { id: 'likes', label: 'J\'aime' }
+          { id: 'likes', label: 'J\'aime' },
+          { id: 'saved', label: 'Sauvegardés' }
         ].map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className="flex-1 min-w-[100px] py-4 text-center relative group transition-all">
             <span className={`text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-white'}`}>{tab.label}</span>
@@ -176,7 +181,7 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
             <Quests user={user} />
           ) : (
             <>
-              {['posts', 'reposts', 'media', 'likes'].includes(activeTab) && (
+              {['posts', 'reposts', 'media', 'likes', 'saved'].includes(activeTab) && (
                 <>
                   {profilePosts.map(p => <PostEntry key={p.id} post={p} user={user} />)}
                   {profilePosts.length === 0 && (
@@ -277,6 +282,9 @@ const PostEntry: React.FC<{ post: Post, user: User }> = ({ post, user }) => {
           <div className="flex-1 space-y-1.5">
              <div className="flex items-center gap-2">
                 <span className="font-black text-white text-sm hover:underline">{originalAuthor?.name}</span>
+                {originalAuthor?.isCertified && (
+                  <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center text-[8px] font-black text-white shadow-lg shadow-blue-500/20">V</div>
+                )}
                 <span className="text-slate-500 text-xs">@{originalAuthor?.username}</span>
              </div>
              <p className="text-slate-200 text-sm leading-snug">{originalPost.content}</p>
