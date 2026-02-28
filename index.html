@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Ultimate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --vibe-accent: #3b82f6; /* Electric Blue */
+      --glass-bg: rgba(15, 23, 42, 0.6);
+      --glass-border: rgba(59, 130, 246, 0.2);
+    }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: #020617; 
+      color: #f8fafc; 
+      overflow: hidden;
+      margin: 0;
+    }
+    .vibe-logo { font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: -0.05em; }
+    
+    .liquid-glass {
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    }
+    
+    .liquid-glass-blue {
+      background: rgba(30, 64, 175, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
+    }
+
+    .cyber-glow {
+      filter: drop-shadow(0 0 10px var(--vibe-accent));
+      text-shadow: 0 0 8px var(--vibe-accent);
+    }
+
+    @keyframes neural-pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 0.4; }
+      100% { transform: scale(1.15); opacity: 0; }
+    }
+    .animate-neural-pulse {
+      animation: neural-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .logo-glow {
+      filter: drop-shadow(0 0 15px var(--vibe-accent));
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 20px; }
+
+    @keyframes pulse-blue {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+    .bg-pulse-blue { animation: pulse-blue 4s infinite ease-in-out; }
+
+    @keyframes boost-glow {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); transform: scale(1); }
+      50% { box-shadow: 0 0 20px 10px rgba(59, 130, 246, 0); transform: scale(1.1); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); }
+    }
+    .animate-boost { animation: boost-glow 0.6s ease-out; }
+
+    /* Themes */
+    .theme-default { --vibe-accent: #3b82f6; }
+    .theme-neon { --vibe-accent: #f472b6; }
+    .theme-gold { --vibe-accent: #fbbf24; }
+    .theme-matrix { --vibe-accent: #10b981; }
+    .theme-ruby { --vibe-accent: #e11d48; }
+
+    .theme-bg-gradient {
+      background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 100% 100%, rgba(30, 64, 175, 0.1) 0%, transparent 50%),
+                  #020617;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+      "react/": "https://esm.sh/react@^19.2.4/",
+      "react": "https://esm.sh/react@^19.2.4",
+      "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+    }
+  }
+  </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="theme-default theme-bg-gradient">
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
