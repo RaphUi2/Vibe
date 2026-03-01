@@ -119,15 +119,15 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
       {/* Command Terminal */}
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600 rounded-[3.5rem] blur opacity-10 group-hover:opacity-25 transition duration-1000 animate-gradient-x"></div>
-        <div className="relative bg-[#020617] rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-4xl backdrop-blur-3xl overflow-hidden">
+        <div className="relative bg-slate-950 rounded-[3rem] p-8 md:p-12 border border-white/5 shadow-4xl backdrop-blur-3xl overflow-hidden">
           
           <div className="flex items-center justify-between mb-8">
              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 </div>
                 <div className="flex flex-col">
-                   <span className="vibe-logo text-[8px] font-black text-slate-400 uppercase tracking-widest">Neural Link</span>
+                   <span className="vibe-logo text-[8px] font-black text-slate-500 uppercase tracking-widest">Neural Link</span>
                    <span className="text-[10px] font-black text-white">{user.isUltimatePlus ? 'Gemini 3.1 Pro Max' : services.find(s=>s.id === activeTab)?.model}</span>
                 </div>
              </div>
@@ -135,14 +135,14 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
              {activeTab === AIService.CHAT && (
                <div className="flex items-center gap-6">
                   <div className="flex flex-col items-end">
-                    <span className="vibe-logo text-[7px] text-slate-500 font-black uppercase tracking-widest">Deep Thinking</span>
-                    <span className={`text-[9px] font-black uppercase ${thinking ? 'text-blue-400' : 'text-slate-600'}`}>{thinking ? 'Activé' : 'Désactivé'}</span>
+                    <span className="vibe-logo text-[7px] text-slate-600 font-black uppercase tracking-widest">Deep Thinking</span>
+                    <span className={`text-[9px] font-black uppercase ${thinking ? 'text-blue-400' : 'text-slate-700'}`}>{thinking ? 'Activé' : 'Désactivé'}</span>
                   </div>
                   <button 
                     onClick={() => setThinking(!thinking)}
-                    className={`w-14 h-7 rounded-full relative transition-all shadow-inner ${thinking ? 'bg-blue-600' : 'bg-white/5 border border-white/5'}`}
+                    className={`w-12 h-6 rounded-full relative transition-all shadow-inner ${thinking ? 'bg-blue-600' : 'bg-white/5 border border-white/10'}`}
                   >
-                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all shadow-xl ${thinking ? 'left-8' : 'left-1'}`}></div>
+                    <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-xl ${thinking ? 'left-6.5' : 'left-0.5'}`}></div>
                   </button>
                </div>
              )}
@@ -153,19 +153,26 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={activeTab === AIService.CHAT ? "Posez votre question à Aura..." : activeTab === AIService.SEARCH ? "Recherche en temps réel..." : "Décrivez l'image..."}
-              className="w-full bg-transparent border-none outline-none text-white font-bold text-2xl md:text-3xl placeholder:text-slate-800 min-h-[160px] max-h-[400px] custom-scrollbar leading-tight selection:bg-blue-500/30"
+              className="w-full bg-transparent border-none outline-none text-white font-bold text-2xl md:text-4xl placeholder:text-slate-900 min-h-[160px] max-h-[400px] custom-scrollbar leading-tight selection:bg-blue-500/30"
             />
             
             <div className="flex justify-between items-center mt-8 pt-8 border-t border-white/5">
-              <span className={`text-[10px] font-black vibe-logo transition-all ${input.length > 250 && !user.isUltimate ? 'text-rose-500' : 'text-slate-700'}`}>
-                {input.length} / {user.isUltimate ? '∞' : '300'} <span className="ml-2 opacity-50">CARACTÈRES</span>
-              </span>
+              <div className="flex items-center gap-4">
+                <span className={`text-[10px] font-black vibe-logo transition-all ${input.length > 250 && !user.isUltimate ? 'text-rose-500' : 'text-slate-700'}`}>
+                  {input.length} / {user.isUltimate ? '∞' : '300'} <span className="ml-2 opacity-50">CARACTÈRES</span>
+                </span>
+                {services.find(s => s.id === activeTab)?.cost !== 0 && (
+                  <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                    Coût: {services.find(s => s.id === activeTab)?.cost} C
+                  </div>
+                )}
+              </div>
               <button
                 onClick={handleAction}
                 disabled={loading || !input.trim()}
                 className={`relative px-12 py-5 rounded-2xl vibe-logo text-xs font-black uppercase tracking-[0.2em] transition-all overflow-hidden flex items-center gap-4 ${
                   loading || !input.trim() 
-                  ? 'bg-white/5 text-slate-700 cursor-not-allowed' 
+                  ? 'bg-white/5 text-slate-800 cursor-not-allowed' 
                   : 'bg-white text-black hover:scale-[1.05] active:scale-95 shadow-4xl'
                 }`}
               >

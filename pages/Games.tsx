@@ -20,6 +20,10 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
     { id: 'aim', name: 'Aim Trainer', icon: '🎯', color: 'bg-red-500', accent: 'text-red-300', desc: 'Améliorez vos réflexes.', difficulty: 'Hard', tier: 'free', players: '2.5k', rating: '91%' },
     { id: 'color', name: 'Color Match', icon: '🎨', color: 'bg-teal-500', accent: 'text-teal-300', desc: 'Associez les couleurs du Nexus.', difficulty: 'Medium', tier: 'free', players: '1.4k', rating: '89%' },
     { id: 'tap', name: 'Fast Tap', icon: '👆', color: 'bg-purple-500', accent: 'text-purple-300', desc: 'Tapez le plus vite possible.', difficulty: 'Easy', tier: 'free', players: '3.1k', rating: '95%' },
+    { id: 'memory', name: 'Neuro Memory', icon: '🧠', color: 'bg-blue-400', accent: 'text-blue-100', desc: 'Testez votre mémoire visuelle.', difficulty: 'Medium', tier: 'free', players: '1.8k', rating: '92%' },
+    { id: 'bricks', name: 'Cyber Bricks', icon: '🧱', color: 'bg-orange-500', accent: 'text-orange-100', desc: 'Cassez les briques du Nexus.', difficulty: 'Easy', tier: 'free', players: '2.2k', rating: '90%' },
+    { id: 'flappy', name: 'Vibe Bird', icon: '🐦', color: 'bg-yellow-500', accent: 'text-yellow-100', desc: 'Volez à travers les serveurs.', difficulty: 'Hard', tier: 'free', players: '4.5k', rating: '88%' },
+    { id: 'tetris', name: 'Nexus Blocks', icon: '🧊', color: 'bg-indigo-600', accent: 'text-indigo-100', desc: 'Alignez les blocs de données.', difficulty: 'Hard', tier: 'free', players: '3.9k', rating: '94%' },
 
     // ULTIMATE GAMES (5)
     { id: 'matrix', name: 'Memory Matrix', icon: '💠', color: 'bg-purple-600', accent: 'text-purple-400', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%' },
@@ -65,22 +69,25 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
   return (
     <div className="min-h-screen bg-[#F2F4F5] dark:bg-[#111216] animate-in fade-in duration-700 pb-32">
       {/* Roblox-style Top Bar */}
-      <div className="sticky top-0 z-[100] bg-white dark:bg-[#1B1D22] border-b border-black/5 dark:border-white/5 px-6 py-3 flex items-center justify-between shadow-sm">
-         <div className="flex items-center gap-6">
-            <h2 className="text-xl font-black text-black dark:text-white tracking-tight">Découvrir</h2>
-            <div className="hidden md:flex items-center gap-4">
+      <div className="sticky top-0 z-[100] bg-white dark:bg-[#1B1D22] border-b border-black/5 dark:border-white/5 px-6 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12">
+            <h2 className="text-3xl font-black text-black dark:text-white tracking-tight">Découvrir</h2>
+            <div className="flex items-center gap-8 overflow-x-auto scrollbar-hide pb-1 md:pb-0">
                {categories.map(cat => (
-                 <button key={cat.id} className="text-xs font-bold text-slate-500 hover:text-black dark:hover:text-white transition-colors">{cat.label}</button>
+                 <button key={cat.id} className="text-[11px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors whitespace-nowrap">{cat.label}</button>
                ))}
             </div>
          </div>
-         <div className="relative w-64">
+         <div className="relative w-full md:w-96 mt-4 md:mt-0">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+               <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
             <input 
               type="text" 
-              placeholder="Rechercher des jeux" 
+              placeholder="Rechercher un jeu dans le Nexus..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-100 dark:bg-[#25272D] border-none rounded-lg px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full bg-slate-100 dark:bg-[#25272D] border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-500 shadow-inner"
             />
          </div>
       </div>
@@ -189,8 +196,10 @@ const GameEngine = ({ id, user, onClose }: { id: string, user: User, onClose: ()
   const renderGame = () => {
     switch (id) {
       case 'snake': return <SnakeGame onScore={(s) => setScore(s)} onEnd={() => setGameState('end')} isPlaying={gameState === 'playing'} />;
-      case 'matrix': return <MemoryGame onScore={(s) => setScore(s)} onEnd={() => setGameState('end')} isPlaying={gameState === 'playing'} />;
+      case 'matrix':
+      case 'memory': return <MemoryGame onScore={(s) => setScore(s)} onEnd={() => setGameState('end')} isPlaying={gameState === 'playing'} />;
       case 'math': return <MathGame onScore={(s) => setScore(s)} onEnd={() => setGameState('end')} isPlaying={gameState === 'playing'} />;
+      case 'flappy': return <FlappyGame onScore={(s) => setScore(s)} onEnd={() => setGameState('end')} isPlaying={gameState === 'playing'} />;
       default: return <ClickerGame onScore={(s) => setScore(s)} isPlaying={gameState === 'playing'} />;
     }
   };
@@ -198,19 +207,21 @@ const GameEngine = ({ id, user, onClose }: { id: string, user: User, onClose: ()
   useEffect(() => {
     if (gameState === 'playing') {
         const interval = setInterval(() => {
-            // Passive XP for playing
-            storage.addReward(user.id, 0, 5);
-            setEarnedXp(prev => prev + 5);
-        }, 10000);
+            // Passive XP for playing - BOOSTED
+            storage.addReward(user.id, 5, 25);
+            setEarnedCredits(prev => prev + 5);
+            setEarnedXp(prev => prev + 25);
+        }, 5000);
         return () => clearInterval(interval);
     }
   }, [gameState, user.id]);
 
   useEffect(() => {
-    if (score > 0 && score % 10 === 0) {
-      storage.addReward(user.id, 5, 20);
-      setEarnedCredits(prev => prev + 5);
-      setEarnedXp(prev => prev + 20);
+    if (score > 0 && score % 5 === 0) {
+      // BOOSTED REWARDS
+      storage.addReward(user.id, 25, 100);
+      setEarnedCredits(prev => prev + 25);
+      setEarnedXp(prev => prev + 100);
     }
   }, [score, user.id]);
 
@@ -468,6 +479,77 @@ const MathGame = ({ onScore, onEnd, isPlaying }: { onScore: (s: number) => void,
                     <button key={i} onClick={() => handleAnswer(o)} className="py-6 liquid-glass rounded-3xl border border-white/10 font-black text-2xl text-white hover:bg-white hover:text-black transition-all active:scale-95">{o}</button>
                 ))}
             </div>
+        </div>
+    );
+};
+
+const FlappyGame = ({ onScore, onEnd, isPlaying }: { onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }) => {
+    const [birdY, setBirdY] = useState(50);
+    const [velocity, setVelocity] = useState(0);
+    const [pipes, setPipes] = useState<{ x: number, top: number }[]>([]);
+    const [localScore, setLocalScore] = useState(0);
+
+    useEffect(() => {
+        if (!isPlaying) return;
+        const jump = () => setVelocity(-2.5);
+        window.addEventListener('keydown', (e) => e.code === 'Space' && jump());
+        window.addEventListener('mousedown', jump);
+        
+        const gameLoop = setInterval(() => {
+            setBirdY(y => {
+                const newY = y + velocity;
+                if (newY < 0 || newY > 100) { onEnd(); return y; }
+                return newY;
+            });
+            setVelocity(v => v + 0.15);
+
+            setPipes(prev => {
+                const newPipes = prev.map(p => ({ ...p, x: p.x - 1 })).filter(p => p.x > -20);
+                if (newPipes.length === 0 || newPipes[newPipes.length - 1].x < 60) {
+                    newPipes.push({ x: 100, top: Math.random() * 40 + 20 });
+                }
+                
+                // Collision check
+                const birdX = 20;
+                newPipes.forEach(p => {
+                    if (p.x > birdX - 5 && p.x < birdX + 5) {
+                        if (birdY < p.top || birdY > p.top + 30) onEnd();
+                    }
+                    if (p.x === birdX) {
+                        setLocalScore(s => {
+                            const ns = s + 1;
+                            onScore(ns);
+                            return ns;
+                        });
+                    }
+                });
+                
+                return newPipes;
+            });
+        }, 30);
+
+        return () => {
+            window.removeEventListener('keydown', jump);
+            window.removeEventListener('mousedown', jump);
+            clearInterval(gameLoop);
+        };
+    }, [isPlaying, velocity, birdY]);
+
+    return (
+        <div className="relative w-full h-full bg-blue-900/20 overflow-hidden">
+            <div 
+                className="absolute w-10 h-10 bg-yellow-500 rounded-full shadow-lg transition-transform" 
+                style={{ left: '20%', top: `${birdY}%`, transform: `rotate(${velocity * 10}deg)` }}
+            >
+                <div className="absolute top-2 right-2 w-2 h-2 bg-black rounded-full"></div>
+            </div>
+            {pipes.map((p, i) => (
+                <React.Fragment key={i}>
+                    <div className="absolute bg-emerald-600 w-12 rounded-b-xl border-b-4 border-emerald-800" style={{ left: `${p.x}%`, top: 0, height: `${p.top}%` }}></div>
+                    <div className="absolute bg-emerald-600 w-12 rounded-t-xl border-t-4 border-emerald-800" style={{ left: `${p.x}%`, top: `${p.top + 30}%`, bottom: 0 }}></div>
+                </React.Fragment>
+            ))}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 vibe-logo text-[8px] text-white/20 font-black uppercase tracking-[0.4em]">Espace ou Clic pour sauter</div>
         </div>
     );
 };

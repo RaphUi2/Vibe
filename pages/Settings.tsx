@@ -102,7 +102,7 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
         <div className="bg-white/5 rounded-[2rem] border border-white/10 p-6 space-y-4">
            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                 <span className="text-xs font-black text-white vibe-logo">v3.1.0 - L'Éveil du Nexus</span>
+                 <span className="text-xs font-black text-white vibe-logo">v4.0.0 - L'Éveil du Nexus</span>
                  <span className="text-[8px] font-bold text-blue-400 uppercase">Nouveau</span>
               </div>
               <ul className="text-[10px] text-slate-500 space-y-1 font-medium list-disc ml-4">
@@ -142,7 +142,7 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
           >
             Déconnexion
           </button>
-          <p className="text-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">Version 2.6.0 • Build 901</p>
+          <p className="text-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">Version 4.0.0 • Build 1024</p>
         </div>
       </section>
     </div>

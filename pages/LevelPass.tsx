@@ -7,18 +7,16 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
   const [passes, setPasses] = useState<LevelPass[]>([]);
 
   useEffect(() => {
-    const p: LevelPass[] = [
-      { level: 1, xpRequired: 0, rewardType: 'credits', rewardValue: 500, isPremium: false },
-      { level: 2, xpRequired: 1000, rewardType: 'credits', rewardValue: 1000, isPremium: false },
-      { level: 3, xpRequired: 2000, rewardType: 'theme', rewardValue: 'neon_pink', isPremium: true },
-      { level: 4, xpRequired: 3000, rewardType: 'credits', rewardValue: 1500, isPremium: false },
-      { level: 5, xpRequired: 4000, rewardType: 'badge', rewardValue: 'Débutant', isPremium: false },
-      { level: 6, xpRequired: 5000, rewardType: 'boost_limit', rewardValue: 1, isPremium: true },
-      { level: 7, xpRequired: 6000, rewardType: 'credits', rewardValue: 2000, isPremium: false },
-      { level: 8, xpRequired: 7000, rewardType: 'theme', rewardValue: 'cyber_ocean', isPremium: true },
-      { level: 9, xpRequired: 8000, rewardType: 'credits', rewardValue: 2500, isPremium: false },
-      { level: 10, xpRequired: 9000, rewardType: 'badge', rewardValue: 'Vétéran', isPremium: true },
-    ];
+    const p: LevelPass[] = [];
+    for (let i = 1; i <= 100; i++) {
+        p.push({
+            level: i,
+            xpRequired: (i - 1) * 1000,
+            rewardType: i % 5 === 0 ? 'theme' : i % 3 === 0 ? 'boost_limit' : 'credits',
+            rewardValue: i % 5 === 0 ? `theme_${i}` : i % 3 === 0 ? 1 : 500 * i,
+            isPremium: i % 2 === 0
+        });
+    }
     setPasses(p);
   }, []);
 
@@ -29,7 +27,7 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
       return;
     }
     if (pass.isPremium && !user.isUltimate) {
-      alert("Ultimate requis pour cette récompense.");
+      alert("Ultimate requis pour cette récompense. Achetez le Pass Premium !");
       return;
     }
 
@@ -50,18 +48,41 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
 
     storage.updateUser(updatedUser);
     onUpdate(updatedUser);
-    alert(`Récompense récupérée : ${pass.rewardValue} ${pass.rewardType}`);
+  };
+
+  const buyPremium = () => {
+    if (user.isUltimate) {
+        alert("Vous avez déjà le Pass Premium !");
+        return;
+    }
+    const updatedUser = { ...user, isUltimate: true };
+    storage.updateUser(updatedUser);
+    onUpdate(updatedUser);
+    alert("Pass Premium activé ! Profitez de vos récompenses exclusives.");
   };
 
   return (
     <div className="px-4 py-8 space-y-10 animate-in fade-in duration-700 pb-40">
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-6">
         <div className="inline-block px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] animate-pulse">Saison 1: L'Éveil</div>
-        <h2 className="vibe-logo text-5xl font-black text-white uppercase tracking-tighter">LEVEL PASS</h2>
-        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest max-w-xs mx-auto leading-relaxed">Montez en niveau pour débloquer des récompenses exclusives et des thèmes rares.</p>
+        <h2 className="vibe-logo text-6xl font-black text-white uppercase tracking-tighter">LEVEL PASS</h2>
+        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest max-w-xs mx-auto leading-relaxed">100 niveaux de récompenses neuronales.</p>
+        
+        {!user.isUltimate && (
+            <button 
+                onClick={buyPremium}
+                className="group relative px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl overflow-hidden shadow-2xl hover:scale-105 transition-all active:scale-95"
+            >
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                <div className="relative flex flex-col items-center">
+                    <span className="text-white font-black text-xs uppercase tracking-[0.2em]">Débloquer la Voie Premium</span>
+                    <span className="text-white/60 text-[10px] font-bold">Seulement 8.00€</span>
+                </div>
+            </button>
+        )}
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {passes.map((pass) => {
           const isUnlocked = user.level >= pass.level;
           const isClaimed = user.claimedLevelRewards?.includes(pass.level);
@@ -70,38 +91,29 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
           return (
             <div 
               key={pass.level}
-              className={`relative overflow-hidden p-8 rounded-[2.5rem] border transition-all duration-500 flex flex-col sm:flex-row sm:items-center justify-between gap-6 ${
+              className={`relative overflow-hidden p-6 rounded-[2rem] border transition-all duration-500 flex items-center justify-between gap-4 ${
                 isUnlocked 
                 ? isClaimed 
                   ? 'border-emerald-500/20 bg-emerald-500/5 opacity-80'
-                  : 'border-blue-500/40 bg-gradient-to-br from-blue-600/10 to-transparent shadow-2xl shadow-blue-500/5' 
-                : 'bg-white/5 border-white/5 opacity-40 grayscale'
+                  : 'border-blue-500/40 bg-gradient-to-br from-blue-600/10 to-transparent shadow-xl' 
+                : 'bg-white/5 border-white/5 opacity-40'
               }`}
             >
-              <div className="flex items-center gap-6">
-                <div className="relative">
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black relative z-10 ${isUnlocked ? 'bg-white text-black shadow-2xl' : 'bg-white/10 text-slate-500'}`}>
+              <div className="flex items-center gap-5">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg font-black ${isUnlocked ? 'bg-white text-black' : 'bg-white/10 text-slate-500'}`}>
                     {pass.level}
-                  </div>
-                  {isUnlocked && <div className="absolute -inset-2 bg-blue-500/30 blur-xl rounded-full animate-pulse"></div>}
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-black text-white text-base uppercase tracking-tight">
-                      {pass.rewardType === 'theme' ? 'Thème Exclusif' : pass.rewardType === 'badge' ? 'Badge de Rang' : pass.rewardType === 'boost_limit' ? 'Limite de Boost' : 'Crédits Vibe'}
+                    <h3 className="font-black text-white text-xs uppercase tracking-tight">
+                      {pass.rewardType === 'theme' ? 'Thème' : pass.rewardType === 'boost_limit' ? 'Boost' : 'Crédits'}
                     </h3>
                     {pass.isPremium && (
-                      <div className="px-2 py-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[7px] font-black rounded-md uppercase tracking-widest shadow-lg">Ultimate</div>
+                      <span className="text-[6px] font-black bg-blue-500 text-white px-1.5 py-0.5 rounded uppercase tracking-widest">Premium</span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 font-bold flex items-center gap-2">
-                    {pass.rewardType === 'credits' ? (
-                      <span className="text-blue-400">+{pass.rewardValue} Crédits</span>
-                    ) : pass.rewardType === 'theme' ? (
-                      <span className="text-emerald-400">Thème: {pass.rewardValue}</span>
-                    ) : (
-                      <span>{pass.rewardValue} {pass.rewardType}</span>
-                    )}
+                  <p className="text-[10px] font-bold text-slate-500">
+                    {pass.rewardType === 'credits' ? `+${pass.rewardValue} C` : pass.rewardType === 'theme' ? `Sync: ${pass.rewardValue}` : `+${pass.rewardValue} Boost`}
                   </p>
                 </div>
               </div>
@@ -109,15 +121,15 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
               <button 
                 disabled={!canClaim}
                 onClick={() => handleClaim(pass)}
-                className={`px-8 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all ${
+                className={`px-6 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all ${
                   canClaim 
-                  ? 'bg-white text-black hover:scale-105 active:scale-95 shadow-2xl hover:shadow-white/20' 
+                  ? 'bg-white text-black hover:bg-blue-500 hover:text-white' 
                   : isClaimed
-                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 cursor-default'
-                    : 'bg-white/5 text-slate-700 cursor-not-allowed border border-white/5'
+                    ? 'text-emerald-500'
+                    : 'text-slate-700'
                 }`}
               >
-                {isClaimed ? 'Récupéré' : isUnlocked ? 'Récupérer' : 'Verrouillé'}
+                {isClaimed ? '✓' : isUnlocked ? 'Claim' : 'Locked'}
               </button>
             </div>
           );

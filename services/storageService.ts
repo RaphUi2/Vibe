@@ -36,6 +36,58 @@ export const storage = {
     }
   },
 
+  calculateVibeScore: (userId: string) => {
+    const users = storage.getUsers();
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    const posts = storage.getPosts().filter(p => p.userId === userId);
+    const totalLikes = posts.reduce((acc, p) => acc + (p.likes?.length || 0), 0);
+    const totalBoosts = posts.reduce((acc, p) => acc + (p.boosts?.length || 0), 0);
+    const totalViews = posts.reduce((acc, p) => acc + (p.views || 0), 0);
+    const friendsCount = user.friends?.length || 0;
+    const questsCount = user.completedQuests?.length || 0;
+
+    // More complex score calculation
+    const baseScore = 1000;
+    const levelBonus = user.level * 250;
+    const engagementBonus = (totalLikes * 25) + (totalBoosts * 100) + (Math.floor(totalViews / 10));
+    const socialBonus = (friendsCount * 150) + (questsCount * 500);
+    const membershipBonus = user.isUltimatePlus ? 10000 : (user.isUltimate ? 5000 : 0);
+
+    const newScore = baseScore + levelBonus + engagementBonus + socialBonus + membershipBonus;
+
+    // Metrics calculation (0-99)
+    const newMetrics = {
+      energy: Math.min(99, 40 + (user.level * 2) + (questsCount * 5)),
+      flow: Math.min(99, 30 + (posts.length * 10) + (Math.floor(totalViews / 500))),
+      impact: Math.min(99, 20 + (totalLikes * 5) + (totalBoosts * 15) + (friendsCount * 5))
+    };
+
+    // Rank determination
+    let newRank = 'Nouveau Nexus';
+    if (newScore > 100000) newRank = 'Légende Éternelle';
+    else if (newScore > 50000) newRank = 'Maître du Nexus';
+    else if (newScore > 25000) newRank = 'Nexus Élite';
+    else if (newScore > 10000) newRank = 'Vibe Architect';
+    else if (newScore > 5000) newRank = 'Créateur Actif';
+    else if (newScore > 2500) newRank = 'Explorateur';
+
+    // Only update if something changed significantly
+    if (user.vibeScore !== newScore || user.vibeRank !== newRank) {
+      user.vibeScore = newScore;
+      user.vibeMetrics = newMetrics;
+      user.vibeRank = newRank;
+      
+      storage.saveUsers(users);
+      const current = storage.getCurrentUser();
+      if (current?.id === userId) {
+        storage.setCurrentUser(user);
+        window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
+      }
+    }
+  },
+
   addReward: (userId: string, credits: number, xp: number, actionKey?: string) => {
     const users = storage.getUsers();
     const userIndex = users.findIndex(u => u.id === userId);
@@ -50,8 +102,11 @@ export const storage = {
 
       // Boosted rewards: 2x for everyone, 3x for Ultimate
       const multiplier = user.isUltimate ? 3 : 2;
-      user.credits += credits * multiplier;
-      user.xp += xp * multiplier;
+      const finalCredits = credits > 0 ? credits * multiplier : credits;
+      const finalXp = xp > 0 ? xp * multiplier : xp;
+
+      user.credits += finalCredits;
+      user.xp += finalXp;
       
       const nextLevelXp = user.level * 1000;
       if (user.xp >= nextLevelXp) {
@@ -65,8 +120,11 @@ export const storage = {
       const current = storage.getCurrentUser();
       if (current?.id === userId) {
         storage.setCurrentUser(user);
+        storage.calculateVibeScore(userId);
         window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
-        window.dispatchEvent(new CustomEvent('vibeRewardToast', { detail: { credits: credits * multiplier, xp: xp * multiplier } }));
+        if (finalCredits !== 0 || finalXp !== 0) {
+          window.dispatchEvent(new CustomEvent('vibeRewardToast', { detail: { credits: finalCredits, xp: finalXp } }));
+        }
       }
       return user;
     }
@@ -363,43 +421,6 @@ export const storage = {
     { id: 't2', category: 'CULTURE', hashtag: '#BonneVibes', count: '89K vibes', color: 'from-pink-400 to-rose-500' },
     { id: 't3', category: 'GAMING', hashtag: '#NexusPlay', count: '64K vibes', color: 'from-emerald-400 to-teal-500' },
   ],
-
-  updateVibeScore: (userId: string) => {
-    const users = storage.getUsers();
-    const user = users.find(u => u.id === userId);
-    if (user) {
-      const posts = storage.getPosts().filter(p => p.userId === userId);
-      const totalLikes = posts.reduce((acc, p) => acc + (p.likes?.length || 0), 0);
-      const totalBoosts = posts.reduce((acc, p) => acc + (p.boosts?.length || 0), 0);
-      
-      const newScore = 500 + (user.level * 10) + (totalLikes * 5) + (totalBoosts * 20);
-      const newMetrics = {
-        energy: Math.min(99, 70 + (user.level * 2)),
-        flow: Math.min(99, 60 + (posts.length * 5)),
-        impact: Math.min(99, 50 + (totalLikes * 2))
-      };
-      const newRank = `Top ${Math.max(1, 15 - Math.floor(newScore / 200))}% des créateurs ce mois`;
-      
-      // Only update and dispatch if something changed
-      if (user.vibeScore !== newScore || 
-          user.vibeRank !== newRank || 
-          user.vibeMetrics?.energy !== newMetrics.energy ||
-          user.vibeMetrics?.flow !== newMetrics.flow ||
-          user.vibeMetrics?.impact !== newMetrics.impact) {
-        
-        user.vibeScore = newScore;
-        user.vibeMetrics = newMetrics;
-        user.vibeRank = newRank;
-        
-        storage.saveUsers(users);
-        const current = storage.getCurrentUser();
-        if (current?.id === userId) {
-          storage.setCurrentUser(user);
-          window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
-        }
-      }
-    }
-  },
 
   getQuests: (): Quest[] => [
     { id: 'q1', title: 'Premier Pas', description: 'Créez votre première diffusion.', reward: 1000, xpReward: 2000, type: 'post', goal: 1 },

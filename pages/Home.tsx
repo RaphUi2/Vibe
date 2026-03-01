@@ -46,46 +46,30 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   };
 
   return (
-    <div className="mb-8 animate-in slide-in-from-top-4 duration-700">
+    <div className="mb-4 animate-in slide-in-from-top-2 duration-500">
       <div className="relative group">
-        {/* Animated Background Glow */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600 rounded-[3rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-3xl blur opacity-5 group-hover:opacity-10 transition duration-1000"></div>
         
-        <div className="relative liquid-glass rounded-[3rem] p-8 border border-white/10 shadow-4xl overflow-hidden">
-          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-             <div className="w-32 h-32 bg-blue-500/30 blur-3xl rounded-full animate-neural-pulse"></div>
-          </div>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-             <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/40 relative z-10">
-                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                  </div>
-                  <div className="absolute -inset-2 bg-blue-500/20 blur-xl rounded-full animate-pulse"></div>
-                </div>
-                <div className="flex flex-col">
-                   <h3 className="vibe-logo text-xl font-black text-white tracking-tighter">AURA INTELLIGENCE</h3>
-                   <div className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">Nexus Core v3.0 • Synchronisé</span>
-                   </div>
-                </div>
+        <div className="relative bg-slate-950/50 rounded-3xl p-3 border border-white/5 shadow-xl overflow-hidden">
+          <div className="flex items-center gap-3 mb-3">
+             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
              </div>
-             
-             <div className="flex gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
+             <div className="flex-1">
+                <h3 className="vibe-logo text-[9px] font-black text-white/60 tracking-widest uppercase">Aura Core</h3>
+             </div>
+             <div className="flex gap-1 bg-black/40 p-0.5 rounded-lg border border-white/5">
                 {[
-                  { id: AIService.CHAT, icon: '💬', label: 'Chat' },
-                  { id: AIService.SEARCH, icon: '🔍', label: 'Search' },
-                  { id: AIService.IMAGE_GEN, icon: '🎨', label: 'Art' }
+                  { id: AIService.CHAT, icon: '💬' },
+                  { id: AIService.SEARCH, icon: '🔍' },
+                  { id: AIService.IMAGE_GEN, icon: '🎨' }
                 ].map(m => (
                   <button 
                     key={m.id}
                     onClick={() => setActiveMode(m.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${activeMode === m.id ? 'bg-white text-black shadow-xl scale-105' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                    className={`w-6 h-6 flex items-center justify-center rounded-md transition-all ${activeMode === m.id ? 'bg-white text-black shadow-md' : 'text-slate-500 hover:text-white'}`}
                   >
-                    <span className="text-sm">{m.icon}</span>
-                    <span className="text-[9px] font-black uppercase tracking-widest hidden sm:block">{m.label}</span>
+                    <span className="text-[10px]">{m.icon}</span>
                   </button>
                 ))}
              </div>
@@ -97,41 +81,34 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAuraAction()}
-              placeholder={activeMode === AIService.CHAT ? "Posez une question à Aura..." : activeMode === AIService.SEARCH ? "Recherche Nexus en temps réel..." : "Décrivez l'image à générer..."}
-              className="w-full bg-black/60 border border-white/10 rounded-[2rem] px-8 py-5 text-white font-bold text-base focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-700 pr-20 shadow-inner"
+              placeholder={activeMode === AIService.CHAT ? "Aura..." : activeMode === AIService.SEARCH ? "Recherche..." : "Générer..."}
+              className="w-full bg-black/60 border border-white/5 rounded-xl px-4 py-2 text-white font-bold text-xs focus:outline-none focus:border-blue-500/30 transition-all placeholder:text-slate-800 pr-10"
              />
              <button 
               onClick={handleAuraAction}
               disabled={loading || !input.trim()}
-              className={`absolute right-3 top-3 bottom-3 w-14 rounded-2xl flex items-center justify-center transition-all ${loading || !input.trim() ? 'text-slate-700' : 'bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-500/20 active:scale-90'}`}
+              className={`absolute right-1.5 top-1.5 bottom-1.5 w-7 rounded-lg flex items-center justify-center transition-all ${loading || !input.trim() ? 'text-slate-700' : 'bg-blue-600 text-white hover:bg-blue-50'}`}
              >
                {loading ? (
-                 <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                 <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
                ) : (
-                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
+                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
                )}
              </button>
           </div>
 
           {result && (
-            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10 animate-in zoom-in-95 duration-500 relative backdrop-blur-3xl">
-               <button onClick={() => setResult(null)} className="absolute top-4 right-4 p-2 bg-black/40 rounded-full text-slate-500 hover:text-white transition-colors"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg></button>
+            <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/5 animate-in zoom-in-95 duration-300 relative">
+               <button onClick={() => setResult(null)} className="absolute top-1.5 right-1.5 p-1 text-slate-500 hover:text-white"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg></button>
                {result.type === 'image' ? (
-                 <div className="space-y-4">
-                    <img src={result.mediaUrl} className="w-full rounded-2xl border border-white/10 shadow-4xl" />
-                    <button className="w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all">Télécharger l'œuvre</button>
-                 </div>
+                  <img src={result.mediaUrl} className="w-full rounded-lg border border-white/10 shadow-2xl" />
                ) : (
-                 <div className="space-y-4">
-                   <div className="flex items-center gap-2 mb-2">
-                      <div className="w-1.5 h-4 bg-blue-500 rounded-full"></div>
-                      <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Réponse Aura</span>
-                   </div>
-                   <p className="text-base font-medium text-slate-200 leading-relaxed">{result.text}</p>
+                 <div className="space-y-1.5">
+                   <p className="text-xs font-medium text-slate-300 leading-relaxed">{result.text}</p>
                    {result.grounding?.length > 0 && (
-                     <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5">
+                     <div className="flex flex-wrap gap-1 pt-1">
                         {result.grounding.map((g: any, i: number) => (
-                          <a key={i} href={g.uri} target="_blank" className="px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest text-blue-400 hover:bg-blue-500/20 transition-all">{g.title}</a>
+                          <a key={i} href={g.uri} target="_blank" className="px-1.5 py-0.5 bg-blue-500/10 border border-blue-500/10 rounded-md text-[7px] font-black uppercase text-blue-400">{g.title}</a>
                         ))}
                      </div>
                    )}

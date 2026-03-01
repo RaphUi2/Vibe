@@ -20,6 +20,7 @@ export interface User {
   isInfinite: boolean;
   isUltimate: boolean;
   isUltimatePlus: boolean;
+  hasPremiumPass?: boolean;
   lastBoosts: number[];
   friends: string[];
   savedPosts: string[];
