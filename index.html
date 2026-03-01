@@ -28,15 +28,15 @@
       background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
     }
     
     .liquid-glass-blue {
-      background: rgba(30, 64, 175, 0.15);
+      background: rgba(30, 64, 175, 0.05);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
+      border: 1px solid var(--vibe-glow);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
     }
 
     .cyber-glow {
@@ -81,20 +81,31 @@
     .animate-boost-pulse { animation: boost-pulse 3s infinite ease-in-out; }
 
     /* Themes */
-    .theme-default { --vibe-accent: #3b82f6; }
-    .theme-neon { --vibe-accent: #f472b6; }
-    .theme-gold { --vibe-accent: #fbbf24; }
-    .theme-matrix { --vibe-accent: #10b981; }
-    .theme-ruby { --vibe-accent: #e11d48; }
+    .theme-default { --vibe-accent: #3b82f6; --vibe-glow: rgba(59, 130, 246, 0.5); }
+    .theme-neon_pink { --vibe-accent: #f472b6; --vibe-glow: rgba(244, 114, 182, 0.5); }
+    .theme-gold { --vibe-accent: #fbbf24; --vibe-glow: rgba(251, 191, 36, 0.5); }
+    .theme-cyber_ocean { --vibe-accent: #06b6d4; --vibe-glow: rgba(6, 182, 212, 0.5); }
+    .theme-ruby { --vibe-accent: #e11d48; --vibe-glow: rgba(225, 29, 72, 0.5); }
+    .theme-emerald { --vibe-accent: #10b981; --vibe-glow: rgba(16, 185, 129, 0.5); }
 
     .theme-bg-gradient {
-      background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 100% 100%, rgba(30, 64, 175, 0.1) 0%, transparent 50%),
+      background: radial-gradient(circle at 0% 0%, var(--vibe-glow) 0%, transparent 40%),
+                  radial-gradient(circle at 100% 100%, rgba(30, 64, 175, 0.05) 0%, transparent 40%),
                   #020617;
+      background-attachment: fixed;
     }
 
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes gradient-x {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .animate-gradient-x {
+      background-size: 200% 200%;
+      animation: gradient-x 3s ease infinite;
+    }
   </style>
   <script type="importmap">
   {

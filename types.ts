@@ -24,6 +24,8 @@ export interface User {
   friends: string[];
   savedPosts: string[];
   unlockedThemes: string[];
+  claimedLevelRewards: number[];
+  rewardedActions: string[];
   boostLimit: number;
   dailyBoostsCount: number;
   lastBoostReset: number;
@@ -101,4 +103,24 @@ export enum AIService {
   VIDEO_GEN = 'video_gen',
   MUSIC_GEN = 'music_gen',
   SEARCH = 'search'
+}
+
+export interface Game {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  category: 'arcade' | 'puzzle' | 'action' | 'strategy';
+  tier: 'free' | 'ultimate' | 'ultimate_plus';
+  url: string;
+  plays: number;
+  rating: number;
+}
+
+export interface LevelPass {
+  level: number;
+  xpRequired: number;
+  rewardType: 'credits' | 'theme' | 'badge' | 'boost_limit';
+  rewardValue: string | number;
+  isPremium: boolean;
 }

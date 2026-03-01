@@ -18,12 +18,38 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isLogin) {
+      if (username.length < 3) {
+        alert("Le pseudo doit faire au moins 3 caractères.");
+        return;
+      }
+      if (password.length < 8) {
+        alert("Le mot de passe doit faire au moins 8 caractères.");
+        return;
+      }
+      const users = storage.getUsers();
+      if (users.find(u => u.username.toLowerCase() === username.toLowerCase().replace('@', ''))) {
+        alert("Ce pseudo est déjà utilisé.");
+        return;
+      }
+      if (users.find(u => u.email.toLowerCase() === identifier.toLowerCase())) {
+        alert("Cet email est déjà utilisé.");
+        return;
+      }
+      if (!identifier.includes('@') || !identifier.includes('.')) {
+        alert("Veuillez entrer une adresse email valide.");
+        return;
+      }
+    }
+
     setLoading(true);
     
     setTimeout(() => {
       const users = storage.getUsers();
       if (isLogin) {
-        const user = users.find(u => u.email === identifier || u.username === identifier.replace('@', ''));
+        const user = users.find(u => (u.email === identifier || u.username === identifier.replace('@', '')));
+        // In a real app we would check password here
         if (user) {
           storage.setCurrentUser(user);
           onLogin(user);
@@ -49,6 +75,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           friends: [],
           savedPosts: [],
           unlockedThemes: ['default'],
+          claimedLevelRewards: [],
+          rewardedActions: [],
           completedQuests: [],
           boostLimit: 3,
           dailyBoostsCount: 0,

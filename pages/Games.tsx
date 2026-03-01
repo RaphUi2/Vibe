@@ -9,29 +9,54 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const games = [
-    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'bg-blue-600', accent: 'text-blue-400', desc: 'Générez des crédits via impulsions neuronales.', difficulty: 'Easy', premium: false, players: '1.2k', rating: '94%' },
-    { id: 'snake', name: 'Neural Snake', icon: '🐍', color: 'bg-emerald-600', accent: 'text-emerald-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', premium: true, players: '850', rating: '88%' },
-    { id: 'matrix', name: 'Memory Matrix', icon: '💠', color: 'bg-purple-600', accent: 'text-purple-400', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', premium: true, players: '420', rating: '91%' },
-    { id: 'math', name: 'Fast Math', icon: '🧮', color: 'bg-rose-600', accent: 'text-rose-400', desc: 'Résolvez les équations du Nexus en temps record.', difficulty: 'Medium', premium: true, players: '2.1k', rating: '96%' },
-    { id: 'runner', name: 'Nexus Runner', icon: '🏃', color: 'bg-orange-600', accent: 'text-orange-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', premium: false, players: '3.4k', rating: '92%', comingSoon: true },
-    { id: 'battle', name: 'Aura Battle', icon: '⚔️', color: 'bg-indigo-600', accent: 'text-indigo-400', desc: 'Combattez d\'autres utilisateurs dans l\'arène Aura.', difficulty: 'Hard', premium: true, players: '5.6k', rating: '98%', comingSoon: true },
-    { id: 'jump', name: 'Neon Jump', icon: '🚀', color: 'bg-cyan-600', accent: 'text-cyan-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', premium: false, players: '1.5k', rating: '90%', comingSoon: true },
-    { id: 'dodge', name: 'Data Dodge', icon: '🛡️', color: 'bg-yellow-600', accent: 'text-yellow-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', premium: false, players: '2.3k', rating: '93%', comingSoon: true },
-    { id: 'quiz', name: 'Vibe Quiz', icon: '❓', color: 'bg-pink-600', accent: 'text-pink-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', premium: false, players: '900', rating: '85%', comingSoon: true },
-    { id: 'tower', name: 'Aura Tower', icon: '🏰', color: 'bg-violet-600', accent: 'text-violet-400', desc: 'Construisez la plus haute tour de données.', difficulty: 'Hard', premium: true, players: '1.1k', rating: '89%', comingSoon: true },
+    // FREE GAMES (10)
+    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'bg-blue-600', accent: 'text-blue-400', desc: 'Générez des crédits via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%' },
+    { id: 'snake', name: 'Neural Snake', icon: '🐍', color: 'bg-emerald-600', accent: 'text-emerald-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', tier: 'free', players: '850', rating: '88%' },
+    { id: 'runner', name: 'Nexus Runner', icon: '🏃', color: 'bg-orange-600', accent: 'text-orange-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', tier: 'free', players: '3.4k', rating: '92%' },
+    { id: 'jump', name: 'Neon Jump', icon: '🚀', color: 'bg-cyan-600', accent: 'text-cyan-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '90%' },
+    { id: 'dodge', name: 'Data Dodge', icon: '🛡️', color: 'bg-yellow-600', accent: 'text-yellow-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', tier: 'free', players: '2.3k', rating: '93%' },
+    { id: 'quiz', name: 'Vibe Quiz', icon: '❓', color: 'bg-pink-600', accent: 'text-pink-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', tier: 'free', players: '900', rating: '85%' },
+    { id: 'stack', name: 'Block Stack', icon: '🧱', color: 'bg-indigo-500', accent: 'text-indigo-300', desc: 'Empilez les blocs de données.', difficulty: 'Easy', tier: 'free', players: '1.1k', rating: '87%' },
+    { id: 'aim', name: 'Aim Trainer', icon: '🎯', color: 'bg-red-500', accent: 'text-red-300', desc: 'Améliorez vos réflexes.', difficulty: 'Hard', tier: 'free', players: '2.5k', rating: '91%' },
+    { id: 'color', name: 'Color Match', icon: '🎨', color: 'bg-teal-500', accent: 'text-teal-300', desc: 'Associez les couleurs du Nexus.', difficulty: 'Medium', tier: 'free', players: '1.4k', rating: '89%' },
+    { id: 'tap', name: 'Fast Tap', icon: '👆', color: 'bg-purple-500', accent: 'text-purple-300', desc: 'Tapez le plus vite possible.', difficulty: 'Easy', tier: 'free', players: '3.1k', rating: '95%' },
+
+    // ULTIMATE GAMES (5)
+    { id: 'matrix', name: 'Memory Matrix', icon: '💠', color: 'bg-purple-600', accent: 'text-purple-400', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%' },
+    { id: 'math', name: 'Fast Math', icon: '🧮', color: 'bg-rose-600', accent: 'text-rose-400', desc: 'Résolvez les équations du Nexus.', difficulty: 'Medium', tier: 'ultimate', players: '2.1k', rating: '96%' },
+    { id: 'battle', name: 'Aura Battle', icon: '⚔️', color: 'bg-indigo-600', accent: 'text-indigo-400', desc: 'Combattez dans l\'arène Aura.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%' },
+    { id: 'tower', name: 'Aura Tower', icon: '🏰', color: 'bg-violet-600', accent: 'text-violet-400', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%' },
+    { id: 'space', name: 'Space Void', icon: '🌌', color: 'bg-slate-800', accent: 'text-slate-400', desc: 'Explorez le vide spatial.', difficulty: 'Medium', tier: 'ultimate', players: '750', rating: '92%' },
+
+    // ULTIMATE+ GAMES (5)
+    { id: 'god', name: 'Nexus God', icon: '👑', color: 'bg-amber-500', accent: 'text-amber-200', desc: 'Devenez le dieu du Nexus.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '99%' },
+    { id: 'hack', name: 'Core Hacker', icon: '💻', color: 'bg-lime-500', accent: 'text-lime-200', desc: 'Hackez le noyau central.', difficulty: 'Hard', tier: 'ultimate_plus', players: '300', rating: '97%' },
+    { id: 'time', name: 'Time Warp', icon: '⏳', color: 'bg-cyan-500', accent: 'text-cyan-200', desc: 'Manipulez le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '220', rating: '94%' },
+    { id: 'void', name: 'Void Walker', icon: '🚶', color: 'bg-black', accent: 'text-white', desc: 'Marchez dans le néant.', difficulty: 'Hard', tier: 'ultimate_plus', players: '180', rating: '96%' },
+    { id: 'infinity', name: 'Infinity Loop', icon: '♾️', color: 'bg-fuchsia-500', accent: 'text-fuchsia-200', desc: 'Boucle infinie de données.', difficulty: 'Expert', tier: 'ultimate_plus', players: '400', rating: '98%' },
+    
+    // COMING SOON
+    { id: 'racer', name: 'Vibe Racer', icon: '🏎️', color: 'bg-slate-700', accent: 'text-slate-300', desc: 'Course de vitesse.', difficulty: 'Medium', tier: 'free', players: '0', rating: 'N/A', comingSoon: true },
+    { id: 'rpg', name: 'Nexus RPG', icon: '🛡️', color: 'bg-slate-700', accent: 'text-slate-300', desc: 'Aventure épique.', difficulty: 'Hard', tier: 'ultimate', players: '0', rating: 'N/A', comingSoon: true },
   ];
 
   const categories = [
-    { id: 'recommended', label: 'Recommended for You' },
-    { id: 'popular', label: 'Popular' },
-    { id: 'top-rated', label: 'Top Rated' },
-    { id: 'new', label: 'New' },
+    { id: 'free', label: 'Jeux Gratuits' },
+    { id: 'ultimate', label: 'Ultimate Access' },
+    { id: 'ultimate_plus', label: 'Ultimate+ Elite' },
   ];
 
   const handleGameSelect = (game: any) => {
-    if (game.comingSoon) return;
-    if (game.premium && !user.isUltimate) {
+    if (game.comingSoon) {
+      alert("Ce jeu arrive bientôt dans le Nexus ! Restez à l'écoute.");
+      return;
+    }
+    if (game.tier === 'ultimate' && !user.isUltimate) {
       setShowUltimateModal(true);
+      return;
+    }
+    if (game.tier === 'ultimate_plus' && !user.isUltimatePlus) {
+      alert("Ultimate+ requis pour ce jeu.");
       return;
     }
     setActiveGame(game.id);
@@ -42,7 +67,7 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
       {/* Roblox-style Top Bar */}
       <div className="sticky top-0 z-[100] bg-white dark:bg-[#1B1D22] border-b border-black/5 dark:border-white/5 px-6 py-3 flex items-center justify-between shadow-sm">
          <div className="flex items-center gap-6">
-            <h2 className="text-xl font-black text-black dark:text-white tracking-tight">Discover</h2>
+            <h2 className="text-xl font-black text-black dark:text-white tracking-tight">Découvrir</h2>
             <div className="hidden md:flex items-center gap-4">
                {categories.map(cat => (
                  <button key={cat.id} className="text-xs font-bold text-slate-500 hover:text-black dark:hover:text-white transition-colors">{cat.label}</button>
@@ -52,7 +77,7 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
          <div className="relative w-64">
             <input 
               type="text" 
-              placeholder="Search Games" 
+              placeholder="Rechercher des jeux" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-slate-100 dark:bg-[#25272D] border-none rounded-lg px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 transition-all"
@@ -67,9 +92,9 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
                <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/games/1200/400')] bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-1000"></div>
                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                <div className="absolute bottom-8 left-8 space-y-2">
-                  <span className="px-3 py-1 bg-blue-500 text-white text-[10px] font-black rounded-md uppercase tracking-widest">Featured</span>
+                  <span className="px-3 py-1 bg-blue-500 text-white text-[10px] font-black rounded-md uppercase tracking-widest">À LA UNE</span>
                   <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">SYNTH CLICKER 2.0</h1>
-                  <p className="text-white/80 text-sm font-bold max-w-md">The biggest update yet! New neurons, faster sync, and bigger rewards.</p>
+                  <p className="text-white/80 text-sm font-bold max-w-md">La plus grosse mise à jour ! Nouveaux neurones, synchronisation plus rapide et plus de récompenses.</p>
                </div>
             </div>
          </div>
@@ -81,11 +106,14 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
            <div key={cat.id} className="space-y-6">
               <div className="flex items-center justify-between">
                  <h3 className="text-xl font-black text-black dark:text-white">{cat.label}</h3>
-                 <button className="text-xs font-bold text-blue-500 hover:underline">See All</button>
+                 <button className="text-xs font-bold text-blue-500 hover:underline">Voir tout</button>
               </div>
               
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
-                 {games.filter(g => searchQuery ? g.name.toLowerCase().includes(searchQuery.toLowerCase()) : true).map(game => (
+                 {games
+                   .filter(g => g.tier === cat.id)
+                   .filter(g => searchQuery ? g.name.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+                   .map(game => (
                    <div 
                     key={game.id} 
                     onClick={() => handleGameSelect(game)}
@@ -94,14 +122,14 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
                       <div className={`aspect-square rounded-xl ${game.color} flex items-center justify-center text-4xl shadow-md group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300 relative overflow-hidden`}>
                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                          {game.icon}
-                         {game.premium && (
-                           <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-blue-500 rounded-md flex items-center justify-center shadow-lg">
-                              <span className="text-[8px]">💎</span>
-                           </div>
-                         )}
                          {game.comingSoon && (
-                           <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
-                              <span className="text-[8px] font-black text-white uppercase tracking-widest rotate-[-12deg] border border-white/20 px-1.5 py-0.5">Soon</span>
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                               <span className="text-[8px] font-black text-white uppercase tracking-[0.2em] -rotate-12 border border-white/20 px-2 py-1 rounded bg-black/40">Bientôt</span>
+                            </div>
+                         )}
+                         {game.tier !== 'free' && !game.comingSoon && (
+                           <div className={`absolute top-1.5 right-1.5 w-5 h-5 ${game.tier === 'ultimate_plus' ? 'bg-amber-500' : 'bg-blue-500'} rounded-md flex items-center justify-center shadow-lg`}>
+                              <span className="text-[8px]">{game.tier === 'ultimate_plus' ? '👑' : '💎'}</span>
                            </div>
                          )}
                       </div>
@@ -151,7 +179,7 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const GameEngine: React.FC<{ id: string, user: User, onClose: () => void }> = ({ id, user, onClose }) => {
+const GameEngine = ({ id, user, onClose }: { id: string, user: User, onClose: () => void }) => {
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<'start' | 'playing' | 'end'>('start');
   const [earnedCredits, setEarnedCredits] = useState(0);
@@ -187,26 +215,26 @@ const GameEngine: React.FC<{ id: string, user: User, onClose: () => void }> = ({
   }, [score, user.id]);
 
   return (
-    <div className="fixed inset-0 z-[1200] bg-[#020617] flex items-center justify-center animate-in fade-in duration-500 p-2 md:p-6">
-      <div className="w-full h-full max-w-5xl mx-auto flex flex-col p-4 md:p-8 gap-6 bg-slate-950 rounded-[2rem] border border-white/5 shadow-4xl">
+    <div className="fixed inset-0 z-[2000] bg-black/95 backdrop-blur-2xl flex items-center justify-center animate-in fade-in duration-500 p-0 md:p-4">
+      <div className="w-full h-full max-w-6xl mx-auto flex flex-col bg-[#1B1D22] md:rounded-[2.5rem] border border-white/5 shadow-4xl overflow-hidden">
         
         {/* Top Control Bar */}
-        <div className="flex justify-between items-center border-b border-white/5 pb-6">
+        <div className="flex justify-between items-center bg-[#25272D] px-6 py-4 border-b border-white/5">
            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-2xl shadow-2xl">
+              <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-xl shadow-lg">
                 {id === 'snake' ? '🐍' : id === 'matrix' ? '💠' : id === 'math' ? '🧮' : '⚡'}
               </div>
               <div>
-                <h3 className="vibe-logo text-xl md:text-3xl font-black text-white tracking-tighter">{id.toUpperCase()} PROTOCOL</h3>
-                <div className="flex items-center gap-3 mt-0.5">
-                   <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest">Active Link: @{user.username}</span>
-                   <div className="w-0.5 h-0.5 bg-white/20 rounded-full"></div>
-                   <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Latency: 14ms</span>
+                <h3 className="text-lg font-black text-white tracking-tight">{id.toUpperCase()}</h3>
+                <div className="flex items-center gap-2">
+                   <span className="text-[8px] font-bold text-emerald-500 uppercase tracking-widest">En ligne</span>
+                   <div className="w-1 h-1 bg-white/20 rounded-full"></div>
+                   <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Serveur: Nexus-EU-1</span>
                 </div>
               </div>
            </div>
-           <button onClick={onClose} className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-rose-500/10 hover:border-rose-500/20 text-slate-400 hover:text-rose-500 transition-all group">
-             <svg className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+           <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-all">
+             <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
            </button>
         </div>
 
@@ -253,18 +281,18 @@ const GameEngine: React.FC<{ id: string, user: User, onClose: () => void }> = ({
         </div>
 
         {/* Real-time Stats Footer */}
-        <div className="grid grid-cols-3 gap-4">
-            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center justify-center space-y-1">
-                <span className="vibe-logo text-[8px] text-slate-500 uppercase tracking-widest">Score</span>
-                <span className="text-2xl font-black text-white tracking-tighter">{score}</span>
+        <div className="bg-[#25272D] px-6 py-4 border-t border-white/5 grid grid-cols-3 gap-8">
+            <div className="flex flex-col">
+                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Score Actuel</span>
+                <span className="text-xl font-black text-white tracking-tight">{score}</span>
             </div>
-            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center justify-center space-y-1">
-                <span className="vibe-logo text-[8px] text-slate-500 uppercase tracking-widest">XP Sync</span>
-                <span className="text-2xl font-black text-indigo-400 tracking-tighter">+{earnedXp}</span>
+            <div className="flex flex-col">
+                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">XP Gagnés</span>
+                <span className="text-xl font-black text-indigo-400 tracking-tight">+{earnedXp}</span>
             </div>
-            <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex flex-col items-center justify-center space-y-1">
-                <span className="vibe-logo text-[8px] text-slate-500 uppercase tracking-widest">Credits</span>
-                <span className="text-2xl font-black text-blue-500 tracking-tighter">+{earnedCredits}</span>
+            <div className="flex flex-col">
+                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Crédits</span>
+                <span className="text-xl font-black text-blue-500 tracking-tight">+{earnedCredits}</span>
             </div>
         </div>
       </div>
@@ -274,12 +302,10 @@ const GameEngine: React.FC<{ id: string, user: User, onClose: () => void }> = ({
 
 /* --- MINI GAMES IMPLEMENTATIONS --- */
 
-const SnakeGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }> = ({ onScore, onEnd, isPlaying }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+const SnakeGame = ({ onScore, onEnd, isPlaying }: { onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }) => {
     const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
     const [food, setFood] = useState({ x: 5, y: 5 });
     const [dir, setDir] = useState({ x: 0, y: -1 });
-    const [localScore, setLocalScore] = useState(0);
 
     useEffect(() => {
         if (!isPlaying) return;
@@ -302,7 +328,7 @@ const SnakeGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isP
         const newSnake = [head, ...snake];
         if (head.x === food.x && head.y === food.y) {
             setFood({ x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 12) });
-            setLocalScore(s => { const ns = s + 1; onScore(ns); return ns; });
+            onScore(snake.length);
         } else {
             newSnake.pop();
         }
@@ -326,7 +352,7 @@ const SnakeGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isP
     );
 };
 
-const MemoryGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }> = ({ onScore, onEnd, isPlaying }) => {
+const MemoryGame = ({ onScore, onEnd, isPlaying }: { onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }) => {
     const [sequence, setSequence] = useState<number[]>([]);
     const [userInput, setUserInput] = useState<number[]>([]);
     const [activeButton, setActiveButton] = useState<number | null>(null);
@@ -388,13 +414,17 @@ const MemoryGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, is
     );
 };
 
-const MathGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }> = ({ onScore, onEnd, isPlaying }) => {
+const MathGame = ({ onScore, onEnd, isPlaying }: { onScore: (s: number) => void, onEnd: () => void, isPlaying: boolean }) => {
     const [problem, setProblem] = useState({ a: 0, b: 0, op: '+', ans: 0 });
     const [options, setOptions] = useState<number[]>([]);
     const [timer, setTimer] = useState(5);
+    const [localScore, setLocalScore] = useState(0);
 
     useEffect(() => {
-        if (isPlaying) nextProblem();
+        if (isPlaying) {
+            setLocalScore(0);
+            nextProblem();
+        }
     }, [isPlaying]);
 
     useEffect(() => {
@@ -420,7 +450,10 @@ const MathGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isPl
 
     const handleAnswer = (val: number) => {
         if (val === problem.ans) {
-            onScore(s => s + 1); nextProblem();
+            const ns = localScore + 1;
+            setLocalScore(ns);
+            onScore(ns);
+            nextProblem();
         } else onEnd();
     };
 
@@ -439,7 +472,7 @@ const MathGame: React.FC<{ onScore: (s: number) => void, onEnd: () => void, isPl
     );
 };
 
-const ClickerGame: React.FC<{ onScore: (s: number) => void, isPlaying: boolean }> = ({ onScore, isPlaying }) => {
+const ClickerGame = ({ onScore, isPlaying }: { onScore: (s: number) => void, isPlaying: boolean }) => {
     const [count, setCount] = useState(0);
     const [effects, setEffects] = useState<{ id: number, x: number, y: number }[]>([]);
 

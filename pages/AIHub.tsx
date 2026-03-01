@@ -82,10 +82,10 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
       {/* Header Status */}
       <div className="flex items-center justify-between px-2">
         <div className="flex flex-col">
-          <h2 className="vibe-logo text-4xl font-black text-white tracking-tighter">ASSISTANT IA</h2>
+          <h2 className="vibe-logo text-4xl font-black text-white tracking-tighter">AURA CORE</h2>
           <div className="flex items-center gap-2 mt-1">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.4em]">Système Opérationnel</span>
+            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.4em]">Synchronisation Optimale</span>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
           <button
             key={s.id}
             onClick={() => { setActiveTab(s.id); setResult(null); }}
-            className={`relative overflow-hidden p-6 rounded-[2rem] border transition-all duration-500 group text-left flex flex-col justify-between h-44 ${
+            className={`relative overflow-hidden p-6 rounded-[2.5rem] border transition-all duration-500 group text-left flex flex-col justify-between h-44 ${
               activeTab === s.id 
               ? `bg-white text-black border-white shadow-2xl scale-[1.02]` 
               : 'bg-white/5 border-white/5 hover:border-white/20'
@@ -118,23 +118,24 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
 
       {/* Command Terminal */}
       <div className="relative group">
-        <div className="relative bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-4xl backdrop-blur-3xl overflow-hidden">
+        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600 rounded-[3.5rem] blur opacity-10 group-hover:opacity-25 transition duration-1000 animate-gradient-x"></div>
+        <div className="relative bg-[#020617] rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-4xl backdrop-blur-3xl overflow-hidden">
           
           <div className="flex items-center justify-between mb-8">
              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white">
-                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 </div>
                 <div className="flex flex-col">
-                   <span className="vibe-logo text-[8px] font-black text-slate-400 uppercase tracking-widest">Modèle Actif</span>
-                   <span className="text-[10px] font-black text-white">{user.isUltimatePlus ? 'Gemini 3.1 Pro' : services.find(s=>s.id === activeTab)?.model}</span>
+                   <span className="vibe-logo text-[8px] font-black text-slate-400 uppercase tracking-widest">Neural Link</span>
+                   <span className="text-[10px] font-black text-white">{user.isUltimatePlus ? 'Gemini 3.1 Pro Max' : services.find(s=>s.id === activeTab)?.model}</span>
                 </div>
              </div>
 
              {activeTab === AIService.CHAT && (
                <div className="flex items-center gap-6">
                   <div className="flex flex-col items-end">
-                    <span className="vibe-logo text-[7px] text-slate-500 font-black uppercase tracking-widest">Mode Réflexion</span>
+                    <span className="vibe-logo text-[7px] text-slate-500 font-black uppercase tracking-widest">Deep Thinking</span>
                     <span className={`text-[9px] font-black uppercase ${thinking ? 'text-blue-400' : 'text-slate-600'}`}>{thinking ? 'Activé' : 'Désactivé'}</span>
                   </div>
                   <button 
@@ -151,12 +152,12 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Posez votre question ici..."
-              className="w-full bg-transparent border-none outline-none text-white font-bold text-2xl md:text-3xl placeholder:text-slate-700 min-h-[160px] max-h-[400px] custom-scrollbar leading-tight selection:bg-blue-500/30"
+              placeholder={activeTab === AIService.CHAT ? "Posez votre question à Aura..." : activeTab === AIService.SEARCH ? "Recherche en temps réel..." : "Décrivez l'image..."}
+              className="w-full bg-transparent border-none outline-none text-white font-bold text-2xl md:text-3xl placeholder:text-slate-800 min-h-[160px] max-h-[400px] custom-scrollbar leading-tight selection:bg-blue-500/30"
             />
             
             <div className="flex justify-between items-center mt-8 pt-8 border-t border-white/5">
-              <span className={`text-[10px] font-black vibe-logo transition-all ${input.length > 250 && !user.isUltimate ? 'text-rose-500' : 'text-slate-600'}`}>
+              <span className={`text-[10px] font-black vibe-logo transition-all ${input.length > 250 && !user.isUltimate ? 'text-rose-500' : 'text-slate-700'}`}>
                 {input.length} / {user.isUltimate ? '∞' : '300'} <span className="ml-2 opacity-50">CARACTÈRES</span>
               </span>
               <button
@@ -164,7 +165,7 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
                 disabled={loading || !input.trim()}
                 className={`relative px-12 py-5 rounded-2xl vibe-logo text-xs font-black uppercase tracking-[0.2em] transition-all overflow-hidden flex items-center gap-4 ${
                   loading || !input.trim() 
-                  ? 'bg-white/5 text-slate-600 cursor-not-allowed' 
+                  ? 'bg-white/5 text-slate-700 cursor-not-allowed' 
                   : 'bg-white text-black hover:scale-[1.05] active:scale-95 shadow-4xl'
                 }`}
               >
@@ -187,31 +188,42 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
 
       {/* Result Area */}
       {result && (
-        <div className="animate-in zoom-in fade-in duration-500 relative">
-          <div className="bg-white/5 rounded-[3rem] p-10 md:p-14 border border-white/10 shadow-4xl space-y-10">
+        <div className="animate-in zoom-in fade-in duration-500 relative group/result">
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-[3.5rem] blur opacity-0 group-hover/result:opacity-100 transition duration-700"></div>
+          <div className="relative bg-[#020617]/80 rounded-[3rem] p-10 md:p-14 border border-white/10 shadow-4xl backdrop-blur-3xl space-y-10">
              <div className="flex justify-between items-center border-b border-white/5 pb-6">
                 <div className="flex items-center gap-4">
-                   <Logo size="md" />
+                   <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                      <Logo size="sm" />
+                   </div>
                    <div className="flex flex-col">
-                      <span className="vibe-logo text-[10px] font-black text-slate-400 uppercase tracking-widest">Résultat de l'IA</span>
-                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{new Date(result.timestamp).toLocaleTimeString()}</span>
+                      <span className="vibe-logo text-[10px] font-black text-blue-400 uppercase tracking-widest">Réponse de l'IA</span>
+                      <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{new Date(result.timestamp).toLocaleTimeString()}</span>
                    </div>
                 </div>
+                <button 
+                  onClick={() => setResult(null)}
+                  className="p-2 hover:bg-white/5 rounded-xl transition-all text-slate-500 hover:text-white"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
              </div>
 
              {result.type === 'text' || result.type === 'search' ? (
                 <div className="space-y-8">
-                   <p className="text-3xl md:text-4xl font-bold text-slate-100 leading-snug tracking-tight whitespace-pre-wrap selection:bg-blue-500/40">{result.text}</p>
+                   <div className="text-2xl md:text-3xl font-bold text-slate-100 leading-relaxed tracking-tight whitespace-pre-wrap selection:bg-blue-500/40">
+                      {result.text}
+                   </div>
                    {result.grounding?.length > 0 && (
-                     <div className="flex flex-wrap gap-3 pt-6 border-t border-white/5">
+                     <div className="flex flex-wrap gap-3 pt-8 border-t border-white/5">
                         {result.grounding.map((g: any, i: number) => (
                           <a 
                             key={i} 
                             href={g.uri} 
                             target="_blank" 
-                            className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white hover:text-black transition-all group"
+                            className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white hover:text-black transition-all group/link"
                           >
-                            <svg className="w-4 h-4 group-hover:rotate-45 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            <svg className="w-4 h-4 group-hover/link:rotate-45 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                             {g.title}
                           </a>
                         ))}
@@ -220,6 +232,7 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
                 </div>
              ) : (
                 <div className="relative group/media overflow-hidden rounded-[2.5rem] border border-white/10 shadow-4xl bg-black">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none z-10"></div>
                    {result.type === 'video' ? (
                       <video src={result.mediaUrl} controls autoPlay loop className="w-full h-auto" />
                    ) : (

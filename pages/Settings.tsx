@@ -6,10 +6,11 @@ import { storage } from '../services/storageService';
 const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user, onUpdate }) => {
   const themes = [
     { id: 'default', label: 'Vibe Blue', color: 'bg-blue-500' },
-    { id: 'neon', label: 'Cyber Pink', color: 'bg-pink-500' },
+    { id: 'neon_pink', label: 'Cyber Pink', color: 'bg-pink-500' },
     { id: 'gold', label: 'Elite Gold', color: 'bg-amber-500' },
-    { id: 'matrix', label: 'Digital Green', color: 'bg-emerald-500' },
+    { id: 'cyber_ocean', label: 'Cyber Ocean', color: 'bg-cyan-500' },
     { id: 'ruby', label: 'Crimson Red', color: 'bg-rose-500' },
+    { id: 'emerald', label: 'Emerald Matrix', color: 'bg-emerald-500' },
   ];
 
   const toggleTheme = (themeId: string) => {
@@ -101,7 +102,7 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
         <div className="bg-white/5 rounded-[2rem] border border-white/10 p-6 space-y-4">
            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                 <span className="text-xs font-black text-white vibe-logo">v3.0.0 - L'Éveil du Nexus</span>
+                 <span className="text-xs font-black text-white vibe-logo">v3.1.0 - L'Éveil du Nexus</span>
                  <span className="text-[8px] font-bold text-blue-400 uppercase">Nouveau</span>
               </div>
               <ul className="text-[10px] text-slate-500 space-y-1 font-medium list-disc ml-4">
@@ -109,9 +110,11 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
                  <li>**Mur de Profil** : Laissez des messages sur les profils de vos amis.</li>
                  <li>**Quêtes de Profil** : Accès rapide aux quêtes depuis votre profil.</li>
                  <li>**Certification Officielle** : Badge "V" pour les comptes vérifiés.</li>
-                 <li>**Nouveaux Jeux** : Ajout de 4 nouveaux titres en développement.</li>
+                 <li>**Nouveaux Jeux** : Ajout de 10 jeux gratuits et 10 jeux Ultimate.</li>
                  <li>**Boost Animé** : Effets visuels améliorés pour le boost de post.</li>
-                 <li>**Galerie Média** : Nouveau système d'upload pour images et vidéos.</li>
+                 <li>**Aura v3.0** : Redesign complet de l'IA Aura avec de nouveaux modes.</li>
+                 <li>**Level Pass** : Nouveau système de progression avec récompenses.</li>
+                 <li>**Thèmes Corrigés** : Les thèmes sont désormais fonctionnels et dynamiques.</li>
               </ul>
            </div>
            <div className="w-px h-full bg-white/5" />

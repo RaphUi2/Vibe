@@ -36,11 +36,18 @@ export const storage = {
     }
   },
 
-  addReward: (userId: string, credits: number, xp: number) => {
+  addReward: (userId: string, credits: number, xp: number, actionKey?: string) => {
     const users = storage.getUsers();
     const userIndex = users.findIndex(u => u.id === userId);
     if (userIndex !== -1) {
       const user = users[userIndex];
+      
+      if (actionKey) {
+        if (!user.rewardedActions) user.rewardedActions = [];
+        if (user.rewardedActions.includes(actionKey)) return user;
+        user.rewardedActions.push(actionKey);
+      }
+
       // Boosted rewards: 2x for everyone, 3x for Ultimate
       const multiplier = user.isUltimate ? 3 : 2;
       user.credits += credits * multiplier;
@@ -93,7 +100,7 @@ export const storage = {
         savedBy: []
       };
       posts.unshift(repost);
-      storage.addReward(userId, 50, 100);
+      storage.addReward(userId, 50, 100, `repost-${postId}`);
     } else {
       // Remove repost
       post.reposts.splice(index, 1);
@@ -167,7 +174,7 @@ export const storage = {
       savedBy: post.savedBy || [] 
     });
     storage.savePosts(posts);
-    storage.addReward(post.userId, 100, 250);
+    storage.addReward(post.userId, 100, 250, `post-${post.id}`);
     storage.updateVibeScore(post.userId);
     
     // Quest check: Premier Pas
@@ -182,7 +189,7 @@ export const storage = {
       const index = post.likes.indexOf(userId);
       if (index === -1) {
         post.likes.push(userId);
-        storage.addReward(userId, 10, 25);
+        storage.addReward(userId, 10, 25, `like-${postId}`);
         
         // Quest check: Philanthrope (Need to check total likes by user)
         const allPosts = storage.getPosts();
@@ -232,7 +239,7 @@ export const storage = {
       if (!post.comments) post.comments = [];
       post.comments.push(comment);
       storage.savePosts(posts);
-      storage.addReward(comment.userId, 20, 50);
+      storage.addReward(comment.userId, 20, 50, `comment-${comment.id}`);
     }
   },
 
@@ -248,8 +255,9 @@ export const storage = {
         content,
         createdAt: Date.now()
       });
+      const lastComment = user.profileComments[user.profileComments.length - 1];
       storage.saveUsers(users);
-      storage.addReward(authorId, 10, 30);
+      storage.addReward(authorId, 10, 30, `profile-comment-${lastComment.id}`);
     }
   },
 
@@ -433,6 +441,8 @@ export const storage = {
         friends: [],
         savedPosts: [],
         unlockedThemes: ['default'],
+        claimedLevelRewards: [],
+        rewardedActions: [],
         completedQuests: [],
         boostLimit: 100,
         dailyBoostsCount: 0,
