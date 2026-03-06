@@ -33,13 +33,11 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
   };
 
   const themes = [
-    { id: 'neon', label: 'Cyber Pink', cost: 500, color: 'bg-pink-500' },
+    { id: 'neon_pink', label: 'Cyber Pink', cost: 500, color: 'bg-pink-500' },
     { id: 'gold', label: 'Elite Gold', cost: 2000, color: 'bg-amber-500' },
-    { id: 'matrix', label: 'Digital Green', cost: 1000, color: 'bg-emerald-500' },
+    { id: 'emerald', label: 'Digital Green', cost: 1000, color: 'bg-emerald-500' },
     { id: 'ruby', label: 'Crimson Red', cost: 1000, color: 'bg-rose-500' },
     { id: 'cyber_ocean', label: 'Cyber Ocean', cost: 1500, color: 'bg-blue-500' },
-    { id: 'neon_pink', label: 'Neon Pink', cost: 1500, color: 'bg-fuchsia-500' },
-    { id: 'emerald', label: 'Emerald', cost: 1500, color: 'bg-emerald-400' },
   ];
 
   const buyTheme = (themeId: string, cost: number) => {

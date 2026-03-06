@@ -1,11 +1,128 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Post, User, Comment, AIService } from '../types.ts';
+import { Post, User, Comment, AIService, Story, Note } from '../types.ts';
 import { storage } from '../services/storageService.ts';
 import { gemini } from '../services/geminiService.ts';
 import Boost from './Boost';
 import VibeScore from '../components/VibeScore';
 import Logo from '../components/Logo';
+
+const StoriesBar: React.FC<{ user: User, refresh: () => void }> = ({ user, refresh }) => {
+  const [stories, setStories] = useState<Story[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [noteText, setNoteText] = useState('');
+
+  useEffect(() => {
+    const allStories = storage.getStories();
+    const allNotes = storage.getNotes();
+    setStories(allStories.filter(s => s.userId === user.id || user.friends.includes(s.userId)));
+    setNotes(allNotes.filter(n => n.userId === user.id || user.friends.includes(n.userId)));
+  }, [user]);
+
+  const handleAddNote = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!noteText.trim()) return;
+    storage.addNote({
+      id: Math.random().toString(36).substr(2, 9),
+      userId: user.id,
+      content: noteText.substring(0, 60),
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000
+    });
+    setNoteText('');
+    setIsAddingNote(false);
+    refresh();
+  };
+
+  const handleAddStory = () => {
+    // Simulate adding a story for now
+    storage.addStory({
+      id: Math.random().toString(36).substr(2, 9),
+      userId: user.id,
+      mediaUrl: `https://picsum.photos/seed/${Math.random()}/400/800`,
+      mediaType: 'image',
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+      viewers: []
+    });
+    refresh();
+  };
+
+  const usersWithStoriesOrNotes = Array.from(new Set([...stories.map(s => s.userId), ...notes.map(n => n.userId), user.id]));
+
+  return (
+    <div className="w-full overflow-x-auto scrollbar-hide py-4 px-2 border-b border-white/5">
+      <div className="flex gap-4 px-2">
+        {/* Current User */}
+        <div className="flex flex-col items-center gap-1 min-w-[72px] relative">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-slate-700 to-slate-500 cursor-pointer" onClick={handleAddStory}>
+              <div className="w-full h-full bg-black rounded-full p-[2px]">
+                <img src={user.avatar} className="w-full h-full rounded-full object-cover" />
+              </div>
+            </div>
+            <button 
+              onClick={() => setIsAddingNote(true)}
+              className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-black shadow-lg z-10"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
+            </button>
+            {notes.find(n => n.userId === user.id) && !isAddingNote && (
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-3 py-1.5 rounded-2xl whitespace-nowrap shadow-xl max-w-[100px] truncate z-20">
+                {notes.find(n => n.userId === user.id)?.content}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45"></div>
+              </div>
+            )}
+            {isAddingNote && (
+              <form onSubmit={handleAddNote} className="absolute -top-8 left-1/2 -translate-x-1/2 z-30">
+                <input 
+                  autoFocus
+                  type="text" 
+                  value={noteText}
+                  onChange={e => setNoteText(e.target.value)}
+                  onBlur={() => setIsAddingNote(false)}
+                  placeholder="Note..."
+                  maxLength={60}
+                  className="bg-white text-black text-[10px] font-bold px-3 py-1.5 rounded-2xl shadow-xl w-24 outline-none"
+                />
+              </form>
+            )}
+          </div>
+          <span className="text-[10px] text-slate-400 font-medium truncate w-full text-center">Votre story</span>
+        </div>
+
+        {/* Friends */}
+        {usersWithStoriesOrNotes.filter(id => id !== user.id).map(uid => {
+          const u = storage.getUsers().find(x => x.id === uid);
+          if (!u) return null;
+          const hasStory = stories.some(s => s.userId === uid);
+          const userNote = notes.find(n => n.userId === uid);
+          
+          return (
+            <div key={uid} className="flex flex-col items-center gap-1 min-w-[72px] relative cursor-pointer">
+              <div className="relative">
+                <div className={`w-16 h-16 rounded-full p-[2px] ${hasStory ? 'bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500' : 'bg-transparent'} cursor-pointer`}>
+                  <div className="w-full h-full bg-black rounded-full p-[2px]">
+                    <img src={u.avatar} className="w-full h-full rounded-full object-cover" />
+                  </div>
+                </div>
+                {userNote && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-2xl whitespace-nowrap shadow-xl max-w-[100px] truncate z-20">
+                    {userNote.content}
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white/10 backdrop-blur-md border-b border-r border-white/20 rotate-45"></div>
+                  </div>
+                )}
+              </div>
+              <span className="text-[10px] text-white font-medium truncate w-full text-center">{u.username}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 
 const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   const [input, setInput] = useState('');
@@ -122,9 +239,9 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' | 'vibeos' }> = ({ user, initialFeedType = 'for-you' }) => {
+const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> = ({ user, initialFeedType = 'for-you' }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [feedType, setFeedType] = useState<'for-you' | 'following' | 'vibeos'>(initialFeedType);
+  const [feedType, setFeedType] = useState<'for-you' | 'following'>(initialFeedType);
   const [searchQuery, setSearchQuery] = useState('');
 
   const refresh = () => {
@@ -139,8 +256,6 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' | '
 
     if (feedType === 'following') {
       all = all.filter(p => user.friends.includes(p.userId) || p.userId === user.id);
-    } else if (feedType === 'vibeos') {
-      all = all.filter(p => p.mediaType === 'video');
     }
     setPosts(all);
   };
@@ -157,7 +272,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' | '
   }, [feedType, searchQuery, user.friends]);
 
   return (
-    <div className="flex flex-col w-full animate-in fade-in duration-700">
+    <div className="flex flex-col w-full animate-in fade-in duration-700 h-full">
       {/* Search & Header - Fixed at top like Twitter */}
       <div className="sticky top-0 z-[500] bg-[#020617] border-b border-white/5 p-4 space-y-4">
         <div className="relative group">
@@ -176,8 +291,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' | '
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
            {[
              { id: 'for-you', label: 'Pour vous' },
-             { id: 'following', label: 'Suivis' },
-             { id: 'vibeos', label: 'Vibeos' }
+             { id: 'following', label: 'Suivis' }
            ].map(tab => (
              <button 
               key={tab.id}
@@ -191,6 +305,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' | '
       </div>
 
       <div className="px-2 md:px-0 divide-y divide-white/5 pb-24">
+        {feedType === 'for-you' && !searchQuery && <StoriesBar user={user} refresh={refresh} />}
         <div className="p-4 space-y-6">
           {feedType === 'for-you' && !searchQuery && (
             <>

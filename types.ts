@@ -52,6 +52,7 @@ export interface Post {
   content: string;
   mediaUrl?: string;
   mediaType?: 'image' | 'video' | 'audio';
+  isVibeo?: boolean;
   createdAt: number;
   likes: string[];
   boosts: string[];
@@ -61,6 +62,24 @@ export interface Post {
   views: number;
   isPremium?: boolean;
   savedBy: string[]; // User IDs who saved this
+}
+
+export interface Story {
+  id: string;
+  userId: string;
+  mediaUrl: string;
+  mediaType: 'image' | 'video';
+  createdAt: number;
+  expiresAt: number;
+  viewers: string[];
+}
+
+export interface Note {
+  id: string;
+  userId: string;
+  content: string;
+  createdAt: number;
+  expiresAt: number;
 }
 
 export interface Comment {

@@ -10,6 +10,7 @@ import Games from './pages/Games.tsx';
 import Store from './pages/Store.tsx';
 import LevelPassPage from './pages/LevelPass.tsx';
 import Logo from './components/Logo.tsx';
+import Vibeos from './pages/Vibeos.tsx';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -116,7 +117,7 @@ const App: React.FC = () => {
         <div className="max-w-2xl mx-auto">
           {activeTab === 'home' && <Home user={currentUser} />}
           {activeTab === 'ia' && <AIHub user={currentUser} />}
-          {activeTab === 'vibeos' && <Home user={currentUser} initialFeedType="vibeos" />}
+          {activeTab === 'vibeos' && <Vibeos user={currentUser} />}
           {activeTab === 'profile' && (
               <Profile 
                 user={currentUser} 
@@ -153,7 +154,7 @@ const App: React.FC = () => {
       <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg h-16 liquid-glass rounded-[2rem] flex items-center justify-around z-[550] px-2 shadow-4xl border border-white/10">
         {[
           { id: 'home', label: 'Accueil', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-          { id: 'coming-soon', label: 'Vibeos', icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+          { id: 'vibeos', label: 'Vibeos', icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
           { id: 'ia', label: 'Aura', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
           { id: 'games', label: 'Jeux', icon: 'M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z' },
           { id: 'store', label: 'Shop', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
@@ -235,12 +236,35 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMediaUrl(reader.result as string);
-        setMediaType(type);
-      };
-      reader.readAsDataURL(file);
+      if (type === 'video') {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+          window.URL.revokeObjectURL(video.src);
+          if (video.duration > 60) {
+            alert("La vidéo ne doit pas dépasser 60 secondes.");
+            return;
+          }
+          if (video.videoWidth > video.videoHeight) {
+            alert("La vidéo doit être au format vertical (ex: 9:16).");
+            return;
+          }
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setMediaUrl(reader.result as string);
+            setMediaType(type);
+          };
+          reader.readAsDataURL(file);
+        };
+        video.src = URL.createObjectURL(file);
+      } else {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setMediaUrl(reader.result as string);
+          setMediaType(type);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 

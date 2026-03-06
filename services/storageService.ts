@@ -1,10 +1,12 @@
 
-import { User, Post, Comment, Message, Quest, Trend } from '../types.ts';
+import { User, Post, Comment, Message, Quest, Trend, Story, Note } from '../types.ts';
 
 const USERS_KEY = 'vibe_users_v11';
 const POSTS_KEY = 'vibe_posts_v11';
 const MESSAGES_KEY = 'vibe_messages_v11';
 const AUTH_KEY = 'vibe_auth_v11';
+const STORIES_KEY = 'vibe_stories_v11';
+const NOTES_KEY = 'vibe_notes_v11';
 
 export const storage = {
   getUsers: (): User[] => JSON.parse(localStorage.getItem(USERS_KEY) || '[]'),
@@ -15,6 +17,32 @@ export const storage = {
     return posts.sort((a: Post, b: Post) => b.createdAt - a.createdAt);
   },
   savePosts: (posts: Post[]) => localStorage.setItem(POSTS_KEY, JSON.stringify(posts)),
+
+  getStories: (): Story[] => {
+    const stories = JSON.parse(localStorage.getItem(STORIES_KEY) || '[]');
+    const now = Date.now();
+    return stories.filter((s: Story) => s.expiresAt > now).sort((a: Story, b: Story) => b.createdAt - a.createdAt);
+  },
+  saveStories: (stories: Story[]) => localStorage.setItem(STORIES_KEY, JSON.stringify(stories)),
+  addStory: (story: Story) => {
+    const stories = storage.getStories();
+    stories.unshift(story);
+    storage.saveStories(stories);
+  },
+
+  getNotes: (): Note[] => {
+    const notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]');
+    const now = Date.now();
+    return notes.filter((n: Note) => n.expiresAt > now).sort((a: Note, b: Note) => b.createdAt - a.createdAt);
+  },
+  saveNotes: (notes: Note[]) => localStorage.setItem(NOTES_KEY, JSON.stringify(notes)),
+  addNote: (note: Note) => {
+    const notes = storage.getNotes();
+    // Remove existing note from same user
+    const filtered = notes.filter(n => n.userId !== note.userId);
+    filtered.unshift(note);
+    storage.saveNotes(filtered);
+  },
   
   searchUsers: (query: string): User[] => {
     const users = storage.getUsers();
@@ -233,7 +261,7 @@ export const storage = {
     });
     storage.savePosts(posts);
     storage.addReward(post.userId, 100, 250, `post-${post.id}`);
-    storage.updateVibeScore(post.userId);
+    storage.calculateVibeScore(post.userId);
     
     // Quest check: Premier Pas
     storage.completeQuest(post.userId, 'q1');
@@ -259,7 +287,7 @@ export const storage = {
         post.likes.splice(index, 1);
       }
       storage.savePosts(posts);
-      storage.updateVibeScore(post.userId);
+      storage.calculateVibeScore(post.userId);
     }
   },
 
@@ -365,8 +393,8 @@ export const storage = {
       storage.saveUsers(users);
       storage.savePosts(posts);
       storage.setCurrentUser(user);
-      storage.updateVibeScore(userId);
-      storage.updateVibeScore(post.userId);
+      storage.calculateVibeScore(userId);
+      storage.calculateVibeScore(post.userId);
       
       // Quest check: Propulseur
       storage.completeQuest(userId, 'q4');
@@ -383,8 +411,8 @@ export const storage = {
       storage.saveUsers(users);
       storage.savePosts(posts);
       storage.setCurrentUser(user);
-      storage.updateVibeScore(userId);
-      storage.updateVibeScore(post.userId);
+      storage.calculateVibeScore(userId);
+      storage.calculateVibeScore(post.userId);
       
       window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
       
