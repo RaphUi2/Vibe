@@ -37,7 +37,7 @@ const RewardCard: React.FC<{ reward: Reward, level: number, track: 'free' | 'ult
       : 'bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.2)]';
 
   return (
-    <div className={`relative w-full max-w-[260px] p-3 md:p-4 rounded-2xl border backdrop-blur-xl transition-all duration-500 ${bgClass} ${!isUnlocked ? 'opacity-40 grayscale' : 'hover:scale-105 hover:-translate-y-1 z-10'}`}>
+    <div className={`relative w-full max-w-[260px] p-3 md:p-4 rounded-2xl border backdrop-blur-xl transition-all duration-500 ${bgClass} ${!isUnlocked ? 'opacity-60 grayscale' : 'hover:scale-105 hover:-translate-y-1 z-10'}`}>
       {reward.isUltimatePlus && (
         <div className="absolute -top-2.5 -right-2.5 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg border border-fuchsia-400/50 animate-pulse">
           Ultimate+
@@ -151,7 +151,7 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden pb-40" style={{ perspective: '1000px' }}>
+    <div className="relative min-h-screen pb-40">
       {/* 3D Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.15),_transparent_70%)] pointer-events-none" />
       <div className="absolute inset-0 opacity-20 pointer-events-none" 

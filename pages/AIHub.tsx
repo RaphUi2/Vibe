@@ -93,66 +93,27 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
   const activeService = services.find(s => s.id === activeTab);
 
   return (
-    <div className="flex h-[calc(100vh-80px)] landscape:h-full bg-[#020617] text-white animate-in fade-in duration-700 font-sans overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-80px)] bg-[#020617] text-white animate-in fade-in duration-700 font-sans overflow-hidden max-w-4xl mx-auto w-full">
       
-      {/* Sidebar (Desktop) */}
-      <div className="hidden md:flex flex-col w-72 border-r border-white/5 bg-black/40 backdrop-blur-2xl p-6 space-y-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 p-[1px] shadow-[0_0_30px_rgba(59,130,246,0.3)]">
-            <div className="w-full h-full bg-black rounded-2xl flex items-center justify-center">
-              <span className="text-2xl">✨</span>
+      {/* Header & Modules */}
+      <div className="flex flex-col items-center p-4 border-b border-white/5 bg-black/40 backdrop-blur-xl z-50 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-400 p-[1px]">
+            <div className="w-full h-full bg-black rounded-xl flex items-center justify-center">
+              <span className="text-lg">✨</span>
             </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50 vibe-logo">AURA 2</h1>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[9px] font-bold text-emerald-500 tracking-[0.2em] uppercase">Online</span>
-            </div>
-          </div>
+          <h1 className="text-2xl font-black tracking-tighter vibe-logo">AURA 2</h1>
         </div>
-
-        <div className="space-y-2 flex-1">
-          <h3 className="text-[10px] font-black tracking-widest text-white/30 uppercase mb-4 px-2">Modules</h3>
-          {services.map(s => (
-            <button
-              key={s.id}
-              onClick={() => { setActiveTab(s.id); setResult(null); }}
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
-                activeTab === s.id 
-                  ? `bg-gradient-to-r ${s.color} text-white shadow-lg scale-105` 
-                  : 'text-white/50 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span className="text-xl">{s.icon}</span>
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-bold">{s.label}</span>
-                <span className="text-[9px] opacity-70">{s.model}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative">
-        {/* Mobile Header */}
-        <div className="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-black/40 backdrop-blur-xl z-50">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-400 p-[1px]">
-              <div className="w-full h-full bg-black rounded-xl flex items-center justify-center">
-                <span className="text-sm">✨</span>
-              </div>
-            </div>
-            <h1 className="text-lg font-black tracking-tighter vibe-logo">AURA 2</h1>
-          </div>
-          <div className="flex gap-1 overflow-x-auto scrollbar-hide max-w-[60%]">
+        
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide w-full justify-center px-4">
+          <div className="flex bg-white/5 rounded-full p-1">
             {services.map(s => (
               <button
                 key={s.id}
                 onClick={() => { setActiveTab(s.id); setResult(null); }}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap ${
-                  activeTab === s.id ? `bg-gradient-to-r ${s.color} text-white` : 'bg-white/5 text-white/50'
+                className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
+                  activeTab === s.id ? `bg-gradient-to-r ${s.color} text-white shadow-md` : 'text-slate-500 hover:text-white'
                 }`}
               >
                 {s.icon} {s.label}
@@ -160,10 +121,13 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
             ))}
           </div>
         </div>
+      </div>
 
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col relative">
         {/* Chat Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-hide relative z-10">
-          <div className="max-w-4xl mx-auto space-y-8 pb-32">
+          <div className="max-w-3xl mx-auto space-y-8 pb-32">
             
             {/* Welcome / Context */}
             {history.filter(h => h.service === activeTab).length === 0 && !result && (
@@ -185,9 +149,9 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
 
             {/* Chat / Search History */}
             {(activeTab === AIService.CHAT || activeTab === AIService.SEARCH) && (
-              <div className="space-y-6">
+              <div className="space-y-6 flex flex-col items-center">
                 {history.filter(h => h.service === activeTab).map((msg, idx) => (
-                  <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
+                  <div key={idx} className={`flex w-full ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 max-w-2xl`}>
                     <div className={`max-w-[85%] md:max-w-[75%] rounded-3xl p-5 shadow-xl ${
                       msg.type === 'user' 
                         ? 'bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-tr-sm' 
@@ -270,9 +234,8 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
         </div>
 
         {/* Input Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-[#020617] via-[#020617] to-transparent z-50">
-          <div className="max-w-4xl mx-auto relative group">
-            <div className={`absolute -inset-1 bg-gradient-to-r ${activeService?.color} rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200`}></div>
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-[#020617] via-[#020617] to-transparent z-50 flex justify-center">
+          <div className="w-full max-w-2xl relative group">
             <div className="relative flex items-end gap-2 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 rounded-[2rem] shadow-2xl">
               <textarea
                 value={input}

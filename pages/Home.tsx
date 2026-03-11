@@ -391,19 +391,19 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
            />
         </div>
 
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-           {[
-             { id: 'for-you', label: 'Pour vous' },
-             { id: 'following', label: 'Suivis' }
-           ].map(tab => (
-             <button 
-              key={tab.id}
-              onClick={() => setFeedType(tab.id as any)}
-              className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border whitespace-nowrap ${feedType === tab.id ? 'bg-white text-black shadow-lg' : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'}`}
-             >
-               {tab.label}
-             </button>
-           ))}
+        <div className="flex justify-center gap-3">
+             {[
+               { id: 'for-you', label: 'Pour vous' },
+               { id: 'following', label: 'Suivis' }
+             ].map(tab => (
+               <button 
+                key={tab.id}
+                onClick={() => setFeedType(tab.id as any)}
+                className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${feedType === tab.id ? 'bg-white text-black border-white shadow-lg shadow-white/10' : 'bg-black/40 text-slate-400 border-white/10 hover:text-white hover:bg-white/5'}`}
+               >
+                 {tab.label}
+               </button>
+             ))}
         </div>
       </div>
 
@@ -412,7 +412,6 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
         <div className="p-4 space-y-6">
           {feedType === 'for-you' && !searchQuery && (
             <>
-              <AuraProWidget user={user} />
               <VibeScore user={user} />
             </>
           )}

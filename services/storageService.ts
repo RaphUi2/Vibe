@@ -456,8 +456,15 @@ export const storage = {
     { id: 'q3', title: 'Philanthrope', description: 'Aimez 5 diffusions.', reward: 400, xpReward: 800, type: 'like', goal: 5 },
     { id: 'q4', title: 'Propulseur', description: 'Boostez une diffusion.', reward: 2000, xpReward: 4000, type: 'boost', goal: 1 },
     { id: 'q5', title: 'Bavard', description: 'Envoyez un message (IA ou Ami).', reward: 300, xpReward: 600, type: 'chat', goal: 1 },
+    { id: 'q6', title: 'Joueur Vibe', description: 'Jouez à un jeu VibeGames.', reward: 800, xpReward: 1500, type: 'game', goal: 1 },
+    { id: 'q7', title: 'Créateur Vibeo', description: 'Publiez un Vibeo.', reward: 1500, xpReward: 3000, type: 'vibeo', goal: 1 },
+    { id: 'q8', title: 'Explorateur', description: 'Recherchez 3 fois avec l\'IA.', reward: 500, xpReward: 1000, type: 'search', goal: 3 },
+    { id: 'q9', title: 'Collectionneur', description: 'Sauvegardez 5 diffusions.', reward: 600, xpReward: 1200, type: 'save', goal: 5 },
+    { id: 'q10', title: 'Acheteur Compulsif', description: 'Achetez un thème dans la boutique.', reward: 1000, xpReward: 2500, type: 'shop', goal: 1 },
     { id: 'u1', title: 'Maître Ultimate', description: 'Générez 5 images IA.', reward: 5000, xpReward: 10000, type: 'daily', goal: 5, ultimate: true },
     { id: 'u2', title: 'Visionnaire', description: 'Créez une vidéo IA.', reward: 10000, xpReward: 20000, type: 'daily', goal: 1, ultimate: true },
+    { id: 'u3', title: 'Champion Vibe', description: 'Atteignez le niveau 10.', reward: 20000, xpReward: 50000, type: 'level', goal: 10, ultimate: true },
+    { id: 'u4', title: 'Influenceur', description: 'Obtenez 100 likes sur vos diffusions.', reward: 15000, xpReward: 30000, type: 'social', goal: 100, ultimate: true },
   ],
 
   completeQuest: (userId: string, questId: string) => {

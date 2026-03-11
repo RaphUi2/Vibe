@@ -61,126 +61,145 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] animate-in fade-in duration-700 pb-40">
+    <div className="min-h-screen bg-[#020617] animate-in fade-in duration-700 pb-40 relative" style={{ perspective: '1200px' }}>
       {/* Hero Section */}
-      <div className="px-6 py-20 border-b border-white/5 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_70%)] pointer-events-none"></div>
+      <div className="px-6 py-20 border-b border-white/5 text-center relative overflow-hidden z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.15),transparent_70%)] pointer-events-none"></div>
         <div className="relative z-10 space-y-4">
-          <h2 className="vibe-logo text-7xl font-black text-white uppercase tracking-tighter leading-none">THE VAULT</h2>
-          <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em]">Upgrade your neural presence</p>
+          <h2 className="vibe-logo text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 uppercase tracking-tighter leading-none drop-shadow-2xl">THE VAULT</h2>
+          <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.5em] drop-shadow-md">Upgrade your neural presence</p>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-16 space-y-24">
+      <div className="max-w-5xl mx-auto px-6 py-16 space-y-24 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(20px)' }}>
         {/* Memberships */}
         <section className="space-y-10">
           <div className="flex items-center gap-4">
-            <h3 className="vibe-logo text-xs font-black text-blue-400 uppercase tracking-[0.3em]">Memberships</h3>
-            <div className="flex-1 h-px bg-white/5"></div>
+            <h3 className="vibe-logo text-xs font-black text-blue-400 uppercase tracking-[0.3em] drop-shadow-md">Memberships</h3>
+            <div className="flex-1 h-px bg-gradient-to-r from-blue-500/50 to-transparent"></div>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Real Money Ultimate Card */}
-            <div className={`group relative p-10 rounded-[3.5rem] border transition-all duration-500 ${user.isUltimate ? 'border-blue-500/30 bg-blue-500/5' : 'bg-gradient-to-br from-blue-600/20 to-transparent border-blue-500/20 hover:border-blue-500/40'}`}>
+            <div className={`group relative p-10 rounded-[3rem] border transition-all duration-500 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl ${user.isUltimate ? 'border-blue-500/50 bg-gradient-to-br from-blue-500/20 to-indigo-900/20 scale-[0.98]' : 'bg-gradient-to-br from-white/10 to-white/5 border-white/20 hover:border-blue-400/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:scale-[1.02]'}`}>
               <div className="flex justify-between items-start mb-8">
-                <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-3xl shadow-2xl">⚡</div>
-                <span className="px-3 py-1 bg-blue-500 text-white text-[8px] font-black rounded-md tracking-widest uppercase">Best Value</span>
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(59,130,246,0.5)] border border-blue-300/50">⚡</div>
+                <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[8px] font-black rounded-full tracking-widest uppercase shadow-lg border border-blue-400/50">Best Value</span>
               </div>
               <div className="space-y-3 mb-8">
-                <h4 className="vibe-logo text-3xl font-black text-white tracking-tight">ULTIMATE PRO</h4>
+                <h4 className="vibe-logo text-3xl font-black text-white tracking-tight drop-shadow-md">ULTIMATE PRO</h4>
                 <p className="text-xs text-slate-400 font-medium leading-relaxed">Accès complet à Aura Pro, 10 boosts quotidiens et badge certifié.</p>
-                <div className="pt-2">
-                   <span className="text-2xl font-black text-white">8.00€</span>
-                   <span className="text-[10px] text-slate-500 ml-2">une seule fois</span>
+                <div className="pt-2 flex items-baseline gap-2">
+                   <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 drop-shadow-md">8.00€</span>
+                   <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">une seule fois</span>
                 </div>
               </div>
               {!user.isUltimate ? (
                 <button 
                   onClick={() => buyMembership('real_money')} 
-                  className="w-full py-5 bg-blue-600 text-white rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl"
+                  className="w-full py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest hover:from-blue-500 hover:to-indigo-500 transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] border border-blue-400/50 hover:scale-[1.02] active:scale-95"
                 >
-                  ACHETER MAINTENANT
+                  Activer Ultimate
                 </button>
               ) : (
-                <div className="w-full py-5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-[2rem] font-black text-[10px] text-center uppercase tracking-widest">DÉBLOQUÉ</div>
+                <div className="w-full py-5 bg-blue-500/20 text-blue-400 rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest text-center border border-blue-500/30 shadow-inner">
+                  Déjà Actif
+                </div>
               )}
             </div>
 
-            {/* Ultimate Card (Credits) */}
-            <div className={`group relative p-10 rounded-[3.5rem] border transition-all duration-500 ${user.isUltimate ? 'border-emerald-500/30 bg-emerald-500/5' : 'bg-slate-900/50 border-white/5 hover:border-white/10'}`}>
+            {/* Novas Ultimate Card */}
+            <div className={`group relative p-10 rounded-[3rem] border transition-all duration-500 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl ${user.isUltimate ? 'border-slate-700/50 bg-slate-800/20 scale-[0.98]' : 'bg-gradient-to-br from-white/10 to-white/5 border-white/20 hover:border-slate-400/50 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:scale-[1.02]'}`}>
               <div className="flex justify-between items-start mb-8">
-                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-3xl shadow-2xl">💎</div>
+                <div className="w-14 h-14 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-slate-600/50">💎</div>
               </div>
               <div className="space-y-3 mb-8">
-                <h4 className="vibe-logo text-3xl font-black text-white tracking-tight">ULTIMATE</h4>
-                <p className="text-xs text-slate-400 font-medium leading-relaxed">Débloquez les modèles AI avancés et 10 boosts quotidiens via vos Novas.</p>
-                <div className="pt-2">
-                   <span className="text-2xl font-black text-white">10,000</span>
-                   <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-widest">Novas</span>
+                <h4 className="vibe-logo text-3xl font-black text-white tracking-tight drop-shadow-md">ULTIMATE</h4>
+                <p className="text-xs text-slate-400 font-medium leading-relaxed">Les mêmes avantages, payables avec vos Novas durement gagnés.</p>
+                <div className="pt-2 flex items-baseline gap-2">
+                   <span className="text-3xl font-black text-white drop-shadow-md">10K</span>
+                   <span className="text-[10px] text-blue-400 font-black uppercase tracking-widest">Novas</span>
                 </div>
               </div>
-              {!user.isUltimate && (
+              {!user.isUltimate ? (
                 <button 
                   onClick={() => buyMembership('ultimate')} 
-                  className="w-full py-5 bg-white text-black rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl"
+                  className="w-full py-5 bg-white/10 text-white rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all border border-white/20 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95"
                 >
-                  UPGRADE
+                  Acheter (10K N)
                 </button>
+              ) : (
+                <div className="w-full py-5 bg-slate-800/50 text-slate-500 rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest text-center border border-slate-700/50 shadow-inner">
+                  Déjà Actif
+                </div>
               )}
             </div>
 
             {/* Ultimate+ Card */}
-            <div className={`group relative p-10 rounded-[3.5rem] border transition-all duration-500 ${user.isUltimatePlus ? 'border-purple-500/30 bg-purple-500/5' : 'bg-slate-900/50 border-white/5 hover:border-white/10'}`}>
-              <div className="flex justify-between items-start mb-8">
-                <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center text-3xl shadow-2xl">👑</div>
+            <div className={`group relative p-10 rounded-[3rem] border transition-all duration-500 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl ${user.isUltimatePlus ? 'border-fuchsia-500/50 bg-gradient-to-br from-fuchsia-500/20 to-purple-900/20 scale-[0.98]' : 'bg-gradient-to-br from-white/10 to-white/5 border-white/20 hover:border-fuchsia-400/50 hover:shadow-[0_0_30px_rgba(217,70,239,0.3)] hover:scale-[1.02]'}`}>
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-fuchsia-500/20 blur-[30px] rounded-full group-hover:bg-fuchsia-500/40 transition-all duration-700"></div>
+              <div className="flex justify-between items-start mb-8 relative z-10">
+                <div className="w-14 h-14 bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(217,70,239,0.5)] border border-fuchsia-400/50">👑</div>
+                <span className="px-3 py-1 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white text-[8px] font-black rounded-full tracking-widest uppercase shadow-lg border border-fuchsia-400/50 animate-pulse">Exclusif</span>
               </div>
-              <div className="space-y-3 mb-8">
-                <h4 className="vibe-logo text-3xl font-black text-white tracking-tight">ULTIMATE+</h4>
-                <p className="text-xs text-slate-400 font-medium leading-relaxed">Le summum du Nexus. Modèles Pro+, 25 boosts et certification Elite.</p>
-                <div className="pt-2">
-                   <span className="text-2xl font-black text-white">50,000</span>
-                   <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-widest">Novas</span>
+              <div className="space-y-3 mb-8 relative z-10">
+                <h4 className="vibe-logo text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-400 tracking-tight drop-shadow-md">ULTIMATE+</h4>
+                <p className="text-xs text-slate-400 font-medium leading-relaxed">Le statut ultime. 25 boosts/jour, accès anticipé, badge exclusif.</p>
+                <div className="pt-2 flex items-baseline gap-2">
+                   <span className="text-3xl font-black text-fuchsia-400 drop-shadow-md">50K</span>
+                   <span className="text-[10px] text-fuchsia-400/70 font-black uppercase tracking-widest">Novas</span>
                 </div>
               </div>
-              {!user.isUltimatePlus && (
+              {!user.isUltimatePlus ? (
                 <button 
                   onClick={() => buyMembership('ultimate_plus')} 
-                  className="w-full py-5 bg-purple-600 text-white rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest hover:bg-purple-500 transition-all shadow-xl"
+                  className="w-full py-5 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest hover:from-fuchsia-500 hover:to-purple-500 transition-all shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:shadow-[0_0_30px_rgba(217,70,239,0.6)] border border-fuchsia-400/50 relative z-10 hover:scale-[1.02] active:scale-95"
                 >
-                  GET ELITE
+                  Acheter (50K N)
                 </button>
+              ) : (
+                <div className="w-full py-5 bg-fuchsia-500/20 text-fuchsia-400 rounded-[2rem] font-black vibe-logo text-[10px] uppercase tracking-widest text-center border border-fuchsia-500/30 shadow-inner relative z-10">
+                  Déjà Actif
+                </div>
               )}
             </div>
           </div>
         </section>
 
         {/* Themes */}
-        <section className="space-y-10">
+        <section className="space-y-10 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(10px)' }}>
           <div className="flex items-center gap-4">
-            <h3 className="vibe-logo text-xs font-black text-blue-400 uppercase tracking-[0.3em]">Neural Themes</h3>
-            <div className="flex-1 h-px bg-white/5"></div>
+            <h3 className="vibe-logo text-xs font-black text-fuchsia-400 uppercase tracking-[0.3em] drop-shadow-md">Aesthetics</h3>
+            <div className="flex-1 h-px bg-gradient-to-r from-fuchsia-500/50 to-transparent"></div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {themes.map(t => {
-              const isUnlocked = user.unlockedThemes?.includes(t.id);
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {themes.map(theme => {
+              const isUnlocked = user.unlockedThemes?.includes(theme.id);
+              const isActive = user.activeTheme === theme.id;
+              
               return (
-                <div key={t.id} className={`p-8 rounded-[2.5rem] border flex items-center justify-between transition-all duration-300 ${isUnlocked ? 'border-emerald-500/20 bg-emerald-500/5' : 'bg-slate-900/50 border-white/5 hover:border-white/10'}`}>
-                  <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-2xl ${t.color} shadow-2xl border-2 border-white/10`} />
-                    <div>
-                      <p className="font-black text-white text-lg tracking-tight">{t.label}</p>
-                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{isUnlocked ? (user.activeTheme === t.id ? 'Active' : 'Unlocked') : `${t.cost} C`}</p>
-                    </div>
+                <div key={theme.id} className={`group relative p-6 rounded-[2.5rem] border transition-all duration-500 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-xl flex flex-col items-center text-center ${isActive ? 'border-fuchsia-500/50 bg-gradient-to-b from-fuchsia-500/10 to-purple-900/20 scale-[0.98]' : 'bg-gradient-to-b from-white/10 to-white/5 border-white/20 hover:border-fuchsia-400/50 hover:shadow-[0_0_25px_rgba(217,70,239,0.2)] hover:scale-[1.05]'}`}>
+                  <div className={`w-16 h-16 rounded-2xl ${theme.color} mb-6 shadow-2xl border-2 border-white/20 group-hover:scale-110 transition-transform duration-500`} />
+                  <h4 className="font-black text-white text-sm mb-2 drop-shadow-md">{theme.label}</h4>
+                  
+                  <div className="mt-auto pt-4 w-full">
+                    {isUnlocked ? (
+                      <button 
+                        onClick={() => buyTheme(theme.id, theme.cost)}
+                        className={`w-full py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md ${isActive ? 'bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'}`}
+                      >
+                        {isActive ? 'Actif' : 'Équiper'}
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => buyTheme(theme.id, theme.cost)}
+                        className="w-full py-3 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:from-fuchsia-500 hover:to-purple-500 transition-all shadow-[0_0_15px_rgba(217,70,239,0.3)] hover:shadow-[0_0_20px_rgba(217,70,239,0.5)] border border-fuchsia-400/50 hover:scale-[1.02] active:scale-95"
+                      >
+                        {theme.cost} N
+                      </button>
+                    )}
                   </div>
-                  {(!isUnlocked || user.activeTheme !== t.id) && (
-                    <button 
-                      onClick={() => buyTheme(t.id, t.cost)}
-                      className={`px-8 py-4 border rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${isUnlocked ? 'bg-blue-500 border-blue-400 text-white hover:bg-blue-400' : 'bg-white/5 border-white/10 text-white hover:bg-white hover:text-black'}`}
-                    >
-                      {isUnlocked ? 'Apply' : 'Buy'}
-                    </button>
-                  )}
                 </div>
               );
             })}

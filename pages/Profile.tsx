@@ -155,7 +155,7 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
                   <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" /></svg>
                 )}
             </h2>
-            <p className="text-slate-500 text-sm font-bold tracking-wider">@{profileUser.username}</p>
+            <p className="text-slate-500 text-sm font-bold tracking-wider">@{profileUser.username} • Lvl.{profileUser.level}</p>
          </div>
          
          <p className="text-slate-200 text-sm md:text-base leading-relaxed whitespace-pre-wrap">{profileUser.bio || "Signal de bio-signature non identifié."}</p>
@@ -165,25 +165,13 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
             <div className="flex gap-1.5 hover:underline cursor-pointer"><span className="font-black text-white">{followersCount}</span> <span className="text-slate-500">Abonnés</span></div>
          </div>
 
-         <VibeScore user={profileUser} />
-
-         {/* PROGRESS BAR */}
-         <div className="p-4 liquid-glass rounded-3xl border border-white/10 space-y-3 shadow-xl">
-            <div className="flex justify-between items-end">
-                <div className="flex flex-col">
-                   <span className="vibe-logo text-[8px] text-blue-400 font-black tracking-[0.2em] uppercase">Progression</span>
-                   <span className="text-lg font-black text-white">Niveau {profileUser.level}</span>
-                </div>
-                <span className="text-[9px] text-slate-500 font-black bg-white/5 px-2 py-1 rounded-md">{profileUser.xp.toLocaleString()} / {(profileUser.level * 1000).toLocaleString()} XP</span>
-            </div>
-            <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5 shadow-inner">
-                <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.6)] rounded-full transition-all duration-1000 ease-out" style={{ width: `${xpPercent}%` }} />
-            </div>
+         <div className="max-w-[200px]">
+            <VibeScore user={profileUser} compact={true} />
          </div>
       </div>
 
       {/* TABS SLIDER */}
-      <div className="mt-8 border-b border-white/5 overflow-x-auto scrollbar-hide flex sticky top-0 bg-[#020617]/90 backdrop-blur-md z-40">
+      <div className="mt-8 overflow-x-auto scrollbar-hide flex justify-center gap-3 px-4 sticky top-0 bg-[#020617]/90 backdrop-blur-md z-40 py-3">
         {[
           { id: 'posts', label: 'Vibe' },
           { id: 'reposts', label: 'Reposts' },
@@ -192,9 +180,12 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
           { id: 'saved', label: 'Sauvegardés' },
           { id: 'wall', label: 'Mur' }
         ].map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className="flex-1 min-w-[100px] py-4 text-center relative group transition-all">
-            <span className={`text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-white'}`}>{tab.label}</span>
-            {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />}
+          <button 
+            key={tab.id} 
+            onClick={() => setActiveTab(tab.id as any)} 
+            className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${activeTab === tab.id ? 'bg-white text-black border-white shadow-lg shadow-white/10' : 'bg-black/40 text-slate-400 border-white/10 hover:text-white hover:bg-white/5'}`}
+          >
+            {tab.label}
           </button>
         ))}
       </div>
