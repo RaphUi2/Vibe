@@ -50,7 +50,7 @@ const Quests: React.FC<{ user: User }> = ({ user }) => {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-2xl border border-blue-500/20">
                   <span className="text-blue-400 font-black text-xs">+{quest.reward}</span>
-                  <span className="text-[10px] font-black text-blue-400/50 uppercase">Crédits</span>
+                  <span className="text-[10px] font-black text-blue-400/50 uppercase">Novas</span>
                 </div>
                 <div className="flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-2xl border border-emerald-500/20">
                   <span className="text-emerald-400 font-black text-xs">+{quest.xpReward}</span>
@@ -69,7 +69,7 @@ const Quests: React.FC<{ user: User }> = ({ user }) => {
       <div className="liquid-glass p-8 rounded-[2.5rem] border border-white/5 text-center space-y-4">
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Astuce</p>
         <p className="text-xs text-slate-400 font-medium leading-relaxed">
-          Les quêtes sont mises à jour régulièrement. Revenez souvent pour maximiser vos gains de crédits et monter en niveau plus rapidement !
+          Les quêtes sont mises à jour régulièrement. Revenez souvent pour maximiser vos gains de Novas et monter en niveau plus rapidement !
         </p>
       </div>
     </div>

@@ -12,6 +12,8 @@ const StoriesBar: React.FC<{ user: User, refresh: () => void }> = ({ user, refre
   const [notes, setNotes] = useState<Note[]>([]);
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [noteText, setNoteText] = useState('');
+  const [viewingStoryIndex, setViewingStoryIndex] = useState<number | null>(null);
+  const [viewingStoryUser, setViewingStoryUser] = useState<string | null>(null);
 
   useEffect(() => {
     const allStories = storage.getStories();
@@ -36,22 +38,87 @@ const StoriesBar: React.FC<{ user: User, refresh: () => void }> = ({ user, refre
   };
 
   const handleAddStory = () => {
-    // Simulate adding a story for now
-    storage.addStory({
-      id: Math.random().toString(36).substr(2, 9),
-      userId: user.id,
-      mediaUrl: `https://picsum.photos/seed/${Math.random()}/400/800`,
-      mediaType: 'image',
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-      viewers: []
-    });
-    refresh();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*,video/*';
+    input.onchange = (e: any) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      
+      const isVideo = file.type.startsWith('video/');
+      if (isVideo) {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+          window.URL.revokeObjectURL(video.src);
+          if (video.duration > 60) {
+            alert("La vidéo de la story ne doit pas dépasser 60 secondes.");
+            return;
+          }
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            storage.addStory({
+              id: Math.random().toString(36).substr(2, 9),
+              userId: user.id,
+              mediaUrl: reader.result as string,
+              mediaType: 'video',
+              createdAt: Date.now(),
+              expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+              viewers: []
+            });
+            refresh();
+          };
+          reader.readAsDataURL(file);
+        };
+        video.src = URL.createObjectURL(file);
+      } else {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          storage.addStory({
+            id: Math.random().toString(36).substr(2, 9),
+            userId: user.id,
+            mediaUrl: reader.result as string,
+            mediaType: 'image',
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+            viewers: []
+          });
+          refresh();
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   };
 
   const usersWithStoriesOrNotes = Array.from(new Set([...stories.map(s => s.userId), ...notes.map(n => n.userId), user.id]));
 
+  const handleStoryClick = (uid: string) => {
+    const userStories = stories.filter(s => s.userId === uid);
+    if (userStories.length > 0) {
+      setViewingStoryUser(uid);
+      setViewingStoryIndex(0);
+    }
+  };
+
+  const closeStory = () => {
+    setViewingStoryUser(null);
+    setViewingStoryIndex(null);
+  };
+
+  const nextStory = () => {
+    if (viewingStoryUser && viewingStoryIndex !== null) {
+      const userStories = stories.filter(s => s.userId === viewingStoryUser);
+      if (viewingStoryIndex < userStories.length - 1) {
+        setViewingStoryIndex(viewingStoryIndex + 1);
+      } else {
+        closeStory();
+      }
+    }
+  };
+
   return (
+    <>
     <div className="w-full overflow-x-auto scrollbar-hide py-4 px-2 border-b border-white/5">
       <div className="flex gap-4 px-2">
         {/* Current User */}
@@ -100,7 +167,7 @@ const StoriesBar: React.FC<{ user: User, refresh: () => void }> = ({ user, refre
           const userNote = notes.find(n => n.userId === uid);
           
           return (
-            <div key={uid} className="flex flex-col items-center gap-1 min-w-[72px] relative cursor-pointer">
+            <div key={uid} className="flex flex-col items-center gap-1 min-w-[72px] relative cursor-pointer" onClick={() => handleStoryClick(uid)}>
               <div className="relative">
                 <div className={`w-16 h-16 rounded-full p-[2px] ${hasStory ? 'bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500' : 'bg-transparent'} cursor-pointer`}>
                   <div className="w-full h-full bg-black rounded-full p-[2px]">
@@ -120,6 +187,42 @@ const StoriesBar: React.FC<{ user: User, refresh: () => void }> = ({ user, refre
         })}
       </div>
     </div>
+
+    {viewingStoryUser && viewingStoryIndex !== null && (
+      <div className="fixed inset-0 z-[2000] bg-black flex items-center justify-center animate-in fade-in duration-300">
+        <div className="relative w-full max-w-md h-full md:h-[90vh] md:rounded-[2rem] overflow-hidden bg-zinc-900">
+          {/* Progress bars */}
+          <div className="absolute top-4 left-4 right-4 flex gap-1 z-50">
+            {stories.filter(s => s.userId === viewingStoryUser).map((s, i) => (
+              <div key={s.id} className="h-1 flex-1 bg-white/30 rounded-full overflow-hidden">
+                <div className={`h-full bg-white ${i === viewingStoryIndex ? 'w-full animate-[progress_5s_linear]' : i < viewingStoryIndex ? 'w-full' : 'w-0'}`} onAnimationEnd={nextStory} />
+              </div>
+            ))}
+          </div>
+
+          {/* User Info */}
+          <div className="absolute top-8 left-4 right-4 flex justify-between items-center z-50">
+            <div className="flex items-center gap-2">
+              <img src={storage.getUsers().find(u => u.id === viewingStoryUser)?.avatar} className="w-8 h-8 rounded-full border border-white/20" />
+              <span className="text-white font-bold text-sm drop-shadow-md">{storage.getUsers().find(u => u.id === viewingStoryUser)?.username}</span>
+            </div>
+            <button onClick={closeStory} className="text-white p-2 hover:bg-white/10 rounded-full">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+
+          {/* Story Content */}
+          <div className="w-full h-full" onClick={nextStory}>
+            {stories.filter(s => s.userId === viewingStoryUser)[viewingStoryIndex].mediaType === 'video' ? (
+              <video src={stories.filter(s => s.userId === viewingStoryUser)[viewingStoryIndex].mediaUrl} className="w-full h-full object-cover" autoPlay playsInline onEnded={nextStory} />
+            ) : (
+              <img src={stories.filter(s => s.userId === viewingStoryUser)[viewingStoryIndex].mediaUrl} className="w-full h-full object-cover" />
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

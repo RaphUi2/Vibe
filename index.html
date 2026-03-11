@@ -21,7 +21,12 @@
             }
           }
         }
-      }
+      },
+      plugins: [
+        function({ addVariant }) {
+          addVariant('landscape', '@media (orientation: landscape) { .auto-rotate & }');
+        }
+      ]
     }
   </script>
   <style>
@@ -96,20 +101,22 @@
     .animate-boost-pulse { animation: boost-pulse 3s infinite ease-in-out; }
 
     /* Themes */
-    .theme-default { --vibe-accent: 59 130 246; --vibe-glow: rgba(59, 130, 246, 0.5); }
-    .theme-neon_pink { --vibe-accent: 244 114 182; --vibe-glow: rgba(244, 114, 182, 0.5); }
-    .theme-gold { --vibe-accent: 251 191 36; --vibe-glow: rgba(251, 191, 36, 0.5); }
-    .theme-cyber_ocean { --vibe-accent: 6 182 212; --vibe-glow: rgba(6, 182, 212, 0.5); }
-    .theme-ruby { --vibe-accent: 225 29 72; --vibe-glow: rgba(225, 29, 72, 0.5); }
-    .theme-emerald { --vibe-accent: 16 185 129; --vibe-glow: rgba(16, 185, 129, 0.5); }
-    .theme-neon { --vibe-accent: 255 0 255; --vibe-glow: rgba(255, 0, 255, 0.5); }
-    .theme-matrix { --vibe-accent: 0 255 0; --vibe-glow: rgba(0, 255, 0, 0.5); }
-    .theme-cyber_pink { --vibe-accent: 255 0 127; --vibe-glow: rgba(255, 0, 127, 0.5); }
+    .theme-default { --vibe-accent: 59 130 246; --vibe-glow: rgba(59, 130, 246, 0.5); --bg-color: #020617; }
+    .theme-neon_pink { --vibe-accent: 244 114 182; --vibe-glow: rgba(244, 114, 182, 0.5); --bg-color: #1a0512; }
+    .theme-gold { --vibe-accent: 251 191 36; --vibe-glow: rgba(251, 191, 36, 0.5); --bg-color: #1a1602; }
+    .theme-cyber_ocean { --vibe-accent: 6 182 212; --vibe-glow: rgba(6, 182, 212, 0.5); --bg-color: #01121a; }
+    .theme-ruby { --vibe-accent: 225 29 72; --vibe-glow: rgba(225, 29, 72, 0.5); --bg-color: #1a0308; }
+    .theme-emerald { --vibe-accent: 16 185 129; --vibe-glow: rgba(16, 185, 129, 0.5); --bg-color: #011a0e; }
+    .theme-neon { --vibe-accent: 255 0 255; --vibe-glow: rgba(255, 0, 255, 0.5); --bg-color: #140014; }
+    .theme-matrix { --vibe-accent: 0 255 0; --vibe-glow: rgba(0, 255, 0, 0.5); --bg-color: #001400; }
+    .theme-cyber_pink { --vibe-accent: 255 0 127; --vibe-glow: rgba(255, 0, 127, 0.5); --bg-color: #1a000d; }
+    .theme-obsidian { --vibe-accent: 161 161 170; --vibe-glow: rgba(255, 255, 255, 0.1); --bg-color: #000000; }
+    .theme-royal { --vibe-accent: 139 92 246; --vibe-glow: rgba(139, 92, 246, 0.5); --bg-color: #0f051f; }
 
     .theme-bg-gradient {
       background: radial-gradient(circle at 0% 0%, var(--vibe-glow) 0%, transparent 40%),
                   radial-gradient(circle at 100% 100%, rgba(30, 64, 175, 0.05) 0%, transparent 40%),
-                  #020617;
+                  var(--bg-color);
       background-attachment: fixed;
     }
 
@@ -123,6 +130,15 @@
     .animate-gradient-x {
       background-size: 200% 200%;
       animation: gradient-x 3s ease infinite;
+    }
+
+    /* Power Save Mode */
+    body.power-save * {
+      animation-duration: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+      backdrop-filter: none !important;
+      filter: none !important;
     }
   </style>
   <script type="importmap">

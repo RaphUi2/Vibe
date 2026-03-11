@@ -79,7 +79,7 @@ const Boost: React.FC<{ user: User }> = ({ user }) => {
                  </div>
                  <div className="flex gap-4">
                     <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0 text-blue-400 font-black">2</div>
-                    <p>Chaque boost coûte de l'énergie (Crédits) et rapporte un bonus massif d'XP (+500).</p>
+                    <p>Chaque boost coûte de l'énergie (Novas) et rapporte un bonus massif d'XP (+500).</p>
                  </div>
                  <div className="flex gap-4">
                     <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0 text-blue-400 font-black">3</div>

@@ -55,7 +55,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      document.body.className = `theme-${currentUser.activeTheme} theme-bg-gradient`;
+      document.body.className = `theme-${currentUser.activeTheme} theme-bg-gradient ${currentUser.settings?.autoRotate !== false ? 'auto-rotate' : ''} ${currentUser.settings?.powerSave ? 'power-save' : ''}`;
     }
   }, [currentUser]);
 
@@ -74,28 +74,28 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col relative overflow-hidden text-slate-100">
+    <div className="h-screen flex flex-col landscape:flex-row relative overflow-hidden text-slate-100">
       <div className="absolute inset-0 bg-pulse-blue pointer-events-none opacity-10"></div>
 
-      <header className="z-[600] h-16 px-4 md:px-10 flex items-center justify-between bg-[#020617] border-b border-white/5">
-        <div className="flex items-center gap-4">
+      <header className="z-[600] h-16 landscape:h-full landscape:w-20 landscape:flex-col landscape:py-6 px-4 md:px-10 landscape:px-0 flex items-center justify-between bg-[#020617] border-b landscape:border-b-0 landscape:border-r border-white/5">
+        <div className="flex items-center landscape:flex-col gap-4">
           <div className="cursor-pointer group hover:scale-105 transition-all" onClick={() => setActiveTab('home')}>
             <Logo size="sm" />
           </div>
-          <h1 className="vibe-logo text-base font-black tracking-tighter hidden sm:block">
+          <h1 className="vibe-logo text-base landscape:hidden font-black tracking-tighter hidden sm:block">
               {activeTab === 'home' ? 'Accueil' : activeTab === 'vibeos' ? 'Vibeos' : activeTab.toUpperCase()}
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
-           <div className="flex items-center gap-2.5 liquid-glass px-3 py-1.5 rounded-xl border border-white/10 shadow-lg">
-              <div className="flex flex-col items-end">
-                <span className="font-black text-blue-400 text-[10px] leading-none">{currentUser.credits.toLocaleString()} <span className="text-[8px] opacity-50">C</span></span>
-                <div className="h-1 w-12 bg-white/10 rounded-full mt-1 overflow-hidden">
-                  <div className="h-full bg-blue-500" style={{ width: `${(currentUser.xp / (currentUser.level * 1000)) * 100}%` }} />
+        <div className="flex items-center landscape:flex-col gap-3">
+           <div className="flex items-center landscape:flex-col gap-2.5 liquid-glass px-3 py-1.5 landscape:py-3 landscape:px-1.5 rounded-xl border border-white/10 shadow-lg">
+              <div className="flex flex-col items-end landscape:items-center">
+                <span className="font-black text-blue-400 text-[10px] leading-none">{currentUser.credits.toLocaleString()} <span className="text-[8px] opacity-50">N</span></span>
+                <div className="h-1 w-12 landscape:w-1 landscape:h-12 bg-white/10 rounded-full mt-1 landscape:mt-2 overflow-hidden">
+                  <div className="h-full landscape:w-full bg-blue-500" style={{ width: `${(currentUser.xp / (currentUser.level * 1000)) * 100}%` }} />
                 </div>
               </div>
-              <div className="w-px h-4 bg-white/10" />
+              <div className="w-px h-4 landscape:w-4 landscape:h-px bg-white/10" />
               <span className="font-black text-white text-[9px] px-1.5 py-0.5 bg-blue-600 rounded-md shadow-blue-500/20">Lvl.{currentUser.level}</span>
            </div>
         </div>
@@ -106,15 +106,15 @@ const App: React.FC = () => {
            <div className="flex flex-col">
               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{rewardToast.title || 'Récompense'}</span>
               <div className="flex gap-4">
-                 <span className="text-blue-400 font-black text-xs">+{rewardToast.credits} Crédits</span>
+                 <span className="text-blue-400 font-black text-xs">+{rewardToast.credits} Novas</span>
                  <span className="text-emerald-400 font-black text-xs">+{rewardToast.xp} XP</span>
               </div>
            </div>
         </div>
       )}
 
-      <main className="flex-1 overflow-y-auto custom-scrollbar pb-24">
-        <div className="max-w-2xl mx-auto">
+      <main className="flex-1 overflow-y-auto custom-scrollbar pb-24 landscape:pb-0">
+        <div className="max-w-2xl mx-auto landscape:max-w-4xl landscape:h-full">
           {activeTab === 'home' && <Home user={currentUser} />}
           {activeTab === 'ia' && <AIHub user={currentUser} />}
           {activeTab === 'vibeos' && <Vibeos user={currentUser} />}
@@ -151,7 +151,7 @@ const App: React.FC = () => {
           </button>
       )}
 
-      <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg h-16 liquid-glass rounded-[2rem] flex items-center justify-around z-[550] px-2 shadow-4xl border border-white/10">
+      <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg h-16 landscape:bottom-auto landscape:top-1/2 landscape:-translate-y-1/2 landscape:left-4 landscape:translate-x-0 landscape:w-16 landscape:h-[95%] landscape:max-h-[500px] landscape:flex-col liquid-glass rounded-[2rem] flex items-center justify-around z-[550] px-2 landscape:px-0 landscape:py-2 shadow-4xl border border-white/10">
         {[
           { id: 'home', label: 'Accueil', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
           { id: 'vibeos', label: 'Vibeos', icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },

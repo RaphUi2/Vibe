@@ -83,7 +83,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           lastBoostReset: new Date().setHours(0, 0, 0, 0),
           vibeScore: 0,
           vibeRank: 'Nouveau Créateur',
-          vibeMetrics: { energy: 0, flow: 0, impact: 0 }
+          vibeMetrics: { energy: 0, flow: 0, impact: 0 },
+          settings: {
+            autoRotate: true,
+            powerSave: false,
+            notifications: true
+          }
         };
         storage.saveUsers([...users, newUser]);
         storage.setCurrentUser(newUser);

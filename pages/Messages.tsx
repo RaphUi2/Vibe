@@ -269,13 +269,13 @@ const Messages: React.FC<{ user: User }> = ({ user }) => {
                        <span className="font-black text-white">{selectedContact.xp.toLocaleString()}</span>
                     </div>
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center">
-                       <span className="vibe-logo text-[7px] text-slate-500 mb-1">CRÉDITS</span>
+                       <span className="vibe-logo text-[7px] text-slate-500 mb-1">NOVAS</span>
                        <span className="font-black text-blue-400">{selectedContact.credits.toLocaleString()}</span>
                     </div>
                  </div>
 
                  <div className="space-y-3">
-                    <button className="w-full py-3.5 bg-blue-600 text-white rounded-2xl font-black vibe-logo text-[10px] uppercase tracking-widest shadow-lg hover:scale-105 transition-all">Transférer Crédits</button>
+                    <button className="w-full py-3.5 bg-blue-600 text-white rounded-2xl font-black vibe-logo text-[10px] uppercase tracking-widest shadow-lg hover:scale-105 transition-all">Transférer Novas</button>
                     <button className="w-full py-3.5 bg-white/5 text-slate-400 rounded-2xl font-black vibe-logo text-[10px] uppercase tracking-widest border border-white/10 hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 transition-all">Bloquer le Signal</button>
                  </div>
               </div>

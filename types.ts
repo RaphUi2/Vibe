@@ -36,6 +36,11 @@ export interface User {
   vibeMetrics: VibeMetrics;
   isCertified?: boolean;
   profileComments?: ProfileComment[];
+  settings?: {
+    autoRotate: boolean;
+    powerSave: boolean;
+    notifications: boolean;
+  };
 }
 
 export interface ProfileComment {

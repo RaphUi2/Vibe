@@ -375,7 +375,7 @@ export const storage = {
       }
       
       const cost = user.isUltimate ? 100 : 250;
-      if (user.credits < cost) return { success: false, message: `Crédits insuffisants (${cost} C requis).` };
+      if (user.credits < cost) return { success: false, message: `Novas insuffisants (${cost} N requis).` };
       
       post.boosts.push(userId);
       user.credits -= cost;

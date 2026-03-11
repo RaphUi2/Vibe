@@ -14,7 +14,7 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
 
     const cost = type === 'ultimate' ? 10000 : 50000;
     if (user.credits < cost) {
-      alert("Crédits insuffisants pour cette mise à niveau.");
+      alert("Novas insuffisants pour cette mise à niveau.");
       return;
     }
 
@@ -48,7 +48,7 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
       return;
     }
     if (user.credits < cost) {
-      alert("Crédits insuffisants pour ce thème.");
+      alert("Novas insuffisants pour ce thème.");
       return;
     }
 
@@ -113,10 +113,10 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
               </div>
               <div className="space-y-3 mb-8">
                 <h4 className="vibe-logo text-3xl font-black text-white tracking-tight">ULTIMATE</h4>
-                <p className="text-xs text-slate-400 font-medium leading-relaxed">Débloquez les modèles AI avancés et 10 boosts quotidiens via vos crédits.</p>
+                <p className="text-xs text-slate-400 font-medium leading-relaxed">Débloquez les modèles AI avancés et 10 boosts quotidiens via vos Novas.</p>
                 <div className="pt-2">
                    <span className="text-2xl font-black text-white">10,000</span>
-                   <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-widest">Crédits</span>
+                   <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-widest">Novas</span>
                 </div>
               </div>
               {!user.isUltimate && (
@@ -139,7 +139,7 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
                 <p className="text-xs text-slate-400 font-medium leading-relaxed">Le summum du Nexus. Modèles Pro+, 25 boosts et certification Elite.</p>
                 <div className="pt-2">
                    <span className="text-2xl font-black text-white">50,000</span>
-                   <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-widest">Crédits</span>
+                   <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-widest">Novas</span>
                 </div>
               </div>
               {!user.isUltimatePlus && (

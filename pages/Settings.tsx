@@ -1,17 +1,41 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from '../types';
 import { storage } from '../services/storageService';
 
 const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user, onUpdate }) => {
   const themes = [
     { id: 'default', label: 'Vibe Blue', color: 'bg-blue-500' },
+    { id: 'obsidian', label: 'Obsidian Black', color: 'bg-zinc-900' },
     { id: 'neon_pink', label: 'Cyber Pink', color: 'bg-pink-500' },
     { id: 'gold', label: 'Elite Gold', color: 'bg-amber-500' },
     { id: 'cyber_ocean', label: 'Cyber Ocean', color: 'bg-cyan-500' },
     { id: 'ruby', label: 'Crimson Red', color: 'bg-rose-500' },
     { id: 'emerald', label: 'Emerald Matrix', color: 'bg-emerald-500' },
+    { id: 'royal', label: 'Royal Purple', color: 'bg-violet-600' },
+    { id: 'matrix', label: 'The Matrix', color: 'bg-green-500' },
   ];
+
+  const [autoRotate, setAutoRotate] = useState(user.settings?.autoRotate ?? true);
+  const [powerSave, setPowerSave] = useState(user.settings?.powerSave ?? false);
+  const [notifications, setNotifications] = useState(user.settings?.notifications ?? true);
+
+  const updateSettings = (key: 'autoRotate' | 'powerSave' | 'notifications', value: boolean) => {
+    const updatedSettings = {
+      autoRotate,
+      powerSave,
+      notifications,
+      [key]: value
+    };
+    
+    if (key === 'autoRotate') setAutoRotate(value);
+    if (key === 'powerSave') setPowerSave(value);
+    if (key === 'notifications') setNotifications(value);
+
+    const updatedUser = { ...user, settings: updatedSettings };
+    storage.updateUser(updatedUser);
+    onUpdate(updatedUser);
+  };
 
   const toggleTheme = (themeId: string) => {
     if (!user.unlockedThemes?.includes(themeId) && themeId !== 'default') {
@@ -59,6 +83,55 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
               <p className="text-slate-500 text-xs">Dernière synchronisation : {new Date().toLocaleTimeString()}</p>
             </div>
             <span className="text-emerald-400 text-[10px] font-black vibe-logo uppercase">Connecté</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Options Section */}
+      <section className="space-y-4">
+        <h3 className="vibe-logo text-[10px] text-blue-400 font-black tracking-widest uppercase ml-1">Options de l'Application</h3>
+        <div className="bg-white/5 rounded-[2rem] border border-white/10 p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h4 className="font-black text-white text-lg">Rotation Automatique</h4>
+              <p className="text-slate-500 text-xs">Basculer automatiquement en mode paysage</p>
+            </div>
+            <button 
+              onClick={() => updateSettings('autoRotate', !autoRotate)}
+              className={`w-12 h-6 rounded-full transition-colors relative ${autoRotate ? 'bg-blue-500' : 'bg-slate-700'}`}
+            >
+              <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${autoRotate ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+          
+          <div className="w-full h-px bg-white/5" />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h4 className="font-black text-white text-lg">Économie d'énergie</h4>
+              <p className="text-slate-500 text-xs">Réduire les animations et effets 3D</p>
+            </div>
+            <button 
+              onClick={() => updateSettings('powerSave', !powerSave)}
+              className={`w-12 h-6 rounded-full transition-colors relative ${powerSave ? 'bg-emerald-500' : 'bg-slate-700'}`}
+            >
+              <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${powerSave ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+
+          <div className="w-full h-px bg-white/5" />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h4 className="font-black text-white text-lg">Notifications Push</h4>
+              <p className="text-slate-500 text-xs">Recevoir des alertes pour les Novas et Quêtes</p>
+            </div>
+            <button 
+              onClick={() => updateSettings('notifications', !notifications)}
+              className={`w-12 h-6 rounded-full transition-colors relative ${notifications ? 'bg-blue-500' : 'bg-slate-700'}`}
+            >
+              <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${notifications ? 'left-7' : 'left-1'}`} />
+            </button>
           </div>
         </div>
       </section>

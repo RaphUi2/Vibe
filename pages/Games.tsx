@@ -9,7 +9,7 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
 
   const games = [
     // FREE GAMES (10)
-    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'from-blue-600 to-cyan-400', desc: 'Générez des crédits via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%', image: 'https://picsum.photos/seed/clicker/800/600' },
+    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'from-blue-600 to-cyan-400', desc: 'Générez des Novas via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%', image: 'https://picsum.photos/seed/clicker/800/600' },
     { id: 'snake', name: 'Neural Snake', icon: '🐍', color: 'from-emerald-600 to-teal-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', tier: 'free', players: '850', rating: '88%', image: 'https://picsum.photos/seed/snake/800/600' },
     { id: 'runner', name: 'Nexus Runner', icon: '🏃', color: 'from-orange-600 to-amber-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', tier: 'free', players: '3.4k', rating: '92%', image: 'https://picsum.photos/seed/runner/800/600' },
     { id: 'jump', name: 'Neon Jump', icon: '🚀', color: 'from-cyan-600 to-blue-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '90%', image: 'https://picsum.photos/seed/jump/800/600' },
@@ -272,7 +272,7 @@ const GameEngine: React.FC<{ gameId: string, onExit: () => void, userId: string 
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
                   <div className="text-yellow-400 font-black text-xl mb-1">+{Math.floor(score / 10)}</div>
-                  <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Crédits</div>
+                  <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Novas</div>
                 </div>
                 <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
                   <div className="text-blue-400 font-black text-xl mb-1">+{Math.floor(score / 5)}</div>
