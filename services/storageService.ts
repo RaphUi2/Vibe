@@ -267,6 +267,85 @@ export const storage = {
     storage.completeQuest(post.userId, 'q1');
   },
 
+  resetCredits: (userId: string) => {
+    const users = storage.getUsers();
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      user.credits = 500; // Reset to starting value
+      storage.saveUsers(users);
+      storage.setCurrentUser(user);
+      window.dispatchEvent(new CustomEvent('vibeUserUpdated', { detail: { ...user } }));
+    }
+  },
+
+  getGames: () => [
+    // FREE GAMES (30)
+    { id: 'clicker', name: 'Synth Clicker 3D', icon: '⚡', color: 'from-blue-600 to-cyan-400', desc: 'Générez des Novas via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%', image: 'https://picsum.photos/seed/clicker/800/600' },
+    { id: 'snake', name: 'Neural Snake 3D', icon: '🐍', color: 'from-emerald-600 to-teal-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', tier: 'free', players: '850', rating: '88%', image: 'https://picsum.photos/seed/snake/800/600' },
+    { id: 'runner', name: 'Nexus Runner 3D', icon: '🏃', color: 'from-orange-600 to-amber-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', tier: 'free', players: '3.4k', rating: '92%', image: 'https://picsum.photos/seed/runner/800/600' },
+    { id: 'jump', name: 'Neon Jump 3D', icon: '🚀', color: 'from-cyan-600 to-blue-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '90%', image: 'https://picsum.photos/seed/jump/800/600' },
+    { id: 'dodge', name: 'Data Dodge 3D', icon: '🛡️', color: 'from-yellow-600 to-amber-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', tier: 'free', players: '2.3k', rating: '93%', image: 'https://picsum.photos/seed/dodge/800/600' },
+    { id: 'quiz', name: 'Vibe Quiz 3D', icon: '❓', color: 'from-pink-600 to-rose-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', tier: 'free', players: '900', rating: '85%', image: 'https://picsum.photos/seed/quiz/800/600' },
+    { id: 'stack', name: 'Block Stack 3D', icon: '🧱', color: 'from-indigo-600 to-purple-400', desc: 'Empilez les blocs de données.', difficulty: 'Easy', tier: 'free', players: '1.1k', rating: '87%', image: 'https://picsum.photos/seed/stack/800/600' },
+    { id: 'aim', name: 'Aim Trainer 3D', icon: '🎯', color: 'from-red-600 to-rose-400', desc: 'Améliorez vos réflexes.', difficulty: 'Hard', tier: 'free', players: '2.5k', rating: '91%', image: 'https://picsum.photos/seed/aim/800/600' },
+    { id: 'color', name: 'Color Match 3D', icon: '🎨', color: 'from-teal-600 to-emerald-400', desc: 'Associez les couleurs du Nexus.', difficulty: 'Medium', tier: 'free', players: '1.4k', rating: '89%', image: 'https://picsum.photos/seed/color/800/600' },
+    { id: 'tap', name: 'Fast Tap 3D', icon: '👆', color: 'from-purple-600 to-fuchsia-400', desc: 'Tapez le plus vite possible.', difficulty: 'Easy', tier: 'free', players: '3.1k', rating: '95%', image: 'https://picsum.photos/seed/tap/800/600' },
+    { id: 'memory', name: 'Neuro Memory 3D', icon: '🧠', color: 'from-blue-500 to-indigo-400', desc: 'Testez votre mémoire visuelle.', difficulty: 'Medium', tier: 'free', players: '1.8k', rating: '92%', image: 'https://picsum.photos/seed/memory/800/600' },
+    { id: 'bricks', name: 'Cyber Bricks 3D', icon: '🧱', color: 'from-orange-500 to-red-400', desc: 'Cassez les briques du Nexus.', difficulty: 'Easy', tier: 'free', players: '2.2k', rating: '90%', image: 'https://picsum.photos/seed/bricks/800/600' },
+    { id: 'flappy', name: 'Vibe Bird 3D', icon: '🐦', color: 'from-yellow-500 to-orange-400', desc: 'Volez à travers les serveurs.', difficulty: 'Hard', tier: 'free', players: '4.5k', rating: '88%', image: 'https://picsum.photos/seed/flappy/800/600' },
+    { id: 'tetris', name: 'Nexus Blocks 3D', icon: '🧊', color: 'from-indigo-500 to-blue-400', desc: 'Alignez les blocs de données.', difficulty: 'Hard', tier: 'free', players: '3.9k', rating: '94%', image: 'https://picsum.photos/seed/tetris/800/600' },
+    { id: 'pong', name: 'Cyber Pong 3D', icon: '🏓', color: 'from-slate-600 to-slate-400', desc: 'Le classique revisité.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '86%', image: 'https://picsum.photos/seed/pong/800/600' },
+    { id: 'invaders', name: 'Data Invaders 3D', icon: '👾', color: 'from-purple-600 to-blue-400', desc: 'Défendez le Nexus.', difficulty: 'Medium', tier: 'free', players: '2.8k', rating: '92%', image: 'https://picsum.photos/seed/invaders/800/600' },
+    { id: 'mines', name: 'Nexus Mines 3D', icon: '💣', color: 'from-red-600 to-orange-400', desc: 'Déminez les serveurs.', difficulty: 'Hard', tier: 'free', players: '950', rating: '84%', image: 'https://picsum.photos/seed/mines/800/600' },
+    { id: 'sudoku', name: 'Neuro Sudoku 3D', icon: '🔢', color: 'from-blue-600 to-indigo-400', desc: 'Logique pure.', difficulty: 'Hard', tier: 'free', players: '1.5k', rating: '88%', image: 'https://picsum.photos/seed/sudoku/800/600' },
+    { id: 'helix', name: 'Helix Jump 3D', icon: '🌀', color: 'from-pink-500 to-rose-400', desc: 'Descendez la tour infinie.', difficulty: 'Medium', tier: 'free', players: '2.1k', rating: '91%', image: 'https://picsum.photos/seed/helix/800/600' },
+    { id: 'ball', name: 'Rolling Ball 3D', icon: '⚽', color: 'from-emerald-500 to-teal-400', desc: 'Contrôlez la balle sur le circuit.', difficulty: 'Medium', tier: 'free', players: '1.7k', rating: '89%', image: 'https://picsum.photos/seed/ball/800/600' },
+    { id: 'knife', name: 'Knife Hit 3D', icon: '🔪', color: 'from-slate-500 to-slate-700', desc: 'Lancez des couteaux.', difficulty: 'Medium', tier: 'free', players: '1.1k', rating: '87%', image: 'https://picsum.photos/seed/knife/800/600' },
+    { id: 'soccer', name: 'Soccer Vibe 3D', icon: '⚽', color: 'from-green-500 to-emerald-600', desc: 'Marquez des buts.', difficulty: 'Easy', tier: 'free', players: '2.4k', rating: '92%', image: 'https://picsum.photos/seed/soccer/800/600' },
+    { id: 'basket', name: 'Basket Vibe 3D', icon: '🏀', color: 'from-orange-500 to-red-600', desc: 'Faites des dunks.', difficulty: 'Medium', tier: 'free', players: '1.9k', rating: '90%', image: 'https://picsum.photos/seed/basket/800/600' },
+    { id: 'tennis', name: 'Tennis Vibe 3D', icon: '🎾', color: 'from-lime-500 to-green-600', desc: 'Matchs de tennis.', difficulty: 'Medium', tier: 'free', players: '1.3k', rating: '88%', image: 'https://picsum.photos/seed/tennis/800/600' },
+    { id: 'golf', name: 'Golf Vibe 3D', icon: '⛳', color: 'from-emerald-400 to-teal-500', desc: 'Le golf zen.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '93%', image: 'https://picsum.photos/seed/golf/800/600' },
+    { id: 'bowling', name: 'Bowling Vibe 3D', icon: '🎳', color: 'from-blue-400 to-indigo-500', desc: 'Faites des strikes.', difficulty: 'Easy', tier: 'free', players: '2.1k', rating: '91%', image: 'https://picsum.photos/seed/bowling/800/600' },
+    { id: 'chess', name: 'Chess Vibe 3D', icon: '♟️', color: 'from-slate-800 to-black', desc: 'Échecs stratégiques.', difficulty: 'Hard', tier: 'free', players: '800', rating: '89%', image: 'https://picsum.photos/seed/chess/800/600' },
+    { id: 'cards', name: 'Cards Vibe 3D', icon: '🃏', color: 'from-red-500 to-rose-600', desc: 'Jeux de cartes.', difficulty: 'Medium', tier: 'free', players: '1.6k', rating: '87%', image: 'https://picsum.photos/seed/cards/800/600' },
+    { id: 'dice', name: 'Dice Vibe 3D', icon: '🎲', color: 'from-white to-slate-200', desc: 'Lancez les dés.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '85%', image: 'https://picsum.photos/seed/dice/800/600' },
+    { id: 'ludo', name: 'Ludo Vibe 3D', icon: '🎲', color: 'from-yellow-400 to-orange-500', desc: 'Le jeu culte.', difficulty: 'Easy', tier: 'free', players: '3.5k', rating: '94%', image: 'https://picsum.photos/seed/ludo/800/600' },
+
+    // ULTIMATE GAMES (15)
+    { id: 'matrix', name: 'Memory Matrix 3D', icon: '💠', color: 'from-purple-600 to-indigo-600', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%', image: 'https://picsum.photos/seed/matrix/800/600' },
+    { id: 'math', name: 'Fast Math 3D', icon: '🧮', color: 'from-rose-600 to-pink-600', desc: 'Résolvez les équations du Nexus.', difficulty: 'Medium', tier: 'ultimate', players: '2.1k', rating: '96%', image: 'https://picsum.photos/seed/math/800/600' },
+    { id: 'battle', name: 'Aura Battle 3D', icon: '⚔️', color: 'from-indigo-600 to-blue-600', desc: 'Combattez dans l\'arène Aura.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%', image: 'https://picsum.photos/seed/battle/800/600' },
+    { id: 'tower', name: 'Aura Tower 3D', icon: '🏰', color: 'from-violet-600 to-purple-600', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%', image: 'https://picsum.photos/seed/tower/800/600' },
+    { id: 'space', name: 'Space Void 3D', icon: '🌌', color: 'from-slate-800 to-slate-600', desc: 'Explorez le vide spatial.', difficulty: 'Medium', tier: 'ultimate', players: '750', rating: '92%', image: 'https://picsum.photos/seed/space/800/600' },
+    { id: 'cyber_race', name: 'Cyber Racer 3D', icon: '🏎️', color: 'from-blue-600 to-cyan-400', desc: 'Course néon à haute vitesse.', difficulty: 'Hard', tier: 'ultimate', players: '3.2k', rating: '95%', image: 'https://picsum.photos/seed/cyber_race/800/600' },
+    { id: 'neon_golf', name: 'Neon Golf 3D', icon: '⛳', color: 'from-emerald-600 to-teal-400', desc: 'Golf futuriste.', difficulty: 'Medium', tier: 'ultimate', players: '1.8k', rating: '90%', image: 'https://picsum.photos/seed/neon_golf/800/600' },
+    { id: 'data_flow', name: 'Data Flow 3D', icon: '🌊', color: 'from-cyan-600 to-blue-400', desc: 'Connectez les flux de données.', difficulty: 'Hard', tier: 'ultimate', players: '2.5k', rating: '93%', image: 'https://picsum.photos/seed/data_flow/800/600' },
+    { id: 'sky_jump', name: 'Sky Jump 3D', icon: '☁️', color: 'from-sky-500 to-blue-400', desc: 'Sautez dans les nuages.', difficulty: 'Medium', tier: 'ultimate', players: '1.3k', rating: '87%', image: 'https://picsum.photos/seed/sky/800/600' },
+    { id: 'neon_drift', name: 'Neon Drift 3D', icon: '🚗', color: 'from-red-500 to-orange-400', desc: 'Driftez dans la ville néon.', difficulty: 'Hard', tier: 'ultimate', players: '2.9k', rating: '94%', image: 'https://picsum.photos/seed/drift/800/600' },
+    { id: 'cyber_chess', name: 'Cyber Chess 3D', icon: '♟️', color: 'from-slate-700 to-slate-900', desc: 'Échecs futuristes.', difficulty: 'Hard', tier: 'ultimate', players: '800', rating: '91%', image: 'https://picsum.photos/seed/chess/800/600' },
+    { id: 'void_runner', name: 'Void Runner 3D', icon: '🏃‍♂️', color: 'from-indigo-900 to-purple-900', desc: 'Courez dans le vide.', difficulty: 'Expert', tier: 'ultimate', players: '1.5k', rating: '92%', image: 'https://picsum.photos/seed/voidrun/800/600' },
+    { id: 'ninja', name: 'Ninja Vibe 3D', icon: '🥷', color: 'from-slate-900 to-black', desc: 'L\'art de la furtivité.', difficulty: 'Hard', tier: 'ultimate', players: '2.1k', rating: '93%', image: 'https://picsum.photos/seed/ninja/800/600' },
+    { id: 'samurai', name: 'Samurai Vibe 3D', icon: '⚔️', color: 'from-red-900 to-black', desc: 'Le code de l\'honneur.', difficulty: 'Hard', tier: 'ultimate', players: '1.8k', rating: '95%', image: 'https://picsum.photos/seed/samurai/800/600' },
+    { id: 'pirate', name: 'Pirate Vibe 3D', icon: '🏴‍☠️', color: 'from-blue-900 to-black', desc: 'Voguez sur les mers.', difficulty: 'Medium', tier: 'ultimate', players: '2.5k', rating: '91%', image: 'https://picsum.photos/seed/pirate/800/600' },
+
+    // ULTIMATE+ GAMES (15)
+    { id: 'god', name: 'Nexus God 3D', icon: '👑', color: 'from-amber-500 to-yellow-400', desc: 'Devenez le dieu du Nexus.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '99%', image: 'https://picsum.photos/seed/god/800/600' },
+    { id: 'hack', name: 'Core Hacker 3D', icon: '💻', color: 'from-lime-500 to-green-400', desc: 'Hackez le noyau central.', difficulty: 'Hard', tier: 'ultimate_plus', players: '300', rating: '97%', image: 'https://picsum.photos/seed/hack/800/600' },
+    { id: 'time', name: 'Time Warp 3D', icon: '⏳', color: 'from-cyan-500 to-blue-400', desc: 'Manipulez le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '220', rating: '94%', image: 'https://picsum.photos/seed/time/800/600' },
+    { id: 'void', name: 'Void Walker 3D', icon: '🚶', color: 'from-black to-slate-800', desc: 'Marchez dans le néant.', difficulty: 'Hard', tier: 'ultimate_plus', players: '180', rating: '96%', image: 'https://picsum.photos/seed/void/800/600' },
+    { id: 'infinity', name: 'Infinity Loop 3D', icon: '♾️', color: 'from-fuchsia-500 to-pink-400', desc: 'Boucle infinie de données.', difficulty: 'Expert', tier: 'ultimate_plus', players: '400', rating: '98%', image: 'https://picsum.photos/seed/infinity/800/600' },
+    { id: 'quantum', name: 'Quantum Leap 3D', icon: '⚛️', color: 'from-indigo-600 to-purple-400', desc: 'Sauts quantiques.', difficulty: 'Expert', tier: 'ultimate_plus', players: '250', rating: '97%', image: 'https://picsum.photos/seed/quantum/800/600' },
+    { id: 'neural_net', name: 'Neural Net 3D', icon: '🕸️', color: 'from-emerald-600 to-teal-400', desc: 'Tissez le réseau neuronal.', difficulty: 'Expert', tier: 'ultimate_plus', players: '350', rating: '96%', image: 'https://picsum.photos/seed/neural_net/800/600' },
+    { id: 'singularity', name: 'Singularity 3D', icon: '🕳️', color: 'from-slate-900 to-black', desc: 'Échappez à la singularité.', difficulty: 'Expert', tier: 'ultimate_plus', players: '120', rating: '99%', image: 'https://picsum.photos/seed/singularity/800/600' },
+    { id: 'dimension', name: 'Dimension Shift 3D', icon: '🌀', color: 'from-rose-500 to-orange-400', desc: 'Changez de dimension.', difficulty: 'Expert', tier: 'ultimate_plus', players: '200', rating: '95%', image: 'https://picsum.photos/seed/dim/800/600' },
+    { id: 'supernova', name: 'Supernova 3D', icon: '💥', color: 'from-orange-600 to-red-600', desc: 'Survivez à l\'explosion.', difficulty: 'Expert', tier: 'ultimate_plus', players: '300', rating: '98%', image: 'https://picsum.photos/seed/nova/800/600' },
+    { id: 'nexus_prime', name: 'Nexus Prime 3D', icon: '🌌', color: 'from-blue-900 to-indigo-900', desc: 'L\'expérience VR ultime.', difficulty: 'Expert', tier: 'ultimate_plus', players: '100', rating: '99%', image: 'https://picsum.photos/seed/prime/800/600' },
+    { id: 'aura_quest', name: 'Aura Quest 3D', icon: '✨', color: 'from-amber-400 to-yellow-600', desc: 'L\'aventure RPG avec Aura.', difficulty: 'Hard', tier: 'ultimate_plus', players: '500', rating: '97%', image: 'https://picsum.photos/seed/quest/800/600' },
+    { id: 'infinity_vibe', name: 'Infinity Vibe 3D', icon: '♾️', color: 'from-fuchsia-600 to-pink-600', desc: 'Le jeu sans fin.', difficulty: 'Expert', tier: 'ultimate_plus', players: '300', rating: '98%', image: 'https://picsum.photos/seed/infvibe/800/600' },
+    { id: 'god_vibe', name: 'God Vibe 3D', icon: '🌍', color: 'from-emerald-500 to-teal-500', desc: 'Créez votre propre univers.', difficulty: 'Expert', tier: 'ultimate_plus', players: '200', rating: '99%', image: 'https://picsum.photos/seed/godvibe/800/600' },
+    { id: 'time_vibe', name: 'Time Vibe 3D', icon: '⏳', color: 'from-cyan-600 to-blue-600', desc: 'Voyagez dans le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '96%', image: 'https://picsum.photos/seed/timevibe/800/600' },
+  ],
+
   toggleLike: (postId: string, userId: string) => {
     const posts = storage.getPosts();
     const post = posts.find(p => p.id === postId);
@@ -369,12 +448,12 @@ export const storage = {
         user.lastBoostReset = today;
       }
 
-      const limit = user.isUltimate ? 10 : 3;
+      const limit = user.isUltimatePlus ? 25 : (user.isUltimate ? 12 : 5);
       if (user.dailyBoostsCount >= limit) {
         return { success: false, message: `Limite de boost quotidienne atteinte (${limit}/${limit}).` };
       }
       
-      const cost = user.isUltimate ? 100 : 250;
+      const cost = user.isUltimatePlus ? 50 : (user.isUltimate ? 150 : 300);
       if (user.credits < cost) return { success: false, message: `Novas insuffisants (${cost} N requis).` };
       
       post.boosts.push(userId);

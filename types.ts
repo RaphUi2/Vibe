@@ -108,7 +108,7 @@ export interface Quest {
   description: string;
   reward: number;
   xpReward: number;
-  type: 'post' | 'like' | 'boost' | 'chat' | 'daily';
+  type: 'post' | 'like' | 'boost' | 'chat' | 'daily' | 'game' | 'vibeo' | 'search' | 'save' | 'shop' | 'level' | 'social';
   goal: number;
   ultimate?: boolean;
 }
@@ -145,7 +145,7 @@ export interface Game {
 export interface LevelPass {
   level: number;
   xpRequired: number;
-  rewardType: 'credits' | 'theme' | 'badge' | 'boost_limit';
-  rewardValue: string | number;
+  rewardType: 'credits' | 'theme' | 'badge' | 'boost_limit' | 'aura_skin' | 'verified';
+  rewardValue: string | number | boolean;
   isPremium: boolean;
 }
