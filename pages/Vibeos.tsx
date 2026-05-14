@@ -32,7 +32,7 @@ const Vibeos: React.FC<{ user: User }> = ({ user }) => {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide bg-black relative">
+    <div className="h-full w-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide bg-black relative">
       {posts.map(vibeo => (
         <VibeoCard key={vibeo.id} post={vibeo} user={user} refresh={refresh} />
       ))}

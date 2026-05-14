@@ -212,12 +212,12 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
         <div className="relative mt-10">
           <div className="absolute left-1/2 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-500 via-amber-500 to-yellow-500 -translate-x-1/2 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.6)] opacity-50" />
 
-          <div className="flex justify-between mb-12 sticky top-20 z-30 px-4 md:px-8">
-            <div className="w-[45%] text-right pr-4 md:pr-8">
-              <h3 className="vibe-logo text-xl md:text-3xl font-black text-slate-300 tracking-tighter drop-shadow-lg">FREE</h3>
+          <div className="flex justify-between mb-8 md:mb-12 sticky top-20 z-30 px-2 md:px-8 bg-[#020617]/80 backdrop-blur-md py-4 rounded-3xl border border-white/5">
+            <div className="w-[48%] md:w-[45%] text-right pr-2 md:pr-8">
+              <h3 className="vibe-logo text-xs md:text-3xl font-black text-slate-300 tracking-tighter drop-shadow-lg uppercase">Gratuit</h3>
             </div>
-            <div className="w-[45%] text-left pl-4 md:pl-8">
-              <h3 className="vibe-logo text-xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-amber-400 tracking-tighter drop-shadow-lg">ULTIMATE</h3>
+            <div className="w-[48%] md:w-[45%] text-left pl-2 md:pl-8">
+              <h3 className="vibe-logo text-xs md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-amber-400 tracking-tighter drop-shadow-lg uppercase">Ultimate</h3>
             </div>
           </div>
 
@@ -228,29 +228,29 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
               
               return (
                 <div key={lvl.level} className="relative flex items-center justify-between w-full group">
-                  <div className={`absolute left-1/2 -translate-x-1/2 w-10 h-10 md:w-14 md:h-14 rounded-2xl flex items-center justify-center z-20 transition-all duration-500 transform rotate-45 ${
-                    isCurrent ? 'bg-amber-500 border-4 border-white shadow-[0_0_30px_rgba(245,158,11,0.8)] scale-125' : 
+                  <div className={`absolute left-1/2 -translate-x-1/2 w-8 h-8 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center z-20 transition-all duration-500 transform rotate-45 ${
+                    isCurrent ? 'bg-amber-500 border-2 md:border-4 border-white shadow-[0_0_30px_rgba(245,158,11,0.8)] scale-125' : 
                     isPassed ? 'bg-amber-900 border-2 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 
                     'bg-[#020617] border-2 border-slate-700'
                   }`}>
-                    <span className={`font-black -rotate-45 ${isCurrent ? 'text-white text-xl md:text-2xl' : isPassed ? 'text-amber-200 text-lg' : 'text-slate-500 text-sm'}`}>
+                    <span className={`font-black -rotate-45 ${isCurrent ? 'text-white text-xs md:text-2xl' : isPassed ? 'text-amber-200 text-[10px] md:text-lg' : 'text-slate-500 text-[10px] md:text-sm'}`}>
                       {lvl.level}
                     </span>
                   </div>
 
-                  <div className="w-[45%] pr-6 md:pr-12 flex justify-end">
+                  <div className="w-[48%] md:w-[45%] pr-2 md:pr-12 flex justify-end">
                     {lvl.freeReward ? (
                       <RewardCard reward={lvl.freeReward} level={lvl.level} track="free" user={user} onClaim={handleClaim} />
                     ) : (
-                      <div className="w-full max-w-[260px] h-16 border-2 border-dashed border-slate-800 rounded-2xl opacity-30" />
+                      <div className="w-full max-w-[260px] h-12 md:h-16 border-2 border-dashed border-slate-800 rounded-2xl opacity-30" />
                     )}
                   </div>
 
-                  <div className="w-[45%] pl-6 md:pl-12 flex justify-start">
+                  <div className="w-[48%] md:w-[45%] pl-2 md:pl-12 flex justify-start">
                     {lvl.ultimateReward ? (
                       <RewardCard reward={lvl.ultimateReward} level={lvl.level} track="ultimate" user={user} onClaim={handleClaim} />
                     ) : (
-                      <div className="w-full max-w-[260px] h-16 border-2 border-dashed border-blue-900/30 rounded-2xl opacity-30" />
+                      <div className="w-full max-w-[260px] h-12 md:h-16 border-2 border-dashed border-blue-900/30 rounded-2xl opacity-30" />
                     )}
                   </div>
                 </div>

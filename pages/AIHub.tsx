@@ -93,7 +93,7 @@ const AIHub: React.FC<{ user: User }> = ({ user }) => {
   const activeService = services.find(s => s.id === activeTab);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-[#020617] text-white animate-in fade-in duration-700 font-sans overflow-hidden">
+    <div className="flex flex-col flex-1 bg-[#020617] text-white animate-in fade-in duration-700 font-sans overflow-hidden">
       
       {/* Header & Modules - Centered */}
       <div className="flex flex-col items-center p-6 border-b border-white/5 bg-black/40 backdrop-blur-xl z-50 space-y-6">

@@ -15,9 +15,11 @@ interface PlusPageProps {
 
 const Plus: React.FC<PlusPageProps> = ({ user }) => {
   const menuItems = [
-    { id: 'settings', label: 'Paramètres', icon: <SettingsIcon className="w-6 h-6" />, desc: 'Gérez votre compte et vos préférences.', color: 'bg-slate-500' },
+    { id: 'ia', label: 'Aura AI', icon: <Zap className="w-6 h-6" />, desc: 'Discutez avec Aura, votre assistant intelligent.', color: 'bg-indigo-500' },
+    { id: 'levelpass', label: 'Level Pass', icon: <ChevronRight className="w-6 h-6" />, desc: 'Votre progression et récompenses saisonnières.', color: 'bg-vibe-orange' },
     { id: 'quests', label: 'Quêtes', icon: <Target className="w-6 h-6" />, desc: 'Relevez des défis pour gagner des récompenses.', color: 'bg-emerald-500' },
     { id: 'store', label: 'Shop', icon: <ShoppingBag className="w-6 h-6" />, desc: 'Achetez des cosmétiques et des boosts.', color: 'bg-blue-500' },
+    { id: 'settings', label: 'Paramètres', icon: <SettingsIcon className="w-6 h-6" />, desc: 'Gérez votre compte et vos préférences.', color: 'bg-slate-500' },
     { id: 'boost', label: 'Boost', icon: <Zap className="w-6 h-6" />, desc: 'Accélérez votre progression dans le Nexus.', color: 'bg-amber-500' },
   ];
 

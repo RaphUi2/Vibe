@@ -149,10 +149,10 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
         </div>
       </div>
 
-      <div className="px-6 md:px-8 space-y-8 mt-10">
+      <div className="px-3 md:px-8 space-y-6 mt-8 md:mt-10">
          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <h2 className="text-3xl md:text-5xl font-black text-white vibe-logo tracking-tighter">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+              <h2 className="text-2xl md:text-5xl font-black text-white vibe-logo tracking-tighter">
                   {profileUser.name}
               </h2>
               {profileUser.isCertified && (
@@ -198,24 +198,26 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       </div>
 
       {/* CATEGORIES / TABS */}
-      <div className="mt-8 sticky top-0 z-[40] bg-black/60 backdrop-blur-3xl border-y border-white/5 py-3">
-        <div className="flex justify-center flex-wrap gap-1 px-4 max-w-4xl mx-auto bg-[#16181c]/50 p-1 rounded-full border border-white/5">
-          {[
-            { id: 'posts', label: 'Signaux' },
-            { id: 'reposts', label: 'Echos' },
-            { id: 'media', label: 'Reliques' },
-            { id: 'likes', label: 'Flux' },
-            { id: 'saved', label: 'Archives' },
-            { id: 'wall', label: 'Fréquences' }
-          ].map(tab => (
-            <button 
-              key={tab.id} 
-              onClick={() => setActiveTab(tab.id as any)} 
-              className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.1em] transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      <div className="mt-8 sticky top-0 z-[40] bg-black/60 backdrop-blur-3xl border-y border-white/5 py-3 overflow-x-auto scrollbar-hide">
+        <div className="flex justify-start md:justify-center gap-1 px-4 min-w-max p-1">
+          <div className="flex gap-1 bg-[#16181c]/50 p-1 rounded-full border border-white/5">
+            {[
+              { id: 'posts', label: 'Signaux' },
+              { id: 'reposts', label: 'Echos' },
+              { id: 'media', label: 'Reliques' },
+              { id: 'likes', label: 'Flux' },
+              { id: 'saved', label: 'Archives' },
+              { id: 'wall', label: 'Fréquences' }
+            ].map(tab => (
+              <button 
+                key={tab.id} 
+                onClick={() => setActiveTab(tab.id as any)} 
+                className={`px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.1em] transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -346,7 +348,7 @@ const PostEntry: React.FC<{ post: Post, user: User }> = ({ post, user }) => {
   const originalAuthor = storage.getUsers().find(u => u.id === originalPost.userId);
 
   return (
-    <div className="p-6 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl mx-4">
+    <div className="p-4 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl mx-1 md:mx-4">
        {post.repostOf && (
          <div className="flex items-center gap-2 mb-4 ml-14 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
             <svg className="w-3.5 h-3.5 logo-vibe-text" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>

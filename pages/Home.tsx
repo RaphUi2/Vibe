@@ -264,11 +264,11 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   };
 
   return (
-    <div className="mb-8 animate-in slide-in-from-top-4 duration-700 max-w-2xl mx-auto w-full">
+    <div className="mb-4 md:mb-8 animate-in slide-in-from-top-4 duration-700 max-w-2xl mx-auto w-full px-2 md:px-0">
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-orange rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
         
-        <div className="relative liquid-glass rounded-[2.5rem] p-6 border border-white/10 shadow-4xl overflow-hidden">
+        <div className="relative liquid-glass rounded-[2.5rem] p-4 md:p-6 border border-white/10 shadow-4xl overflow-hidden">
           <div className="flex items-center justify-between mb-6">
              <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-vibe-blue to-vibe-purple rounded-xl flex items-center justify-center shadow-2xl">
@@ -389,7 +389,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-700 h-full">
       {/* Search & Header - Balanced Glassmorphism */}
-      <div className="sticky top-0 z-[500] bg-black/40 backdrop-blur-3xl border-b border-white/5 p-4 space-y-4">
+      <div className="sticky top-0 z-[500] bg-black/40 backdrop-blur-3xl border-b border-white/5 p-2 md:p-4 space-y-4">
         <div className="relative group max-w-2xl mx-auto">
            <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
               <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -516,16 +516,16 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
   };
   
   return (
-    <div className="p-4 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl" onClick={() => {}}>
+    <div className="p-3 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl" onClick={() => {}}>
       {post.repostOf && (
-        <div className="flex items-center gap-2 mb-4 ml-12 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
+        <div className="flex items-center gap-2 mb-4 ml-6 md:ml-12 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
            <svg className="w-3.5 h-3.5 logo-vibe-text" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-           {author?.name} a propagé le signal
+           <span className="truncate">{author?.name} a propagé le signal</span>
         </div>
       )}
       
-      <div className="flex gap-6">
-        <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-vibe-blue via-vibe-purple to-vibe-pink overflow-hidden w-14 h-14 shrink-0 transition-transform group-hover:scale-105 duration-500">
+      <div className="flex gap-3 md:gap-6">
+        <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-vibe-blue via-vibe-purple to-vibe-pink overflow-hidden w-10 h-10 md:w-14 md:h-14 shrink-0 transition-transform group-hover:scale-105 duration-500">
           <img 
               src={originalAuthor?.avatar} 
               className="w-full h-full rounded-full border border-black/20 object-cover" 
