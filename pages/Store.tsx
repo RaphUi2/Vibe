@@ -1,6 +1,7 @@
 import React from 'react';
 import { User } from '../types.ts';
 import { storage } from '../services/storageService.ts';
+import { THEMES } from '../constants.ts';
 
 const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user, onUpdate }) => {
   const buyMembership = (type: 'ultimate' | 'ultimate_plus' | 'real_money') => {
@@ -31,14 +32,6 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
     storage.updateUser(updatedUser);
     onUpdate(updatedUser);
   };
-
-  const themes = [
-    { id: 'neon_pink', label: 'Cyber Pink', cost: 500, color: 'bg-pink-500' },
-    { id: 'gold', label: 'Elite Gold', cost: 2000, color: 'bg-amber-500' },
-    { id: 'emerald', label: 'Digital Green', cost: 1000, color: 'bg-emerald-500' },
-    { id: 'ruby', label: 'Crimson Red', cost: 1000, color: 'bg-rose-500' },
-    { id: 'cyber_ocean', label: 'Cyber Ocean', cost: 1500, color: 'bg-blue-500' },
-  ];
 
   const buyTheme = (themeId: string, cost: number) => {
     if (user.unlockedThemes?.includes(themeId)) {
@@ -193,15 +186,15 @@ const Store: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ user,
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            {themes.map((theme, idx) => {
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            {THEMES.map((theme, idx) => {
               const isUnlocked = user.unlockedThemes?.includes(theme.id);
               const isActive = user.activeTheme === theme.id;
               
               return (
                 <div 
                   key={theme.id} 
-                  style={{ transform: `translateZ(${idx * 15}px)` }}
+                  style={{ transform: `translateZ(${idx * 5}px)` }}
                   className={`group relative p-8 rounded-[3rem] border transition-all duration-700 shadow-4xl backdrop-blur-3xl flex flex-col items-center text-center ${isActive ? 'border-vibe-blue/30 bg-vibe-blue/5 scale-[0.98]' : 'liquid-glass border-white/10 hover:border-white/30 hover:scale-[1.1] transform-gpu'}`}
                 >
                   <div className={`w-20 h-20 rounded-[1.5rem] ${theme.color} mb-8 shadow-4xl border-2 border-white/20 group-hover:rotate-12 transition-transform duration-700 relative overflow-hidden`}>

@@ -75,33 +75,36 @@ export const storage = {
     const totalViews = posts.reduce((acc, p) => acc + (p.views || 0), 0);
     const friendsCount = user.friends?.length || 0;
     const questsCount = user.completedQuests?.length || 0;
+    const aiInteractions = user.rewardedActions?.filter(a => a.startsWith('ai-')).length || 0;
 
-    // More complex score calculation
-    const baseScore = 1000;
-    const levelBonus = user.level * 250;
-    const engagementBonus = (totalLikes * 25) + (totalBoosts * 100) + (Math.floor(totalViews / 10));
-    const socialBonus = (friendsCount * 150) + (questsCount * 500);
-    const membershipBonus = user.isUltimatePlus ? 10000 : (user.isUltimate ? 5000 : 0);
+    // Advanced Vibe Score 2.0
+    const levelPower = Math.pow(user.level, 1.5) * 100;
+    const engagementPower = (totalLikes * 50) + (totalBoosts * 250) + (totalViews * 2);
+    const activityPower = (posts.length * 300) + (questsCount * 1000) + (aiInteractions * 500);
+    const networkPower = (friendsCount * 500);
+    const premiumMultiplier = user.isUltimatePlus ? 2.0 : (user.isUltimate ? 1.5 : 1.0);
 
-    const newScore = baseScore + levelBonus + engagementBonus + socialBonus + membershipBonus;
+    const newScore = Math.floor((levelPower + engagementPower + activityPower + networkPower) * premiumMultiplier);
 
-    // Metrics calculation (0-99)
+    // Metrics calculation (0-100)
     const newMetrics = {
-      energy: Math.min(99, 40 + (user.level * 2) + (questsCount * 5)),
-      flow: Math.min(99, 30 + (posts.length * 10) + (Math.floor(totalViews / 500))),
-      impact: Math.min(99, 20 + (totalLikes * 5) + (totalBoosts * 15) + (friendsCount * 5))
+      energy: Math.min(100, Math.floor(20 + (user.level * 2) + (questsCount * 5))),
+      flow: Math.min(100, Math.floor(10 + (posts.length * 5) + (totalViews / 1000))),
+      impact: Math.min(100, Math.floor(totalLikes / 10 + totalBoosts * 2 + friendsCount * 5))
     };
 
-    // Rank determination
-    let newRank = 'Nouveau Nexus';
-    if (newScore > 100000) newRank = 'Légende Éternelle';
-    else if (newScore > 50000) newRank = 'Maître du Nexus';
-    else if (newScore > 25000) newRank = 'Nexus Élite';
-    else if (newScore > 10000) newRank = 'Vibe Architect';
-    else if (newScore > 5000) newRank = 'Créateur Actif';
-    else if (newScore > 2500) newRank = 'Explorateur';
+    // New Ranks
+    let newRank = 'Néophyte du Nexus';
+    if (newScore > 1000000) newRank = 'Architecte Suprême';
+    else if (newScore > 500000) newRank = 'Oracle Divin';
+    else if (newScore > 250000) newRank = 'Légende de Vibea';
+    else if (newScore > 100000) newRank = 'Nexus Elite';
+    else if (newScore > 50000) newRank = 'Vibe Master';
+    else if (newScore > 25000) newRank = 'Sydéral';
+    else if (newScore > 10000) newRank = 'Résonateur';
+    else if (newScore > 5000) newRank = 'Explorateur';
 
-    // Only update if something changed significantly
+    // Only update if something changed
     if (user.vibeScore !== newScore || user.vibeRank !== newRank) {
       user.vibeScore = newScore;
       user.vibeMetrics = newMetrics;
@@ -312,10 +315,10 @@ export const storage = {
     { id: 'ludo', name: 'Ludo Vibe 3D', icon: '🎲', color: 'from-yellow-400 to-orange-500', desc: 'Le jeu culte.', difficulty: 'Easy', tier: 'free', players: '3.5k', rating: '94%', image: 'https://picsum.photos/seed/ludo/800/600' },
 
     // ULTIMATE GAMES (15)
-    { id: 'matrix', name: 'Memory Matrix 3D', icon: '💠', color: 'from-purple-600 to-indigo-600', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%', image: 'https://picsum.photos/seed/matrix/800/600' },
+    { id: 'matrix', name: 'Memory Matrix 3D', icon: '💠', color: 'from-purple-600 to-indigo-600', desc: 'Répétez la séquence de synchronisation Vibea AI.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%', image: 'https://picsum.photos/seed/matrix/800/600' },
     { id: 'math', name: 'Fast Math 3D', icon: '🧮', color: 'from-rose-600 to-pink-600', desc: 'Résolvez les équations du Nexus.', difficulty: 'Medium', tier: 'ultimate', players: '2.1k', rating: '96%', image: 'https://picsum.photos/seed/math/800/600' },
-    { id: 'battle', name: 'Aura Battle 3D', icon: '⚔️', color: 'from-indigo-600 to-blue-600', desc: 'Combattez dans l\'arène Aura.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%', image: 'https://picsum.photos/seed/battle/800/600' },
-    { id: 'tower', name: 'Aura Tower 3D', icon: '🏰', color: 'from-violet-600 to-purple-600', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%', image: 'https://picsum.photos/seed/tower/800/600' },
+    { id: 'battle', name: 'Vibea Battle 3D', icon: '⚔️', color: 'from-indigo-600 to-blue-600', desc: 'Combattez dans l\'arène Vibea AI.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%', image: 'https://picsum.photos/seed/battle/800/600' },
+    { id: 'tower', name: 'Vibea Tower 3D', icon: '🏰', color: 'from-violet-600 to-purple-600', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%', image: 'https://picsum.photos/seed/tower/800/600' },
     { id: 'space', name: 'Space Void 3D', icon: '🌌', color: 'from-slate-800 to-slate-600', desc: 'Explorez le vide spatial.', difficulty: 'Medium', tier: 'ultimate', players: '750', rating: '92%', image: 'https://picsum.photos/seed/space/800/600' },
     { id: 'cyber_race', name: 'Cyber Racer 3D', icon: '🏎️', color: 'from-blue-600 to-cyan-400', desc: 'Course néon à haute vitesse.', difficulty: 'Hard', tier: 'ultimate', players: '3.2k', rating: '95%', image: 'https://picsum.photos/seed/cyber_race/800/600' },
     { id: 'neon_golf', name: 'Neon Golf 3D', icon: '⛳', color: 'from-emerald-600 to-teal-400', desc: 'Golf futuriste.', difficulty: 'Medium', tier: 'ultimate', players: '1.8k', rating: '90%', image: 'https://picsum.photos/seed/neon_golf/800/600' },
@@ -340,7 +343,9 @@ export const storage = {
     { id: 'dimension', name: 'Dimension Shift 3D', icon: '🌀', color: 'from-rose-500 to-orange-400', desc: 'Changez de dimension.', difficulty: 'Expert', tier: 'ultimate_plus', players: '200', rating: '95%', image: 'https://picsum.photos/seed/dim/800/600' },
     { id: 'supernova', name: 'Supernova 3D', icon: '💥', color: 'from-orange-600 to-red-600', desc: 'Survivez à l\'explosion.', difficulty: 'Expert', tier: 'ultimate_plus', players: '300', rating: '98%', image: 'https://picsum.photos/seed/nova/800/600' },
     { id: 'nexus_prime', name: 'Nexus Prime 3D', icon: '🌌', color: 'from-blue-900 to-indigo-900', desc: 'L\'expérience VR ultime.', difficulty: 'Expert', tier: 'ultimate_plus', players: '100', rating: '99%', image: 'https://picsum.photos/seed/prime/800/600' },
-    { id: 'aura_quest', name: 'Aura Quest 3D', icon: '✨', color: 'from-amber-400 to-yellow-600', desc: 'L\'aventure RPG avec Aura.', difficulty: 'Hard', tier: 'ultimate_plus', players: '500', rating: '97%', image: 'https://picsum.photos/seed/quest/800/600' },
+    { id: 'vibea_quest', name: 'Vibea Quest 3D', icon: '✨', color: 'from-amber-400 to-yellow-600', desc: 'L\'aventure RPG avec Vibea AI.', difficulty: 'Hard', tier: 'ultimate_plus', players: '500', rating: '97%', image: 'https://picsum.photos/seed/quest/800/600' },
+    { id: 'cyber_car', name: 'Neon Driver 3D', icon: '🏎️', color: 'from-cyan-500 to-blue-600', desc: 'Simulateur de conduite cyberpunk.', difficulty: 'Medium', tier: 'ultimate_plus', players: '750', rating: '94%', image: 'https://picsum.photos/seed/neoncar/800/600' },
+    { id: 'space_sim', name: 'Galactic Horizon 3D', icon: '🛸', color: 'from-indigo-800 to-black', desc: 'Exploration spatiale infinie.', difficulty: 'Expert', tier: 'ultimate_plus', players: '450', rating: '98%', image: 'https://picsum.photos/seed/spacesim/800/600' },
     { id: 'infinity_vibe', name: 'Infinity Vibe 3D', icon: '♾️', color: 'from-fuchsia-600 to-pink-600', desc: 'Le jeu sans fin.', difficulty: 'Expert', tier: 'ultimate_plus', players: '300', rating: '98%', image: 'https://picsum.photos/seed/infvibe/800/600' },
     { id: 'god_vibe', name: 'God Vibe 3D', icon: '🌍', color: 'from-emerald-500 to-teal-500', desc: 'Créez votre propre univers.', difficulty: 'Expert', tier: 'ultimate_plus', players: '200', rating: '99%', image: 'https://picsum.photos/seed/godvibe/800/600' },
     { id: 'time_vibe', name: 'Time Vibe 3D', icon: '⏳', color: 'from-cyan-600 to-blue-600', desc: 'Voyagez dans le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '96%', image: 'https://picsum.photos/seed/timevibe/800/600' },
@@ -544,7 +549,7 @@ export const storage = {
     { id: 'q12', title: 'Reposeur de Génie', description: 'Faites 3 reposts.', reward: 900, xpReward: 1500, type: 'post', goal: 3 },
     { id: 'q13', title: 'Commentateur Actif', description: 'Postez 5 commentaires.', reward: 500, xpReward: 1000, type: 'chat', goal: 5 },
     { id: 'q14', title: 'Boosteur de Masse', description: 'Boostez 5 diffusions.', reward: 5000, xpReward: 8000, type: 'boost', goal: 5 },
-    { id: 'q15', title: 'Sorcier de l\'IA', description: 'Générez 3 images avec Aura.', reward: 2000, xpReward: 4500, type: 'search', goal: 3 },
+    { id: 'q15', title: 'Sorcier de l\'IA', description: 'Générez 3 images avec Vibea.', reward: 2000, xpReward: 4500, type: 'search', goal: 3 },
     { id: 'u1', title: 'Maître Ultimate', description: 'Générez 5 images IA.', reward: 5000, xpReward: 10000, type: 'daily', goal: 5, ultimate: true },
     { id: 'u2', title: 'Visionnaire', description: 'Créez une vidéo IA.', reward: 10000, xpReward: 20000, type: 'daily', goal: 1, ultimate: true },
     { id: 'u3', title: 'Champion Vibe', description: 'Atteignez le niveau 10.', reward: 20000, xpReward: 50000, type: 'level', goal: 10, ultimate: true },
@@ -573,7 +578,7 @@ export const storage = {
         id: 'aura_bot',
         username: 'vibe_official',
         name: 'Vibe HQ',
-        bio: 'Bienvenue sur Vibe. Vidéos, Jeux, IA : Tout est là.',
+        bio: 'Bienvenue sur Vibe AI. Vidéos, Jeux, et Vibea AI 3 : Le futur du Nexus est ici.',
         avatar: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=200&h=200',
         email: 'contact@vibe.ai',
         credits: 100000, xp: 0, level: 100,

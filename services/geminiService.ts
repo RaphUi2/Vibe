@@ -92,5 +92,19 @@ export const gemini = {
       },
     });
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  },
+
+  async improveContent(content: string, type: 'grammar' | 'hashtags' | 'style') {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    let prompt = "";
+    if (type === 'grammar') prompt = `Améliore la grammaire et l'orthographe de ce post tout en gardant son style original: "${content}". Retourne uniquement le texte corrigé.`;
+    if (type === 'hashtags') prompt = `Suggère 5 hashtags pertinents pour ce post: "${content}". Retourne uniquement les hashtags séparés par des espaces.`;
+    if (type === 'style') prompt = `Réécris ce post pour qu'il soit plus engageant et "viral" sur les réseaux sociaux: "${content}". Retourne uniquement le nouveau texte.`;
+    
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt
+    });
+    return response.text;
   }
 };

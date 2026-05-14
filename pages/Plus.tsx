@@ -15,7 +15,8 @@ interface PlusPageProps {
 
 const Plus: React.FC<PlusPageProps> = ({ user }) => {
   const menuItems = [
-    { id: 'ia', label: 'Aura AI', icon: <Zap className="w-6 h-6" />, desc: 'Discutez avec Aura, votre assistant intelligent.', color: 'bg-indigo-500' },
+    { id: 'ia', label: 'Vibea AI', icon: <Zap className="w-6 h-6" />, desc: 'Discutez avec Vibea AI 3, votre assistant intelligent.', color: 'bg-indigo-500' },
+    { id: 'games', label: 'Jeux', icon: <Target className="w-6 h-6" />, desc: 'Plus de 60 jeux d\'arcade pour gagner des Novas.', color: 'bg-vibe-purple' },
     { id: 'levelpass', label: 'Level Pass', icon: <ChevronRight className="w-6 h-6" />, desc: 'Votre progression et récompenses saisonnières.', color: 'bg-vibe-orange' },
     { id: 'quests', label: 'Quêtes', icon: <Target className="w-6 h-6" />, desc: 'Relevez des défis pour gagner des récompenses.', color: 'bg-emerald-500' },
     { id: 'store', label: 'Shop', icon: <ShoppingBag className="w-6 h-6" />, desc: 'Achetez des cosmétiques et des boosts.', color: 'bg-blue-500' },

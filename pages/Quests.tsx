@@ -1,89 +1,127 @@
 import React from 'react';
 import { User, Quest } from '../types.ts';
 import { storage } from '../services/storageService.ts';
+import { motion } from 'motion/react';
+import { 
+  Target, 
+  CheckCircle2, 
+  Zap, 
+  TrendingUp, 
+  Award,
+  ChevronRight,
+  Hexagon
+} from 'lucide-react';
 
 const Quests: React.FC<{ user: User }> = ({ user }) => {
   const quests = storage.getQuests();
 
   return (
-    <div className="px-6 py-12 space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-48 relative" style={{ perspective: '2000px' }}>
-      <div className="text-center space-y-4 relative z-10" style={{ transform: 'translateZ(100px)' }}>
-        <h2 className="vibe-logo text-6xl md:text-8xl font-black text-white tracking-tighter drop-shadow-4xl">QUÊTES</h2>
-        <div className="flex items-center justify-center gap-4">
-           <div className="h-0.5 w-12 bg-vibe-blue/50" />
-           <p className="text-vibe-blue text-[10px] font-black uppercase tracking-[0.5em]">Nexus Chronicles & Missions</p>
-           <div className="h-0.5 w-12 bg-vibe-blue/50" />
-        </div>
-      </div>
-
-      <div className="grid gap-10 relative z-10" style={{ transformStyle: 'preserve-3d' }}>
-        {quests.map((quest, idx) => {
-          const isCompleted = user.completedQuests.includes(quest.id);
-          
-          return (
-            <div 
-              key={quest.id}
-              style={{ transform: `translateZ(${idx * 20}px) rotateX(${idx % 2 === 0 ? '2deg' : '-2deg'})` }}
-              className={`group relative overflow-hidden p-10 rounded-[3.5rem] border transition-all duration-1000 shadow-4xl backdrop-blur-3xl ${
-                isCompleted 
-                ? 'border-vibe-green/30 bg-vibe-green/5 opacity-60 scale-[0.98]' 
-                : 'liquid-glass border-white/10 hover:border-vibe-blue/50 hover:scale-[1.03] transform-gpu'
-              }`}
+    <div className="min-h-screen bg-black text-white px-6 py-12 pb-48 animate-in fade-in duration-700">
+      <div className="max-w-4xl mx-auto space-y-16">
+        
+        {/* Header Section */}
+        <div className="space-y-6 text-center">
+            <motion.div 
+               initial={{ opacity: 0, y: -20 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-blue-400"
             >
-              <div className="flex justify-between items-start mb-8 relative z-20">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    {quest.ultimate && (
-                      <span className="px-4 py-1 rounded-full bg-gradient-to-r from-vibe-purple to-vibe-blue text-white text-[8px] font-black uppercase tracking-widest shadow-vibe-blue/20">ULTIMATE CORE</span>
-                    )}
-                    <span className="px-3 py-1 rounded-full bg-white/5 text-slate-500 text-[8px] font-black uppercase tracking-widest border border-white/10">{quest.type}</span>
-                  </div>
-                  <h3 className={`vibe-logo text-3xl font-black tracking-tight ${isCompleted ? 'text-vibe-green' : 'text-white'}`}>
-                    {quest.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-medium tracking-wide max-w-xl">{quest.description}</p>
-                </div>
-                
-                {isCompleted ? (
-                  <div className="bg-vibe-green text-white p-4 rounded-3xl shadow-vibe-green/40 animate-in zoom-in duration-500">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="bg-white/5 text-slate-700 p-4 rounded-3xl border border-white/10 shadow-inner group-hover:text-vibe-blue transition-colors">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+               <Target className="w-3 h-3" />
+               Nexus Chronicles
+            </motion.div>
+            <h1 className="vibe-logo text-5xl md:text-7xl font-black tracking-tighter drop-shadow-3xl">SYSTÈME DE QUÊTES</h1>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs max-w-sm mx-auto">Relevez les défis neuronaux pour débloquer votre plein potentiel.</p>
+        </div>
 
-              <div className="flex items-center gap-6 relative z-20">
-                <div className="flex items-center gap-3 bg-vibe-blue/5 px-6 py-3 rounded-2xl border border-vibe-blue/20 shadow-inner">
-                  <span className="text-vibe-blue font-black text-lg tracking-tighter">+{quest.reward.toLocaleString()}</span>
-                  <span className="text-[10px] font-black text-vibe-blue/50 uppercase tracking-widest">N-Pulse</span>
-                </div>
-                <div className="flex items-center gap-3 bg-vibe-purple/5 px-6 py-3 rounded-2xl border border-vibe-purple/20 shadow-inner">
-                  <span className="text-vibe-purple font-black text-lg tracking-tighter">+{quest.xpReward.toLocaleString()}</span>
-                  <span className="text-[10px] font-black text-vibe-purple/50 uppercase tracking-widest">X-Core</span>
-                </div>
-              </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatBox label="Quêtes Finies" value={user.completedQuests.length} icon={<CheckCircle2 className="w-4 h-4" />} />
+            <StatBox label="Novas Gagnées" value={user.completedQuests.length * 100} icon={<Zap className="w-4 h-4" />} />
+            <StatBox label="Niveau Nexus" value={user.level} icon={<TrendingUp className="w-4 h-4" />} />
+            <StatBox label="Rareté" value="Origins" icon={<Award className="w-4 h-4" />} />
+        </div>
 
-              <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-vibe-blue/5 blur-[80px] rounded-full group-hover:bg-vibe-blue/10 transition-all duration-1000" />
+        {/* Quests List */}
+        <div className="space-y-6">
+          {quests.map((quest, idx) => {
+            const isCompleted = user.completedQuests.includes(quest.id);
+            
+            return (
+              <motion.div 
+                key={quest.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className={`relative group overflow-hidden p-8 rounded-[2.5rem] border transition-all duration-500 flex flex-col md:flex-row items-center gap-8 ${
+                  isCompleted 
+                  ? 'border-emerald-500/20 bg-emerald-500/5 opacity-50' 
+                  : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-white/10 shadow-3xl'
+                }`}
+              >
+                <div className="relative shrink-0">
+                    <Hexagon className={`w-20 h-20 ${isCompleted ? 'text-emerald-500' : 'text-blue-500'} opacity-20`} />
+                    <div className="absolute inset-0 flex items-center justify-center text-4xl">
+                        {isCompleted ? '✅' : '⚙️'}
+                    </div>
+                </div>
+
+                <div className="flex-1 text-center md:text-left space-y-3">
+                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                      {quest.ultimate && (
+                        <span className="px-2 py-0.5 bg-vibe-purple text-white text-[8px] font-black uppercase tracking-widest rounded shadow-vibe-blue/20">Ultimate</span>
+                      )}
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{quest.type} core</span>
+                   </div>
+                   <h3 className={`text-2xl font-black vibe-logo ${isCompleted ? 'text-emerald-500' : 'text-white'}`}>
+                      {quest.title}
+                   </h3>
+                   <p className="text-sm text-slate-400 font-medium leading-relaxed max-w-lg">{quest.description}</p>
+                </div>
+
+                <div className="flex flex-col items-center gap-3 shrink-0">
+                   <div className="flex gap-2">
+                       <div className="px-4 py-2 bg-blue-600/10 border border-blue-500/20 rounded-xl text-blue-400 font-black text-xs">+{quest.reward} N</div>
+                       <div className="px-4 py-2 bg-purple-600/10 border border-purple-500/20 rounded-xl text-purple-400 font-black text-xs">+{quest.xpReward} XP</div>
+                   </div>
+                   {!isCompleted && (
+                       <button className="w-full py-3 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-xl">
+                           Mantra Actif <ChevronRight className="w-4 h-4" />
+                       </button>
+                   )}
+                </div>
+
+                {/* Aesthetic flare */}
+                <div className={`absolute top-0 right-0 w-32 h-32 blur-[80px] rounded-full pointer-events-none transition-all ${isCompleted ? 'bg-emerald-500/10' : 'bg-blue-500/5 group-hover:bg-blue-500/10'}`} />
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Footer Info */}
+        <div className="p-10 bg-white/[0.01] rounded-[3rem] border border-white/5 text-center space-y-4">
+            <div className="flex items-center justify-center gap-6 opacity-30">
+               <div className="h-px w-20 bg-white" />
+               <Hexagon className="w-6 h-6" />
+               <div className="h-px w-20 bg-white" />
             </div>
-          );
-        })}
-      </div>
-
-      <div className="liquid-glass rounded-[3rem] p-10 border border-white/5 text-center space-y-4 shadow-4xl relative z-10" style={{ transform: 'translateZ(-50px) rotateX(5deg)' }}>
-        <p className="text-[10px] font-black text-vibe-blue uppercase tracking-[0.6em]">Nexus Advisory</p>
-        <p className="text-sm text-slate-500 font-bold uppercase tracking-widest leading-relaxed max-w-2xl mx-auto opacity-70">
-          Les quêtes se régénèrent dynamiquement. Maximisez vos vecteurs de Novas pour une ascension neuronale optimale.
-        </p>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.6em]">Protocoles de Synchronisation Actifs</p>
+            <p className="text-xs text-slate-600 font-bold uppercase tracking-widest leading-relaxed">
+              Vos accomplissements sont archivés dans le grand registre du Nexus.
+            </p>
+        </div>
       </div>
     </div>
   );
 };
+
+const StatBox: React.FC<{ label: string, value: string | number, icon: React.ReactNode }> = ({ label, value, icon }) => (
+  <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl space-y-2 hover:bg-white/[0.04] transition-all">
+     <div className="flex items-center justify-between text-slate-500">
+        {icon}
+        <span className="text-[9px] font-black uppercase tracking-widest">{label}</span>
+     </div>
+     <div className="text-2xl font-black text-white vibe-logo tracking-tight">{value}</div>
+  </div>
+);
 
 export default Quests;

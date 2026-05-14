@@ -1,10 +1,21 @@
-
 import React, { useState, useEffect } from 'react';
 import { User } from '../types.ts';
 import { storage } from '../services/storageService.ts';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Trophy, 
+  Star, 
+  Zap, 
+  ShieldCheck, 
+  Crown, 
+  Gift, 
+  Flame,
+  ChevronRight,
+  Lock
+} from 'lucide-react';
 
 interface Reward {
-  type: 'novas' | 'theme' | 'boost_limit' | 'badge' | 'aura_skin' | 'verified';
+  type: 'novas' | 'theme' | 'boost_limit' | 'badge' | 'aura_skin' | 'verified' | 'special_gift';
   value: string | number | boolean;
   isUltimatePlus?: boolean;
 }
@@ -14,6 +25,7 @@ interface DualPassLevel {
   xpRequired: number;
   freeReward: Reward | null;
   ultimateReward: Reward | null;
+  name?: string;
 }
 
 const RewardCard: React.FC<{ reward: Reward, level: number, track: 'free' | 'ultimate', user: User, onClaim: (l: number, t: 'free'|'ultimate', r: Reward) => void }> = ({ reward, level, track, user, onClaim }) => {
@@ -30,43 +42,77 @@ const RewardCard: React.FC<{ reward: Reward, level: number, track: 'free' | 'ult
     }
   }
   
-  const bgClass = track === 'free' 
-    ? 'bg-slate-800/40 border-slate-700/50' 
-    : reward.isUltimatePlus 
-      ? 'bg-gradient-to-br from-amber-900/40 to-yellow-900/40 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
-      : 'bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.2)]';
+  const getIcon = () => {
+    switch (reward.type) {
+      case 'novas': return <Star className="w-5 h-5 text-amber-400" fill="currentColor" />;
+      case 'theme': return <Zap className="w-5 h-5 text-blue-400" />;
+      case 'boost_limit': return <Flame className="w-5 h-5 text-rose-500" />;
+      case 'badge': return <ShieldCheck className="w-5 h-5 text-emerald-400" />;
+      case 'verified': return <Crown className="w-5 h-5 text-amber-500" />;
+      case 'special_gift': return <Gift className="w-5 h-5 text-vibe-pink" />;
+      default: return <Gift className="w-5 h-5 text-white" />;
+    }
+  };
+
+  const getName = () => {
+    switch (reward.type) {
+      case 'novas': return `${reward.value} Novas`;
+      case 'theme': return 'Nexus Skin';
+      case 'boost_limit': return '+1 Slot Boost';
+      case 'badge': return 'Insigne Vibe';
+      case 'verified': return 'Badge Vérifié';
+      case 'special_gift': return 'Cadeau Légendaire';
+      default: return 'Récompense';
+    }
+  };
 
   return (
-    <div className={`relative w-full max-w-[260px] p-3 md:p-4 rounded-2xl border backdrop-blur-xl transition-all duration-500 ${bgClass} ${!isUnlocked ? 'opacity-60 grayscale' : 'hover:scale-105 hover:-translate-y-1 z-10'}`}>
+    <motion.div 
+      whileHover={{ y: -5, scale: 1.02 }}
+      className={`relative p-5 rounded-[2rem] border backdrop-blur-3xl transition-all duration-500 w-full max-w-[300px] overflow-hidden ${
+        isClaimed ? 'bg-[#111216]/60 border-emerald-500/30' : 
+        !isUnlocked ? 'bg-[#0f1013]/60 border-white/5 opacity-50' : 
+        track === 'free' ? 'bg-white/5 border-white/10 hover:border-white/20' : 
+        'bg-indigo-600/10 border-indigo-500/30 hover:border-indigo-400/50 shadow-indigo-500/10 shadow-xl'
+      }`}
+    >
       {reward.isUltimatePlus && (
-        <div className="absolute -top-2.5 -right-2.5 bg-gradient-to-r from-amber-600 to-yellow-600 text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg border border-amber-400/50 animate-pulse">
-          Ultimate+
-        </div>
+        <div className="absolute top-0 right-0 px-3 py-1 bg-gradient-to-r from-amber-600 to-yellow-500 text-[8px] font-black uppercase tracking-widest text-white rounded-bl-xl shadow-lg z-20">U+</div>
       )}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-inner ${track === 'free' ? 'bg-slate-700/50' : reward.isUltimatePlus ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'}`}>
-            {reward.type === 'novas' ? '✨' : reward.type === 'theme' ? '🎨' : reward.type === 'boost_limit' ? '🚀' : reward.type === 'aura_skin' ? '🤖' : reward.type === 'verified' ? '✅' : '💎'}
-          </div>
-          <div className="flex flex-col">
-            <h4 className="text-white font-black text-xs md:text-sm uppercase tracking-tight leading-none mb-1">
-              {reward.type === 'novas' ? `${reward.value} Novas` : reward.type === 'theme' ? 'Thème' : reward.type === 'boost_limit' ? '+1 Boost' : reward.type === 'aura_skin' ? 'Skin Aura' : reward.type === 'verified' ? 'Vérifié' : 'Badge VIP'}
-            </h4>
-            <p className={`text-[9px] uppercase tracking-widest font-bold ${track === 'free' ? 'text-slate-500' : reward.isUltimatePlus ? 'text-amber-400/70' : 'text-blue-400/70'}`}>
-              {track === 'free' ? 'Gratuit' : reward.isUltimatePlus ? 'Exclusif U+' : 'Premium'}
-            </p>
-          </div>
+
+      <div className="flex items-center gap-5 relative z-10">
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner ${
+          isClaimed ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-black/40 border border-white/5'
+        }`}>
+          {getIcon()}
         </div>
-        
+        <div className="flex-1 min-w-0">
+          <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">
+             {track === 'free' ? 'Gratuit' : reward.isUltimatePlus ? 'Ultimate+' : 'Premium'}
+          </div>
+          <h4 className="text-white font-black text-sm uppercase tracking-tight truncate">{getName()}</h4>
+        </div>
         <button 
           onClick={() => onClaim(level, track, reward)}
           disabled={!canClaim}
-          className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center transition-all duration-300 ${isClaimed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : canClaim ? 'bg-white text-black hover:bg-blue-400 hover:text-white shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:shadow-[0_0_20px_rgba(59,130,246,0.8)] scale-110' : 'bg-white/5 text-white/20'}`}
+          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+            isClaimed ? 'text-emerald-500 bg-emerald-500/10' : 
+            canClaim ? 'bg-white text-black hover:scale-110 shadow-xl' : 
+            'bg-white/5 text-slate-700'
+          }`}
         >
-          {isClaimed ? '✓' : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>}
+          {isClaimed ? <ShieldCheck className="w-5 h-5 shadow-glow" /> : !isUnlocked ? <Lock className="w-4 h-4" /> : <ChevronRight className="w-6 h-6" />}
         </button>
       </div>
-    </div>
+      
+      {!isUnlocked && (
+        <div className="mt-4 pt-4 border-t border-white/5">
+           <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
+              <div className="h-full bg-slate-800" style={{ width: `${(user.level/level)*100}%` }} />
+           </div>
+        </div>
+      )}
+    </motion.div>
   );
 };
 
@@ -75,20 +121,23 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
 
   useEffect(() => {
     const generated: DualPassLevel[] = [];
-    for (let i = 1; i <= 100; i++) {
-      const isMajor = i % 10 === 0;
-      const isUPlus = i % 20 === 0;
+    const names = ["Départ S1", "Impulsion", "Fréquence", "Éclat", "Nexus", "Vision", "Héritage", "Synthèse", "Apex", "Origines"];
+    
+    for (let i = 1; i <= 50; i++) {
+      const isMajor = i % 5 === 0;
+      const isUPlus = i % 10 === 0;
       
       generated.push({
         level: i,
-        xpRequired: i * 1000,
+        xpRequired: i * 500,
+        name: isMajor ? names[Math.floor(i/5)-1] : undefined,
         freeReward: i % 2 !== 0 || isMajor ? {
-          type: isMajor ? 'theme' : 'novas',
-          value: isMajor ? `theme_s3_${i}` : i * 150
+          type: isMajor ? 'badge' : 'novas',
+          value: isMajor ? `badge_s1_${i}` : i * 50
         } : null,
         ultimateReward: {
-          type: isUPlus ? 'verified' : (i % 5 === 0 ? 'aura_skin' : 'novas'),
-          value: isUPlus ? true : (i % 5 === 0 ? `skin_${i}` : i * 750),
+          type: isUPlus ? (i === 50 ? 'verified' : 'special_gift') : (i % 5 === 0 ? 'theme' : 'novas'),
+          value: isUPlus ? (i === 50 ? true : `gift_${i}`) : (i % 5 === 0 ? `legacy_s1_${i}` : i * 250),
           isUltimatePlus: isUPlus
         }
       });
@@ -136,19 +185,13 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
     onUpdate(updatedUser);
     
     window.dispatchEvent(new CustomEvent('vibeRewardToast', { 
-      detail: { credits: reward.type === 'novas' ? reward.value : 0, xp: 0, title: 'Récompense Pass S3' } 
+      detail: { credits: reward.type === 'novas' ? reward.value : 0, xp: 0, title: 'Récompense Origins S1' } 
     }));
   };
 
   const buyPremium = (type: 'ultimate' | 'ultimate_plus') => {
-    if (type === 'ultimate' && user.isUltimate) {
-        alert("Vous avez déjà le Pass Premium !");
-        return;
-    }
-    if (type === 'ultimate_plus' && user.isUltimatePlus) {
-        alert("Vous avez déjà le Pass Ultimate+ !");
-        return;
-    }
+    if (type === 'ultimate' && user.isUltimate) return;
+    if (type === 'ultimate_plus' && user.isUltimatePlus) return;
     const updatedUser = { 
         ...user, 
         isUltimate: type === 'ultimate' || type === 'ultimate_plus' ? true : user.isUltimate,
@@ -156,112 +199,136 @@ const LevelPassPage: React.FC<{ user: User, onUpdate: (u: User) => void }> = ({ 
     };
     storage.updateUser(updatedUser);
     onUpdate(updatedUser);
-    alert(`${type === 'ultimate' ? 'Pass Premium' : 'Pass Ultimate+'} activé !`);
+    alert(`${type === 'ultimate' ? 'Pass Premium' : 'Pass Ultimate+'} activé pour Origins !`);
   };
 
   return (
-    <div className="relative min-h-screen pb-40">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(245,158,11,0.1),_transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 opacity-20 pointer-events-none" 
-           style={{ 
-             backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', 
-             backgroundSize: '40px 40px',
-             transform: 'rotateX(60deg) scale(2) translateY(-10%)',
-             transformOrigin: 'top center'
-           }} 
-      />
+    <div className="relative min-h-screen bg-black text-white pb-60 overflow-hidden">
       
-      <div className="relative z-10 max-w-5xl mx-auto px-2 md:px-4 py-12">
-        <div className="text-center space-y-6 mb-20">
-          <div className="inline-block px-6 py-2 bg-amber-500/10 border border-amber-500/30 rounded-full text-[10px] font-black text-amber-400 uppercase tracking-[0.4em] shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-            Saison 3 : Singularity
-          </div>
-          <h1 className="vibe-logo text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 drop-shadow-2xl tracking-tighter">
-            SINGULARITY PASS
-          </h1>
-          <p className="text-slate-400 text-xs md:text-sm font-bold max-w-md mx-auto leading-relaxed">
-            L'évolution finale est ici. 100 niveaux de puissance pure.
-          </p>
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(59,130,246,0.1),_transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-indigo-600/5 blur-[100px] pointer-events-none" />
+      
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-20">
+        
+        {/* Header Header */}
+        <div className="text-center space-y-8 mb-32">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] shadow-xl"
+          >
+            <Trophy className="w-3.5 h-3.5" />
+            Saison 1 : Origins
+          </motion.div>
           
-          <div className="flex flex-wrap justify-center gap-6 mt-8">
-            {!user.isUltimate && (
-                <button 
-                    onClick={() => buyPremium('ultimate')}
-                    className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl overflow-hidden shadow-lg hover:scale-105 transition-all active:scale-95 border border-white/10"
-                >
-                    <div className="relative flex flex-col items-center">
-                        <span className="text-white font-black text-xs uppercase tracking-widest">Pass Premium</span>
-                        <span className="text-white/80 text-[10px] font-bold mt-1">4.99€ / Saison</span>
-                    </div>
-                </button>
-            )}
-            {!user.isUltimatePlus && (
-                <button 
-                    onClick={() => buyPremium('ultimate_plus')}
-                    className="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-2xl overflow-hidden shadow-xl hover:scale-105 transition-all active:scale-95 border border-white/20"
-                >
-                    <div className="relative flex flex-col items-center">
-                        <span className="text-white font-black text-xs uppercase tracking-widest">Pass Ultimate+</span>
-                        <span className="text-white/80 text-[10px] font-bold mt-1">9.99€ / Saison</span>
-                    </div>
-                </button>
-            )}
+          <div className="space-y-2">
+            <h1 className="vibe-logo text-6xl md:text-8xl font-black tracking-tighter bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent drop-shadow-4xl">
+               VIBE ORIGINS
+            </h1>
+            <p className="text-slate-500 font-bold tracking-[0.3em] uppercase text-xs">Célébration du Nouveau Nexus</p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-6 mt-12">
+             {!user.isUltimate && (
+               <button onClick={() => buyPremium('ultimate')} className="group relative px-10 py-5 bg-indigo-600 rounded-[2rem] overflow-hidden shadow-2xl hover:scale-105 transition-all">
+                  <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[size:200%_200%] animate-shimmer" />
+                  <div className="relative flex flex-col items-center">
+                      <span className="font-black text-xs uppercase tracking-widest">Premium Origins</span>
+                      <span className="text-white/60 text-[9px] font-bold mt-1 uppercase tracking-widest tracking-widest">4.99 Novas</span>
+                  </div>
+               </button>
+             )}
+             {!user.isUltimatePlus && (
+               <button onClick={() => buyPremium('ultimate_plus')} className="group relative px-10 py-5 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-[2rem] overflow-hidden shadow-2xl hover:scale-105 transition-all">
+                  <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[size:200%_200%] animate-shimmer" />
+                  <div className="relative flex flex-col items-center">
+                      <span className="font-black text-xs uppercase tracking-widest text-black">Ultimate+ Origins</span>
+                      <span className="text-black/60 text-[9px] font-bold mt-1 uppercase tracking-widest">9.99 Novas</span>
+                  </div>
+               </button>
+             )}
           </div>
         </div>
 
-        <div className="relative mt-10">
-          <div className="absolute left-1/2 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-500 via-amber-500 to-yellow-500 -translate-x-1/2 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.6)] opacity-50" />
+        {/* The Pass Timeline */}
+        <div className="relative">
+          {/* Central Line */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/5 -translate-x-1/2 z-0" />
+          <div className="absolute left-1/2 top-0 bottom-0 w-[6px] bg-blue-600/20 -translate-x-1/2 blur-md z-0" />
 
-          <div className="flex justify-between mb-8 md:mb-12 sticky top-20 z-30 px-2 md:px-8 bg-[#020617]/80 backdrop-blur-md py-4 rounded-3xl border border-white/5">
-            <div className="w-[48%] md:w-[45%] text-right pr-2 md:pr-8">
-              <h3 className="vibe-logo text-xs md:text-3xl font-black text-slate-300 tracking-tighter drop-shadow-lg uppercase">Gratuit</h3>
-            </div>
-            <div className="w-[48%] md:w-[45%] text-left pl-2 md:pl-8">
-              <h3 className="vibe-logo text-xs md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-amber-400 tracking-tighter drop-shadow-lg uppercase">Ultimate</h3>
-            </div>
-          </div>
-
-          <div className="space-y-12 md:space-y-16">
+          <div className="space-y-24 md:space-y-32">
             {levels.map(lvl => {
-              const isCurrent = user.level === lvl.level;
-              const isPassed = user.level > lvl.level;
+              const isActive = user.level === lvl.level;
+              const isPast = user.level > lvl.level;
               
               return (
-                <div key={lvl.level} className="relative flex items-center justify-between w-full group">
-                  <div className={`absolute left-1/2 -translate-x-1/2 w-8 h-8 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center z-20 transition-all duration-500 transform rotate-45 ${
-                    isCurrent ? 'bg-amber-500 border-2 md:border-4 border-white shadow-[0_0_30px_rgba(245,158,11,0.8)] scale-125' : 
-                    isPassed ? 'bg-amber-900 border-2 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 
-                    'bg-[#020617] border-2 border-slate-700'
-                  }`}>
-                    <span className={`font-black -rotate-45 ${isCurrent ? 'text-white text-xs md:text-2xl' : isPassed ? 'text-amber-200 text-[10px] md:text-lg' : 'text-slate-500 text-[10px] md:text-sm'}`}>
-                      {lvl.level}
-                    </span>
-                  </div>
-
-                  <div className="w-[48%] md:w-[45%] pr-2 md:pr-12 flex justify-end">
+                <div key={lvl.level} className="relative flex items-center justify-between group">
+                  
+                  {/* Free Lane */}
+                  <div className="w-[45%] flex justify-end">
                     {lvl.freeReward ? (
                       <RewardCard reward={lvl.freeReward} level={lvl.level} track="free" user={user} onClaim={handleClaim} />
                     ) : (
-                      <div className="w-full max-w-[260px] h-12 md:h-16 border-2 border-dashed border-slate-800 rounded-2xl opacity-30" />
+                      <div className="w-full max-w-[300px] h-20 bg-white/[0.01] border border-dashed border-white/5 rounded-[2rem] opacity-20" />
                     )}
                   </div>
 
-                  <div className="w-[48%] md:w-[45%] pl-2 md:pl-12 flex justify-start">
+                  {/* Level Node */}
+                  <div className="absolute left-1/2 -translate-x-1/2 z-20">
+                     <motion.div 
+                        animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center transition-all duration-700 font-black text-sm md:text-xl border-4 ${
+                          isActive ? 'bg-blue-600 border-white text-white shadow-[0_0_30px_rgba(59,130,246,0.6)] scale-125' : 
+                          isPast ? 'bg-indigo-900/60 border-indigo-500/40 text-indigo-400' : 
+                          'bg-[#0a0a0c] border-white/10 text-slate-700'
+                        }`}
+                     >
+                       {lvl.level}
+                     </motion.div>
+                     {lvl.name && (
+                       <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 whitespace-nowrap">
+                          <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] drop-shadow-glow">{lvl.name}</span>
+                       </div>
+                     )}
+                  </div>
+
+                  {/* Premium Lane */}
+                  <div className="w-[45%] flex justify-start">
                     {lvl.ultimateReward ? (
                       <RewardCard reward={lvl.ultimateReward} level={lvl.level} track="ultimate" user={user} onClaim={handleClaim} />
                     ) : (
-                      <div className="w-full max-w-[260px] h-12 md:h-16 border-2 border-dashed border-blue-900/30 rounded-2xl opacity-30" />
+                      <div className="w-full max-w-[300px] h-20 bg-white/[0.01] border border-dashed border-white/5 rounded-[2rem] opacity-20" />
                     )}
                   </div>
+
                 </div>
               );
             })}
           </div>
         </div>
+
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 p-8 z-50 pointer-events-none">
+          <div className="max-w-xl mx-auto p-6 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-4xl pointer-events-auto flex items-center gap-6">
+              <div className="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center font-black text-blue-400">
+                 Lv.{user.level}
+              </div>
+              <div className="flex-1 space-y-2">
+                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <span>Progression Origins</span>
+                    <span>{Math.floor((user.xp / (user.level * 500)) * 100)}%</span>
+                 </div>
+                 <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                    <div className="h-full bg-blue-600 shadow-glow" style={{ width: `${Math.min((user.xp / (user.level * 500)) * 100, 100)}%` }} />
+                 </div>
+              </div>
+          </div>
       </div>
     </div>
   );
 };
 
 export default LevelPassPage;
-
