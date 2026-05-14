@@ -50,6 +50,10 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
     setFollowersCount(storage.getFollowers(viewUserId).length);
   };
 
+  const handleNavigate = (dest: string) => {
+    window.dispatchEvent(new CustomEvent('vibeNavigate', { detail: dest }));
+  };
+
   const saveProfile = () => {
       const updated = { ...user, name: editName, bio: editBio, avatar: editAvatar, bannerUrl: editBanner };
       storage.updateUser(updated);
@@ -83,16 +87,17 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
   const xpPercent = Math.min((profileUser.xp / (profileUser.level * 1000)) * 100, 100);
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+    <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-24">
       {/* Immersive Header */}
-      <div className="relative group/banner">
-        <div className="h-40 md:h-56 bg-slate-900 border-b border-white/5 relative overflow-hidden">
-           <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-transparent" />
+      <div className="relative group/banner overflow-hidden md:rounded-b-[3rem] shadow-4xl border-b border-white/5">
+        <div className="h-48 md:h-72 bg-black relative">
+           <div className="absolute inset-0 bg-gradient-to-br from-vibe-blue/20 via-vibe-purple/10 to-transparent z-10 animate-pulse-slow" />
            {profileUser.bannerUrl ? (
-             <img src={profileUser.bannerUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-110" />
+             <img src={profileUser.bannerUrl} className="w-full h-full object-cover transition-transform duration-1000 group-hover/banner:scale-105" />
            ) : (
-             <div className="w-full h-full bg-[#020617]" />
+             <div className="w-full h-full vibe-gradient-bg opacity-30" />
            )}
+           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-20"></div>
         </div>
         
         <div className="px-4 flex justify-between items-end -mt-14 md:-mt-20 mb-4">
@@ -111,23 +116,23 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
                {isSelf ? (
                     <div className="flex gap-2">
                      <button 
-                       onClick={() => setActiveTab('quests' as any)} 
-                       className={`relative group overflow-hidden p-0.5 rounded-2xl transition-all ${activeTab === 'quests' as any ? 'scale-105' : 'hover:scale-105'}`}
+                       onClick={() => handleNavigate('quests')} 
+                       className="relative group overflow-hidden p-0.5 rounded-2xl transition-all hover:scale-105"
                      >
-                       <div className={`absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 animate-gradient-x ${activeTab === 'quests' as any ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`} />
-                       <div className={`relative px-4 py-2.5 rounded-[calc(1rem-2px)] flex items-center gap-2 ${activeTab === 'quests' as any ? 'bg-transparent text-white' : 'bg-[#020617] text-blue-400'}`}>
+                       <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity" />
+                       <div className="relative px-4 py-2.5 rounded-[calc(1rem-2px)] flex items-center gap-2 bg-[#020617] text-blue-400">
                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                         <span className="text-[10px] font-black uppercase tracking-widest">Quêtes</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Quêtes</span>
                        </div>
                      </button>
                      <button 
-                       onClick={() => setActiveTab('settings' as any)} 
-                       className={`relative group overflow-hidden p-0.5 rounded-2xl transition-all ${activeTab === 'settings' as any ? 'scale-105' : 'hover:scale-105'}`}
+                       onClick={() => handleNavigate('settings')} 
+                       className="relative group overflow-hidden p-0.5 rounded-2xl transition-all hover:scale-105"
                      >
-                       <div className={`absolute inset-0 bg-gradient-to-r from-slate-600 via-slate-500 to-slate-600 animate-gradient-x ${activeTab === 'settings' as any ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`} />
-                       <div className={`relative px-4 py-2.5 rounded-[calc(1rem-2px)] flex items-center gap-2 ${activeTab === 'settings' as any ? 'bg-transparent text-white' : 'bg-[#020617] text-slate-400'}`}>
+                       <div className="absolute inset-0 bg-gradient-to-r from-slate-600 via-slate-500 to-slate-600 animate-gradient-x opacity-0 group-hover:opacity-100 transition-opacity" />
+                       <div className="relative px-4 py-2.5 rounded-[calc(1rem-2px)] flex items-center gap-2 bg-[#020617] text-slate-400">
                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                         <span className="text-[10px] font-black uppercase tracking-widest">Paramètres</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Params</span>
                        </div>
                      </button>
                      <button onClick={() => setIsEditing(true)} className="px-5 py-2 rounded-2xl border border-white/20 font-black text-xs text-white hover:bg-white/5 backdrop-blur-md transition-all">Éditer</button>
@@ -144,58 +149,78 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
         </div>
       </div>
 
-      <div className="px-4 space-y-6">
-         <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white flex items-center gap-2 vibe-logo tracking-tight">
-                {profileUser.name}
-                {profileUser.isCertified && (
-                  <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-lg shadow-blue-500/20">V</div>
-                )}
-                {profileUser.isUltimate && !profileUser.isCertified && (
-                  <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" /></svg>
-                )}
-            </h2>
-            <p className="text-slate-500 text-sm font-bold tracking-wider">@{profileUser.username} • Lvl.{profileUser.level}</p>
+      <div className="px-6 md:px-8 space-y-8 mt-10">
+         <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-3xl md:text-5xl font-black text-white vibe-logo tracking-tighter">
+                  {profileUser.name}
+              </h2>
+              {profileUser.isCertified && (
+                <div className="w-6 h-6 bg-gradient-to-tr from-vibe-blue to-vibe-purple rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-3xl animate-pulse">V</div>
+              )}
+              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10 text-vibe-purple text-[10px] font-black uppercase tracking-[0.2em]">
+                 Lv. {profileUser.level}
+              </span>
+            </div>
+            <p className="text-slate-500 text-sm md:text-lg font-black tracking-widest opacity-60">@{profileUser.username}</p>
          </div>
          
-         <p className="text-slate-200 text-sm md:text-base leading-relaxed whitespace-pre-wrap">{profileUser.bio || "Signal de bio-signature non identifié."}</p>
-
-         <div className="flex gap-8 text-sm">
-            <div className="flex gap-1.5 hover:underline cursor-pointer"><span className="font-black text-white">{profileUser.friends?.length || 0}</span> <span className="text-slate-500">Abonnements</span></div>
-            <div className="flex gap-1.5 hover:underline cursor-pointer"><span className="font-black text-white">{followersCount}</span> <span className="text-slate-500">Abonnés</span></div>
+         <div className="max-w-2xl">
+           <p className="text-slate-300 text-base md:text-xl leading-relaxed whitespace-pre-wrap font-medium">{profileUser.bio || "Bio-signature non identifiée dans ce segment du Nexus."}</p>
          </div>
 
-         <div className="max-w-[200px]">
-            <VibeScore user={profileUser} compact={true} />
+         <div className="flex gap-10 text-xs md:text-sm pt-4">
+            <div className="flex gap-2 group cursor-pointer border-b border-transparent hover:border-vibe-blue transition-all pb-1"><span className="font-black text-white group-hover:text-vibe-blue">{profileUser.friends?.length || 0}</span> <span className="text-slate-500 uppercase tracking-widest font-black text-[10px]">Aura suivies</span></div>
+            <div className="flex gap-2 group cursor-pointer border-b border-transparent hover:border-vibe-pink transition-all pb-1"><span className="font-black text-white group-hover:text-vibe-pink">{followersCount}</span> <span className="text-slate-500 uppercase tracking-widest font-black text-[10px]">Résonances</span></div>
+         </div>
+
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-8 border-t border-white/5">
+            <div className="space-y-4">
+               <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Signature Vibe</h4>
+               <div className="max-w-[200px]">
+                  <VibeScore user={profileUser} compact={true} />
+               </div>
+            </div>
+            
+            <div className="md:col-span-2 liquid-glass rounded-3xl p-6 border border-white/5 space-y-4">
+               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <span>Progression Nexus</span>
+                  <span className="text-vibe-blue">{profileUser.xp} / {profileUser.level * 1000} XP</span>
+               </div>
+               <div className="h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
+                  <div 
+                    className="h-full bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-pink animate-gradient-x transition-all duration-1000"
+                    style={{ width: `${xpPercent}%` }}
+                  />
+               </div>
+            </div>
          </div>
       </div>
 
-      {/* TABS SLIDER */}
-      <div className="mt-8 overflow-x-auto scrollbar-hide flex justify-center gap-3 px-4 sticky top-0 bg-[#020617]/90 backdrop-blur-md z-40 py-3">
-        {[
-          { id: 'posts', label: 'Vibe' },
-          { id: 'reposts', label: 'Reposts' },
-          { id: 'media', label: 'Médias' },
-          { id: 'likes', label: 'J\'aime' },
-          { id: 'saved', label: 'Sauvegardés' },
-          { id: 'wall', label: 'Mur' }
-        ].map(tab => (
-          <button 
-            key={tab.id} 
-            onClick={() => setActiveTab(tab.id as any)} 
-            className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${activeTab === tab.id ? 'bg-white text-black border-white shadow-lg shadow-white/10' : 'bg-black/40 text-slate-400 border-white/10 hover:text-white hover:bg-white/5'}`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* CATEGORIES / TABS */}
+      <div className="mt-8 sticky top-0 z-[40] bg-black/60 backdrop-blur-3xl border-y border-white/5 py-3">
+        <div className="flex justify-center flex-wrap gap-1 px-4 max-w-4xl mx-auto bg-[#16181c]/50 p-1 rounded-full border border-white/5">
+          {[
+            { id: 'posts', label: 'Signaux' },
+            { id: 'reposts', label: 'Echos' },
+            { id: 'media', label: 'Reliques' },
+            { id: 'likes', label: 'Flux' },
+            { id: 'saved', label: 'Archives' },
+            { id: 'wall', label: 'Fréquences' }
+          ].map(tab => (
+            <button 
+              key={tab.id} 
+              onClick={() => setActiveTab(tab.id as any)} 
+              className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.1em] transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="divide-y divide-white/5">
-          {activeTab === 'settings' && isSelf ? (
-            <Settings user={user} onUpdate={onUpdate} />
-          ) : activeTab === 'quests' && isSelf ? (
-            <Quests user={user} />
-          ) : activeTab === 'wall' ? (
+          {activeTab === 'wall' ? (
             <div className="p-6 space-y-8">
                <form onSubmit={handleAddWallComment} className="space-y-4">
                   <textarea 
@@ -321,37 +346,55 @@ const PostEntry: React.FC<{ post: Post, user: User }> = ({ post, user }) => {
   const originalAuthor = storage.getUsers().find(u => u.id === originalPost.userId);
 
   return (
-    <div className="p-5 hover:bg-white/[0.02] transition-colors cursor-pointer group">
+    <div className="p-6 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl mx-4">
        {post.repostOf && (
-         <div className="flex items-center gap-2 mb-2 ml-10 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            Reposté
+         <div className="flex items-center gap-2 mb-4 ml-14 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
+            <svg className="w-3.5 h-3.5 logo-vibe-text" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            Propagé par {author?.name}
          </div>
        )}
-       <div className="flex gap-4">
-          <img src={originalAuthor?.avatar} className="w-12 h-12 rounded-full shrink-0 object-cover border border-white/5 shadow-md" />
-          <div className="flex-1 space-y-1.5">
-             <div className="flex items-center gap-2">
-                <span className="font-black text-white text-sm hover:underline">{originalAuthor?.name}</span>
-                {originalAuthor?.isCertified && (
-                  <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center text-[8px] font-black text-white shadow-lg shadow-blue-500/20">V</div>
-                )}
-                <span className="text-slate-500 text-xs">@{originalAuthor?.username}</span>
+       <div className="flex gap-6">
+          <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-vibe-blue via-vibe-purple to-vibe-pink overflow-hidden w-14 h-14 shrink-0 transition-transform group-hover:scale-105 duration-500">
+            <img src={originalAuthor?.avatar} className="w-full h-full rounded-full border border-black/20 object-cover" />
+          </div>
+          <div className="flex-1 space-y-4 min-w-0">
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="font-black text-white text-sm hover:text-vibe-blue transition-colors vibe-logo tracking-tight truncate">{originalAuthor?.name}</span>
+                  {originalAuthor?.isCertified && (
+                    <div className="w-3.5 h-3.5 bg-gradient-to-tr from-vibe-blue to-vibe-purple rounded-full flex items-center justify-center text-[8px] font-black text-white shadow-lg animate-pulse">V</div>
+                  )}
+                  <span className="text-slate-500 text-xs truncate">@{originalAuthor?.username}</span>
+                </div>
+                <span className="text-vibe-purple text-[10px] font-black uppercase tracking-widest">{new Date(originalPost.createdAt).toLocaleDateString()}</span>
              </div>
-             <p className="text-slate-200 text-sm leading-snug">{originalPost.content}</p>
+             
+             <p className="text-slate-100 text-[15px] leading-relaxed font-medium tracking-tight whitespace-pre-wrap">{originalPost.content}</p>
+             
              {originalPost.mediaUrl && (
-               <div className="mt-3 rounded-2xl overflow-hidden border border-white/5 shadow-xl bg-black">
+               <div className="mt-4 rounded-[2rem] overflow-hidden border border-white/5 shadow-3xl bg-black/40 relative group/media">
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/media:opacity-100 transition-opacity z-10"></div>
                  {originalPost.mediaType === 'video' ? (
-                    <video src={originalPost.mediaUrl} className="w-full max-h-80 object-cover" controls muted />
+                    <video src={originalPost.mediaUrl} className="w-full max-h-[500px] object-cover" autoPlay loop muted playsInline />
                  ) : (
-                    <img src={originalPost.mediaUrl} className="w-full max-h-80 object-cover" />
+                    <img src={originalPost.mediaUrl} className="w-full max-h-[500px] object-cover transition-transform duration-1000 group-hover:scale-[1.05]" />
                  )}
                </div>
              )}
-             <div className="flex justify-between items-center pt-3 max-w-sm text-slate-600 font-black text-[10px] tracking-widest">
-                <span className="flex items-center gap-1.5 group-hover:text-blue-400"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> {originalPost.comments?.length || 0}</span>
-                <span className="flex items-center gap-1.5 group-hover:text-emerald-500"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> {originalPost.reposts?.length || 0}</span>
-                <span className="flex items-center gap-1.5 group-hover:text-rose-500"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg> {originalPost.likes?.length || 0}</span>
+             
+             <div className="flex justify-between items-center pt-6 max-w-sm text-slate-500">
+                <button className="flex items-center gap-3 group hover:text-vibe-blue transition-all">
+                  <div className="p-3 group-hover:bg-vibe-blue/10 rounded-2xl transition-all shadow-sm"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.comments?.length || 0}</span>
+                </button>
+                <button className="flex items-center gap-3 group hover:text-vibe-orange transition-all">
+                  <div className="p-3 group-hover:bg-vibe-orange/10 rounded-2xl transition-all shadow-sm"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.reposts?.length || 0}</span>
+                </button>
+                <button className="flex items-center gap-3 group hover:text-vibe-pink transition-all">
+                  <div className="p-3 group-hover:bg-vibe-pink/10 rounded-2xl transition-all shadow-sm"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.likes?.length || 0}</span>
+                </button>
              </div>
           </div>
        </div>

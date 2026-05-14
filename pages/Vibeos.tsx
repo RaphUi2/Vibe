@@ -47,6 +47,7 @@ const VibeoCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ 
   const [isPlaying, setIsPlaying] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [isFollowing, setIsFollowing] = useState(user.friends?.includes(post.userId));
 
   // Intersection Observer for auto-play/pause
   useEffect(() => {
@@ -57,18 +58,18 @@ const VibeoCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ 
             videoRef.current?.play().catch(() => setIsPlaying(false));
             setIsPlaying(true);
           } else {
-            videoRef.current?.pause();
+            if (videoRef.current) {
+              videoRef.current.pause();
+              videoRef.current.currentTime = 0; // Reset for next watch
+            }
             setIsPlaying(false);
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.8 }
     );
 
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
-    }
-
+    if (videoRef.current) observer.observe(videoRef.current);
     return () => {
       if (videoRef.current) observer.unobserve(videoRef.current);
     };
@@ -88,6 +89,12 @@ const VibeoCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ 
     refresh();
   };
 
+  const handleFollow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    storage.addFriend(user.id, post.userId);
+    setIsFollowing(!isFollowing);
+  };
+
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -102,7 +109,7 @@ const VibeoCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ 
   };
 
   return (
-    <div className="h-full w-full snap-start relative bg-black flex items-center justify-center overflow-hidden group">
+    <div className="h-full w-full snap-start relative bg-black flex items-center justify-center overflow-hidden">
       <video 
         ref={videoRef}
         src={post.mediaUrl} 
@@ -110,52 +117,72 @@ const VibeoCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ 
         loop
         playsInline
         onClick={togglePlay}
+        muted={false}
       />
       
-      {/* Overlay UI */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80 pointer-events-none"></div>
+      {/* Immersive Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none"></div>
       
-      {/* Play/Pause Indicator */}
+      {/* Center Play Icon on Pause */}
       {!isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-20 h-20 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-md animate-in zoom-in duration-200">
-            <svg className="w-10 h-10 text-white ml-2" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <div className="w-16 h-16 bg-black/40 rounded-full flex items-center justify-center backdrop-blur-md scale-110">
+            <svg className="w-8 h-8 text-white/80" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>
       )}
 
-      {/* Right Actions */}
-      <div className="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-10">
-        <div className="flex flex-col items-center gap-1">
-          <button onClick={handleLike} className="w-12 h-12 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-black/60 transition-all border border-white/10">
-            <svg className="w-6 h-6" fill={liked ? '#f43f5e' : 'none'} stroke={liked ? '#f43f5e' : 'white'} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-          </button>
-          <span className="text-white font-bold text-xs drop-shadow-md">{post.likes?.length || 0}</span>
-        </div>
-        
-        <div className="flex flex-col items-center gap-1">
-          <button onClick={() => setShowComments(true)} className="w-12 h-12 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-black/60 transition-all border border-white/10">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-          </button>
-          <span className="text-white font-bold text-xs drop-shadow-md">{post.comments?.length || 0}</span>
+      {/* Side Actions (TikTok Style) */}
+      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-20">
+        <div className="relative mb-4">
+           <img src={author?.avatar} className="w-12 h-12 rounded-full border-2 border-white shadow-xl object-cover ring-2 ring-blue-500/50" />
+           {!isFollowing && author?.id !== user.id && (
+             <button 
+              onClick={handleFollow}
+              className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs border-2 border-black"
+             >
+               +
+             </button>
+           )}
         </div>
 
-        <div className="flex flex-col items-center gap-1">
-          <button className="w-12 h-12 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-black/60 transition-all border border-white/10">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+        <div className="flex flex-col items-center">
+          <button onClick={handleLike} className="group active:scale-125 transition-transform">
+            <svg className={`w-9 h-9 transition-colors ${liked ? 'text-red-500 fill-current' : 'text-white'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
           </button>
-          <span className="text-white font-bold text-xs drop-shadow-md">Partager</span>
+          <span className="text-white text-[11px] font-black mt-1 drop-shadow-lg">{post.likes?.length || 0}</span>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <button onClick={() => setShowComments(true)} className="group active:scale-125 transition-transform">
+            <svg className="w-9 h-9 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5L2.1 21.5l4.5-.762A9.956 9.956 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.474 0-2.85-.398-4.03-1.09l-.278-.163-2.603.441.441-2.603-.163-.278A7.954 7.954 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" /></svg>
+          </button>
+          <span className="text-white text-[11px] font-black mt-1 drop-shadow-lg">{post.comments?.length || 0}</span>
+        </div>
+
+        <div className="flex flex-col items-center">
+          <button className="group active:scale-125 transition-transform">
+             <svg className="w-9 h-9 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+          </button>
+          <span className="text-white text-[11px] font-black mt-1 drop-shadow-lg">Plus</span>
         </div>
       </div>
 
-      {/* Bottom Info */}
-      <div className="absolute bottom-20 left-4 right-20 z-10">
-        <div className="flex items-center gap-3 mb-3">
-          <img src={author?.avatar} className="w-10 h-10 rounded-full border-2 border-white shadow-lg object-cover" />
-          <span className="text-white font-black text-sm drop-shadow-md">@{author?.username}</span>
-          <button className="px-3 py-1 bg-transparent border border-white text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">Suivre</button>
+      {/* Bottom Text Info */}
+      <div className="absolute bottom-6 left-4 right-20 z-10 space-y-3 pointer-events-none">
+        <div className="flex items-center gap-2 pointer-events-auto cursor-pointer" onClick={() => window.dispatchEvent(new CustomEvent('viewProfile', { detail: post.userId }))}>
+           <span className="text-white font-black text-lg drop-shadow-md">@{author?.username}</span>
+           {author?.isCertified && <span className="text-blue-400 text-xs text-[8px] bg-blue-500/20 px-1 rounded-sm border border-blue-500/30">V</span>}
         </div>
-        <p className="text-white text-sm font-medium drop-shadow-md line-clamp-2">{post.content}</p>
+        <p className="text-white text-sm font-medium leading-snug drop-shadow-md max-w-sm line-clamp-2">
+          {post.content}
+        </p>
+        <div className="flex items-center gap-3">
+           <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10">
+              <span className="animate-spin text-xs">💿</span>
+              <span className="text-white text-[10px] font-black uppercase tracking-widest whitespace-nowrap overflow-hidden max-w-[100px]">Original Audio - {author?.name}</span>
+           </div>
+        </div>
       </div>
 
       {/* Comments Modal */}

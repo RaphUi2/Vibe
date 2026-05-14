@@ -225,8 +225,6 @@ const StoriesBar: React.FC<{ user: User, refresh: () => void }> = ({ user, refre
     </>
   );
 };
-
-
 const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -266,30 +264,32 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
   };
 
   return (
-    <div className="mb-4 animate-in slide-in-from-top-2 duration-500">
+    <div className="mb-8 animate-in slide-in-from-top-4 duration-700 max-w-2xl mx-auto w-full">
       <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-3xl blur opacity-5 group-hover:opacity-10 transition duration-1000"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-orange rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
         
-        <div className="relative bg-slate-950/50 rounded-3xl p-3 border border-white/5 shadow-xl overflow-hidden">
-          <div className="flex items-center gap-3 mb-3">
-             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+        <div className="relative liquid-glass rounded-[2.5rem] p-6 border border-white/10 shadow-4xl overflow-hidden">
+          <div className="flex items-center justify-between mb-6">
+             <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-vibe-blue to-vibe-purple rounded-xl flex items-center justify-center shadow-2xl">
+                    <svg className="w-5 h-5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <h3 className="vibe-logo text-sm font-black text-white tracking-[0.2em] uppercase opacity-80">Aura Pro</h3>
              </div>
-             <div className="flex-1">
-                <h3 className="vibe-logo text-[9px] font-black text-white/60 tracking-widest uppercase">Aura Core</h3>
-             </div>
-             <div className="flex gap-1 bg-black/40 p-0.5 rounded-lg border border-white/5">
+             
+             <div className="flex bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
                 {[
-                  { id: AIService.CHAT, icon: '💬' },
-                  { id: AIService.SEARCH, icon: '🔍' },
-                  { id: AIService.IMAGE_GEN, icon: '🎨' }
+                  { id: AIService.CHAT, icon: '💬', label: 'Chat' },
+                  { id: AIService.SEARCH, icon: '🔍', label: 'Search' },
+                  { id: AIService.IMAGE_GEN, icon: '🎨', label: 'VibeGen' }
                 ].map(m => (
                   <button 
                     key={m.id}
                     onClick={() => setActiveMode(m.id)}
-                    className={`w-6 h-6 flex items-center justify-center rounded-md transition-all ${activeMode === m.id ? 'bg-white text-black shadow-md' : 'text-slate-500 hover:text-white'}`}
+                    className={`px-4 py-2 flex items-center gap-2 rounded-lg transition-all ${activeMode === m.id ? 'bg-white text-black shadow-lg shadow-white/10' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                   >
-                    <span className="text-[10px]">{m.icon}</span>
+                    <span className="text-xs">{m.icon}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">{m.label}</span>
                   </button>
                 ))}
              </div>
@@ -301,34 +301,46 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAuraAction()}
-              placeholder={activeMode === AIService.CHAT ? "Aura..." : activeMode === AIService.SEARCH ? "Recherche..." : "Générer..."}
-              className="w-full bg-black/60 border border-white/5 rounded-xl px-4 py-2 text-white font-bold text-xs focus:outline-none focus:border-blue-500/30 transition-all placeholder:text-slate-800 pr-10"
+              placeholder={activeMode === AIService.CHAT ? "Demandez n'importe quoi..." : activeMode === AIService.SEARCH ? "Explorez le Web..." : "Imaginez un visuel..."}
+              className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] px-6 py-4 text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-vibe-blue/20 transition-all placeholder:text-slate-700 pr-16"
              />
              <button 
               onClick={handleAuraAction}
               disabled={loading || !input.trim()}
-              className={`absolute right-1.5 top-1.5 bottom-1.5 w-7 rounded-lg flex items-center justify-center transition-all ${loading || !input.trim() ? 'text-slate-700' : 'bg-blue-600 text-white hover:bg-blue-50'}`}
+              className={`absolute right-2 top-2 bottom-2 px-4 rounded-xl flex items-center justify-center transition-all ${loading || !input.trim() ? 'opacity-30' : 'bg-white text-black hover:scale-[1.02] active:scale-95 shadow-xl'}`}
              >
                {loading ? (
-                 <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
                ) : (
-                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
+                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
                )}
              </button>
           </div>
 
           {result && (
-            <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/5 animate-in zoom-in-95 duration-300 relative">
-               <button onClick={() => setResult(null)} className="absolute top-1.5 right-1.5 p-1 text-slate-500 hover:text-white"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg></button>
+            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10 animate-in zoom-in-95 slide-in-from-top-4 duration-500 relative group/res">
+               <button onClick={() => setResult(null)} className="absolute top-4 right-4 p-2 bg-white/5 rounded-full text-slate-500 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover/res:opacity-100">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+               </button>
+               
                {result.type === 'image' ? (
-                  <img src={result.mediaUrl} className="w-full rounded-lg border border-white/10 shadow-2xl" />
+                  <div className="relative group">
+                    <img src={result.mediaUrl} className="w-full rounded-2xl border border-white/10 shadow-5xl transition-transform group-hover:scale-[1.01] duration-700" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                      <button className="bg-white text-black px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest shadow-2xl">Enregistrer</button>
+                    </div>
+                  </div>
                ) : (
-                 <div className="space-y-1.5">
-                   <p className="text-xs font-medium text-slate-300 leading-relaxed">{result.text}</p>
+                 <div className="space-y-4">
+                   <div className="flex items-center gap-2">
+                     <div className="w-2 h-2 rounded-full bg-vibe-blue animate-pulse"></div>
+                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Réponse d'Aura</span>
+                   </div>
+                   <p className="text-sm font-medium text-slate-100 leading-relaxed tracking-wide">{result.text}</p>
                    {result.grounding?.length > 0 && (
-                     <div className="flex flex-wrap gap-1 pt-1">
+                     <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
                         {result.grounding.map((g: any, i: number) => (
-                          <a key={i} href={g.uri} target="_blank" className="px-1.5 py-0.5 bg-blue-500/10 border border-blue-500/10 rounded-md text-[7px] font-black uppercase text-blue-400">{g.title}</a>
+                          <a key={i} href={g.uri} target="_blank" className="px-3 py-1 bg-vibe-blue/10 border border-vibe-blue/20 rounded-full text-[8px] font-black uppercase text-vibe-blue hover:bg-vibe-blue hover:text-white transition-all transform hover:-translate-y-0.5">{g.title}</a>
                         ))}
                      </div>
                    )}
@@ -376,34 +388,48 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-700 h-full">
-      {/* Search & Header - Fixed at top like Twitter */}
-      <div className="sticky top-0 z-[500] bg-[#020617] border-b border-white/5 p-4 space-y-4">
-        <div className="relative group">
+      {/* Search & Header - Balanced Glassmorphism */}
+      <div className="sticky top-0 z-[500] bg-black/40 backdrop-blur-3xl border-b border-white/5 p-4 space-y-4">
+        <div className="relative group max-w-2xl mx-auto">
            <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-              <svg className="w-4 h-4 text-slate-500 group-focus-within:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
            </div>
            <input 
             type="text" 
             placeholder="Rechercher dans Vibe..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-3 text-xs font-bold text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-700"
+            className="w-full bg-[#16181c] border border-transparent rounded-full pl-12 pr-12 py-3 text-sm font-medium text-white focus:outline-none focus:bg-transparent focus:border-blue-500/50 transition-all placeholder:text-slate-500 shadow-sm"
            />
+           {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+           )}
         </div>
 
-        <div className="flex justify-center gap-3">
-             {[
-               { id: 'for-you', label: 'Pour vous' },
-               { id: 'following', label: 'Suivis' }
-             ].map(tab => (
-               <button 
-                key={tab.id}
-                onClick={() => setFeedType(tab.id as any)}
-                className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${feedType === tab.id ? 'bg-white text-black border-white shadow-lg shadow-white/10' : 'bg-black/40 text-slate-400 border-white/10 hover:text-white hover:bg-white/5'}`}
-               >
-                 {tab.label}
-               </button>
-             ))}
+        <div className="flex justify-center">
+          <div className="flex bg-[#16181c]/50 p-1 rounded-full border border-white/5 backdrop-blur-md">
+               {[
+                 { id: 'for-you', label: 'Pour vous' },
+                 { id: 'following', label: 'Suivis' }
+               ].map((tab, idx) => (
+                 <button 
+                  key={tab.id}
+                  onClick={() => setFeedType(tab.id as any)}
+                  className={`px-10 py-2.5 rounded-full text-xs font-black transition-all whitespace-nowrap ${
+                    feedType === tab.id 
+                    ? 'bg-white text-black shadow-xl' 
+                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                  }`}
+                 >
+                   {tab.label}
+                 </button>
+               ))}
+          </div>
         </div>
       </div>
 
@@ -490,82 +516,86 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
   };
   
   return (
-    <div className="p-4 md:p-6 hover:bg-white/[0.03] transition-all cursor-pointer group mb-1" onClick={() => {}}>
+    <div className="p-4 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl" onClick={() => {}}>
       {post.repostOf && (
-        <div className="flex items-center gap-2 mb-3 ml-12 text-slate-500 text-[10px] font-black uppercase tracking-widest opacity-60">
-           <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-           {author?.name} a partagé
+        <div className="flex items-center gap-2 mb-4 ml-12 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
+           <svg className="w-3.5 h-3.5 logo-vibe-text" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+           {author?.name} a propagé le signal
         </div>
       )}
       
-      <div className="flex gap-4">
-        <img 
-            src={originalAuthor?.avatar} 
-            className="w-12 h-12 rounded-full border border-white/5 shrink-0 object-cover hover:opacity-80 transition-opacity shadow-md" 
-            onClick={(e) => openProfile(e, originalAuthor!.id)}
-        />
-        <div className="flex-1 min-w-0 space-y-2">
+      <div className="flex gap-6">
+        <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-vibe-blue via-vibe-purple to-vibe-pink overflow-hidden w-14 h-14 shrink-0 transition-transform group-hover:scale-105 duration-500">
+          <img 
+              src={originalAuthor?.avatar} 
+              className="w-full h-full rounded-full border border-black/20 object-cover" 
+              onClick={(e) => openProfile(e, originalAuthor!.id)}
+          />
+        </div>
+        <div className="flex-1 min-w-0 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 mb-0.5">
+            <div className="flex items-center gap-3">
               <span 
-                  className="font-black text-white hover:underline truncate vibe-logo text-sm flex items-center gap-1" 
+                  className="font-black text-white hover:text-vibe-blue transition-colors truncate vibe-logo text-sm flex items-center gap-2" 
                   onClick={(e) => openProfile(e, originalAuthor!.id)}
               >
                   {originalAuthor?.name}
                   {originalAuthor?.isCertified && (
-                    <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center text-[8px] font-black text-white shadow-lg shadow-blue-500/20">V</div>
+                    <div className="w-4 h-4 bg-gradient-to-tr from-vibe-blue to-vibe-purple rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-lg animate-pulse">V</div>
                   )}
               </span>
-              <span className="text-slate-500 text-xs truncate">@{originalAuthor?.username}</span>
-              <span className="text-slate-700 text-[10px]">•</span>
-              <span className="text-slate-600 text-[10px] font-bold uppercase">{Math.floor((Date.now() - originalPost.createdAt) / 60000)}m</span>
+              <span className="text-slate-500 text-xs truncate font-medium">@{originalAuthor?.username}</span>
+              <span className="text-slate-800 text-[10px]">•</span>
+              <span className="text-vibe-purple text-[10px] font-black uppercase tracking-widest">{Math.floor((Date.now() - originalPost.createdAt) / 60000)}m</span>
             </div>
-            <button onClick={handleSave} className={`p-2 rounded-xl transition-all ${saved ? 'text-blue-400 bg-blue-400/10' : 'text-slate-600 hover:text-white hover:bg-white/5'}`}>
-               <svg className="w-4 h-4" fill={saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+            <button onClick={handleSave} className={`p-2.5 rounded-2xl transition-all ${saved ? 'text-vibe-orange bg-vibe-orange/10 shadow-lg shadow-vibe-orange/20' : 'text-slate-600 hover:text-white hover:bg-white/10'}`}>
+               <svg className="w-4 h-4" fill={saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
             </button>
           </div>
           
-          <p className="text-slate-200 text-[15px] leading-relaxed whitespace-pre-wrap">{originalPost.content}</p>
+          <p className="text-slate-100 text-[16px] leading-relaxed whitespace-pre-wrap font-medium tracking-tight overflow-hidden text-ellipsis">{originalPost.content}</p>
 
           {originalPost.mediaUrl && (
-            <div className="mt-4 rounded-3xl overflow-hidden border border-white/5 shadow-2xl bg-black min-h-[100px] flex items-center justify-center">
+            <div className="mt-4 rounded-[2.5rem] overflow-hidden border border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.5)] bg-black/40 min-h-[100px] flex items-center justify-center relative group/media">
+               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/media:opacity-100 transition-opacity z-10"></div>
                {originalPost.mediaType === 'video' ? (
                  <video 
                   src={originalPost.mediaUrl} 
-                  className="w-full max-h-[500px] object-cover" 
-                  controls 
-                  playsInline
+                  className="w-full max-h-[600px] object-cover" 
+                  autoPlay
+                  loop
                   muted 
+                  playsInline
                  />
                ) : (
-                 <img src={originalPost.mediaUrl} className="w-full max-h-[500px] object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
+                 <img src={originalPost.mediaUrl} className="w-full max-h-[600px] object-cover transition-transform duration-1000 group-hover:scale-[1.05]" />
                )}
             </div>
           )}
           
-          <div className="flex items-center justify-between mt-5 text-slate-500 max-w-sm">
-            <button onClick={(e) => { e.stopPropagation(); setCommenting(!commenting); }} className="flex items-center gap-2 group hover:text-blue-400 transition-colors">
-              <div className="p-2.5 group-hover:bg-blue-400/10 rounded-full transition-all"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg></div>
-              <span className="text-xs font-black">{originalPost.comments?.length || 0}</span>
+          <div className="flex items-center justify-between mt-8 text-slate-500 max-w-md">
+            <button onClick={(e) => { e.stopPropagation(); setCommenting(!commenting); }} className="flex items-center gap-3 group hover:text-vibe-blue transition-all">
+              <div className="p-3 group-hover:bg-vibe-blue/10 rounded-2xl transition-all shadow-sm group-hover:shadow-vibe-blue/20"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg></div>
+              <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.comments?.length || 0}</span>
             </button>
-            <button onClick={handleRepost} className={`flex items-center gap-2 group transition-all ${reposted ? 'text-emerald-500' : 'hover:text-emerald-500'}`}>
-              <div className="p-2.5 group-hover:bg-emerald-500/10 rounded-full transition-all"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></div>
-              <span className="text-xs font-black">{originalPost.reposts?.length || 0}</span>
+            <button onClick={handleRepost} className={`flex items-center gap-3 group transition-all ${reposted ? 'text-vibe-orange' : 'hover:text-vibe-orange'}`}>
+              <div className="p-3 group-hover:bg-vibe-orange/10 rounded-2xl transition-all shadow-sm group-hover:shadow-vibe-orange/20"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></div>
+              <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.reposts?.length || 0}</span>
             </button>
-            <button onClick={handleLike} className={`flex items-center gap-2 group transition-all ${liked ? 'text-rose-500' : 'hover:text-rose-500'}`}>
-              <div className="p-2.5 group-hover:bg-rose-500/10 rounded-full transition-all"><svg className="w-5 h-5" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
-              <span className="text-xs font-black">{originalPost.likes?.length || 0}</span>
+            <button onClick={handleLike} className={`flex items-center gap-3 group transition-all ${liked ? 'text-vibe-pink' : 'hover:text-vibe-pink'}`}>
+              <div className="p-3 group-hover:bg-vibe-pink/10 rounded-2xl transition-all shadow-sm group-hover:shadow-vibe-pink/20"><svg className="w-5 h-5" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
+              <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.likes?.length || 0}</span>
             </button>
             <button 
               onClick={handleBoost} 
-              className={`flex items-center gap-2 group transition-all ${boosted ? 'text-blue-400' : 'hover:text-blue-400'} ${isBoosting ? 'animate-boost' : ''} ${boosted ? 'animate-boost-pulse' : ''}`}
+              className={`flex items-center gap-3 group transition-all ${boosted ? 'text-vibe-blue' : 'hover:text-vibe-blue'} ${isBoosting ? 'animate-boost' : ''} ${boosted ? 'animate-boost-pulse' : ''}`}
             >
-              <div className="p-2.5 group-hover:bg-blue-400/10 rounded-full transition-all">
+              <div className="p-3 group-hover:bg-vibe-blue/10 rounded-2xl transition-all shadow-sm group-hover:shadow-vibe-blue/20">
                 <svg className="w-5 h-5" fill={boosted ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <span className="text-xs font-black">{originalPost.boosts?.length || 0}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">{originalPost.boosts?.length || 0}</span>
             </button>
           </div>
 

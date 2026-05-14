@@ -14,6 +14,7 @@ import Settings from './pages/Settings.tsx';
 import Boost from './pages/Boost.tsx';
 import Logo from './components/Logo.tsx';
 import Vibeos from './pages/Vibeos.tsx';
+import Plus from './pages/Plus.tsx';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -52,15 +53,21 @@ const App: React.FC = () => {
       setTimeout(() => setRewardToast(null), 4000);
     };
 
+    const handleNavigate = (e: any) => {
+      setActiveTab(e.detail);
+    };
+
     window.addEventListener('vibeUserUpdated', handleUserUpdate);
     window.addEventListener('vibeRewardToast', handleReward);
     window.addEventListener('vibeOpenProfile', handleOpenProfile);
     window.addEventListener('vibeQuestCompleted', handleQuestCompleted);
+    window.addEventListener('vibeNavigate', handleNavigate);
     return () => {
       window.removeEventListener('vibeUserUpdated', handleUserUpdate);
       window.removeEventListener('vibeRewardToast', handleReward);
       window.removeEventListener('vibeOpenProfile', handleOpenProfile);
       window.removeEventListener('vibeQuestCompleted', handleQuestCompleted);
+      window.removeEventListener('vibeNavigate', handleNavigate);
     };
   }, []);
 
@@ -97,8 +104,9 @@ const App: React.FC = () => {
   const renderPage = () => {
     switch (activeTab) {
       case 'home': return <Home user={currentUser} onUpdate={setCurrentUser} />;
-      case 'ia': return <AIHub user={currentUser} onUpdate={setCurrentUser} />;
+      case 'ia': return <AIHub user={currentUser} />;
       case 'vibeos': return <Vibeos user={currentUser} />;
+      case 'plus': return <Plus user={currentUser} />;
       case 'profile': return (
           <Profile 
             user={currentUser} 
@@ -117,9 +125,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col relative overflow-hidden text-slate-100">
-      <div className="absolute inset-0 bg-pulse-blue pointer-events-none opacity-10"></div>
-
+    <div className="h-screen flex flex-col relative overflow-hidden vibe-gradient-bg text-slate-100">
+      <div className="absolute inset-0 atmosphere"></div>
+      
       {rewardToast && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[1000] liquid-glass px-6 py-3 rounded-2xl border border-blue-500/40 flex items-center gap-6 animate-in slide-in-from-top-4 shadow-4xl backdrop-blur-3xl">
            <div className="flex flex-col">
@@ -134,9 +142,15 @@ const App: React.FC = () => {
       <div className="max-w-[1300px] mx-auto flex h-full">
         
         {/* Left Sidebar (Desktop) */}
-        <aside className="hidden lg:flex flex-col w-[275px] sticky top-0 h-screen border-r border-black/5 dark:border-white/10 px-4 py-4">
-          <div className="p-3 mb-4">
-            <div className="w-12 h-12 bg-black dark:bg-white rounded-xl flex items-center justify-center text-2xl shadow-lg shadow-black/10 dark:shadow-white/5 font-black text-white dark:text-black">𝕏</div>
+        <aside className="hidden lg:flex flex-col w-[275px] sticky top-0 h-screen border-r border-white/5 px-4 py-4 z-[50]">
+          <div className="p-3 mb-6">
+            <div className="relative group cursor-pointer">
+              <div className="absolute -inset-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-orange rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative w-14 h-14 bg-black rounded-2xl flex flex-col items-center justify-center shadow-2xl border border-white/10 overflow-hidden">
+                <span className="text-4xl font-black logo-vibe-text">V</span>
+              </div>
+            </div>
+            <div className="mt-2 ml-1 text-xs font-black tracking-[0.2em] opacity-80 logo-vibe-text uppercase">Vibe</div>
           </div>
           
           <nav className="flex-1 space-y-2">
@@ -144,118 +158,89 @@ const App: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as any)}
-                className={`w-full flex items-center gap-4 p-3 rounded-full transition-all duration-200 ${activeTab === item.id ? 'font-black text-black dark:text-white bg-black/5 dark:bg-white/10' : 'text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/5'}`}
+                className={`w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group ${activeTab === item.id ? 'font-black text-white bg-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
               >
-                {item.icon}
+                <div className={`${activeTab === item.id ? 'logo-vibe-text drop-shadow-[0_0_10px_rgba(138,43,226,0.5)]' : 'group-hover:text-vibe-pink'} transition-colors`}>
+                  {item.icon}
+                </div>
                 <span className="text-xl hidden xl:block">{item.label}</span>
               </button>
             ))}
           </nav>
 
-          <div className="mt-auto p-3">
+          <div className="mt-auto p-3 space-y-4">
             <button 
               onClick={() => setIsPostModalOpen(true)}
-              className="w-full py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-black text-lg shadow-lg shadow-blue-500/20 transition-all"
+              className="w-full py-4 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-pink text-white rounded-2xl font-black text-lg shadow-2xl shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300 border border-white/10"
             >
-              Poster
+              Post
             </button>
             
             <button 
               onClick={handleProfileNav}
-              className="mt-6 w-full flex items-center gap-3 p-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all text-left"
+              className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 transition-all text-left border border-transparent hover:border-white/10"
             >
-              <img src={currentUser.avatar} className="w-10 h-10 rounded-full object-cover border border-black/10 dark:border-white/10" />
+              <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-vibe-blue to-vibe-pink">
+                <img src={currentUser.avatar} className="w-10 h-10 rounded-full object-cover border border-black/20" />
+              </div>
               <div className="hidden xl:block">
-                <div className="font-black text-black dark:text-white text-sm">@{currentUser.username}</div>
-                <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">Niveau {currentUser.level}</div>
+                <div className="font-black text-white text-sm">@{currentUser.username}</div>
+                <div className="text-vibe-purple text-[10px] font-black uppercase tracking-widest">Niveau {currentUser.level}</div>
               </div>
             </button>
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 border-r border-black/5 dark:border-white/10 relative overflow-y-auto custom-scrollbar pb-24 lg:pb-0">
+        <main className="flex-1 min-w-0 border-x border-white/5 relative overflow-y-auto custom-scrollbar pb-24 lg:pb-0 z-10">
           {renderPage()}
-          
-          {/* Plus Menu Overlay */}
-          {activeTab === 'plus' && (
-            <div className="absolute inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-300">
-              <div className="bg-white dark:bg-[#1B1D22] border border-black/10 dark:border-white/10 rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-300 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-                <div className="flex justify-between items-center mb-8">
-                  <h3 className="vibe-logo text-2xl font-black text-black dark:text-white tracking-tighter">PLUS</h3>
-                  <button onClick={() => setActiveTab('home')} className="p-2 bg-slate-100 dark:bg-white/5 rounded-full text-slate-500 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { id: 'settings', label: 'Paramètres', icon: '⚙️', color: 'bg-slate-500' },
-                    { id: 'quests', label: 'Quêtes', icon: '🎯', color: 'bg-blue-500' },
-                    { id: 'store', label: 'Boutique', icon: '🛒', color: 'bg-emerald-500' },
-                    { id: 'boost', label: 'Boost', icon: '🚀', color: 'bg-purple-500' }
-                  ].map(item => (
-                    <button 
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id as any)}
-                      className="flex flex-col items-center gap-3 p-6 bg-slate-50 dark:bg-white/5 rounded-3xl hover:scale-105 transition-all border border-transparent hover:border-blue-500/30 group"
-                    >
-                      <div className={`w-14 h-14 ${item.color} rounded-2xl flex items-center justify-center text-2xl shadow-lg group-hover:rotate-12 transition-transform`}>{item.icon}</div>
-                      <span className="text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </main>
 
         {/* Right Sidebar (Desktop) */}
-        <aside className="hidden lg:flex flex-col w-[350px] sticky top-0 h-screen px-6 py-4 space-y-6 overflow-y-auto">
-          <div className="relative">
+        <aside className="hidden lg:flex flex-col w-[350px] sticky top-0 h-screen px-6 py-4 space-y-6 overflow-y-auto z-[50]">
+          <div className="relative group">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="w-4 h-4 text-slate-500 group-focus-within:text-vibe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
             <input 
               type="text" 
               placeholder="Chercher sur Vibe" 
-              className="w-full bg-slate-100 dark:bg-[#202327] border-none rounded-full pl-12 pr-6 py-3 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-full pl-12 pr-6 py-4 text-sm focus:ring-2 focus:ring-vibe-blue/50 focus:bg-white/10 transition-all outline-none"
             />
           </div>
 
-          <div className="bg-slate-50 dark:bg-[#16181C] rounded-2xl overflow-hidden border border-black/5 dark:border-white/5">
-            <h3 className="p-4 text-xl font-black text-black dark:text-white tracking-tight">Tendances pour vous</h3>
+          <div className="bg-white/5 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-3xl">
+            <h3 className="p-6 text-xl font-black text-white tracking-tight border-b border-white/10">Tendances</h3>
             {storage.getTrends().map(trend => (
-              <button key={trend.id} className="w-full p-4 text-left hover:bg-black/5 dark:hover:bg-white/5 transition-all border-t border-black/5 dark:border-white/5">
-                <div className="text-slate-500 text-xs font-bold">{trend.category} · Tendances</div>
-                <div className="text-black dark:text-white font-black">{trend.hashtag}</div>
-                <div className="text-slate-500 text-xs font-bold">{trend.count}</div>
+              <button key={trend.id} className="w-full p-6 text-left hover:bg-white/5 transition-all border-b border-white/10 last:border-0 group">
+                <div className="text-slate-500 text-xs font-bold group-hover:text-vibe-blue transition-colors">{trend.category} · Trending</div>
+                <div className="text-white font-black text-lg group-hover:translate-x-1 transition-transform">{trend.hashtag}</div>
+                <div className="text-slate-500 text-xs font-bold">{trend.count} posts</div>
               </button>
             ))}
-            <button className="w-full p-4 text-left text-blue-500 text-sm font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-all">Voir plus</button>
           </div>
 
-          <div className="bg-slate-50 dark:bg-[#16181C] rounded-2xl overflow-hidden border border-black/5 dark:border-white/5">
-            <h3 className="p-4 text-xl font-black text-black dark:text-white tracking-tight">Suggestions</h3>
+          <div className="bg-white/5 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-3xl">
+            <h3 className="p-6 text-xl font-black text-white tracking-tight border-b border-white/10">Suggestions</h3>
             {storage.getUsers().slice(0, 3).map(u => (
-              <div key={u.id} className="flex items-center justify-between p-4 border-t border-black/5 dark:border-white/5">
-                <div className="flex items-center gap-3">
-                  <img src={u.avatar} className="w-10 h-10 rounded-full object-cover" />
+              <div key={u.id} className="flex items-center justify-between p-6 border-b border-white/10 last:border-0 group">
+                <div className="flex items-center gap-4">
+                  <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-vibe-blue to-vibe-pink overflow-hidden">
+                    <img src={u.avatar} className="w-10 h-10 rounded-full object-cover border border-black/20" />
+                  </div>
                   <div>
-                    <div className="text-black dark:text-white font-black text-sm">@{u.username}</div>
-                    <div className="text-slate-500 text-xs font-bold">Niveau {u.level}</div>
+                    <div className="text-white font-black text-sm">@{u.username}</div>
+                    <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Niveau {u.level}</div>
                   </div>
                 </div>
-                <button className="px-4 py-1.5 bg-black dark:bg-white text-white dark:text-black rounded-full text-sm font-black">Suivre</button>
+                <button className="px-5 py-2 bg-white text-black hover:bg-vibe-blue hover:text-white rounded-full text-xs font-black transition-all">Suivre</button>
               </div>
             ))}
-            <button className="w-full p-4 text-left text-blue-500 text-sm font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-all">Voir plus</button>
           </div>
         </aside>
 
         {/* Bottom Navigation (Mobile) */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-t border-black/5 dark:border-white/10 px-4 py-3 pb-8 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.1)]">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/60 backdrop-blur-3xl border-t border-white/10 px-4 py-3 pb-8 flex justify-between items-center shadow-4xl">
           {[
             { id: 'home', label: 'Accueil', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
             { id: 'vibeos', label: 'Vibeos', icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
@@ -275,13 +260,15 @@ const App: React.FC = () => {
                   setActiveTab(btn.id as any);
                 }
               }} 
-              className={`flex flex-col items-center gap-1 transition-all flex-1 ${activeTab === btn.id && (btn.id !== 'profile' || !viewingProfileId) ? 'text-blue-400 scale-110' : 'text-slate-500'}`}
+              className={`flex flex-col items-center gap-1 transition-all flex-1 ${activeTab === btn.id && (btn.id !== 'profile' || !viewingProfileId) ? 'scale-110' : 'opacity-50'}`}
             >
               {btn.avatar ? (
-                <img src={btn.avatar} className={`w-7 h-7 rounded-full border-2 transition-all object-cover ${activeTab === 'profile' && !viewingProfileId ? 'border-blue-400' : 'border-white/10'}`} />
+                <div className={`relative p-0.5 rounded-full ${activeTab === 'profile' && !viewingProfileId ? 'bg-gradient-to-tr from-vibe-blue to-vibe-pink' : 'bg-transparent'}`}>
+                  <img src={btn.avatar} className="w-7 h-7 rounded-full border border-black/20 transition-all object-cover" />
+                </div>
               ) : (
-                <div className={`p-1 rounded-xl ${activeTab === btn.id ? 'bg-blue-400/10' : ''}`}>
-                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={btn.icon} /></svg>
+                <div className={`p-1 transition-colors ${activeTab === btn.id ? 'logo-vibe-text' : 'text-white'}`}>
+                   <svg className="w-5 h-5 transition-transform" fill={activeTab === btn.id ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={btn.icon} /></svg>
                 </div>
               )}
             </button>
@@ -290,15 +277,18 @@ const App: React.FC = () => {
       </div>
 
       {isPostModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-10 md:pt-24 p-4 md:p-6 bg-black/90 backdrop-blur-2xl animate-in fade-in duration-300 overflow-y-auto">
-           <div className="w-full max-w-xl liquid-glass rounded-[3rem] p-6 md:p-8 border border-white/10 shadow-4xl relative mb-10">
-              <div className="flex justify-between items-center mb-8">
-                  <button onClick={() => setIsPostModalOpen(false)} className="text-slate-400 font-bold hover:text-white px-4">Fermer</button>
+        <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-10 md:pt-24 p-4 md:p-6 bg-black/80 backdrop-blur-3xl animate-in fade-in duration-500 overflow-y-auto">
+           <div className="w-full max-w-xl liquid-glass rounded-[3rem] p-6 md:p-10 border border-white/10 shadow-5xl relative mb-10 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-pink"></div>
+              <div className="flex justify-between items-center mb-10">
+                  <button onClick={() => setIsPostModalOpen(false)} className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
                   <button 
                     onClick={() => window.dispatchEvent(new CustomEvent('vibeTriggerPost'))} 
-                    className="px-8 py-2.5 bg-blue-500 text-white rounded-full font-black text-sm shadow-lg hover:bg-blue-400"
+                    className="px-10 py-3 bg-gradient-to-r from-vibe-blue to-vibe-pink text-white rounded-full font-black text-sm shadow-2xl hover:scale-[1.02] active:scale-95 transition-all"
                   >
-                    Publier
+                    Post
                   </button>
               </div>
               <PostCreator user={currentUser} onCreated={() => { setIsPostModalOpen(false); window.dispatchEvent(new CustomEvent('refreshFeed')); }} />

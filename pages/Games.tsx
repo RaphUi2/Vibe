@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../types.ts';
 import { storage } from '../services/storageService.ts';
 
@@ -8,39 +8,43 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const games = [
-    // FREE GAMES (10)
-    { id: 'clicker', name: 'Synth Clicker', icon: '⚡', color: 'from-blue-600 to-cyan-400', desc: 'Générez des Novas via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%', image: 'https://picsum.photos/seed/clicker/800/600' },
-    { id: 'snake', name: 'Neural Snake', icon: '🐍', color: 'from-emerald-600 to-teal-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', tier: 'free', players: '850', rating: '88%', image: 'https://picsum.photos/seed/snake/800/600' },
-    { id: 'runner', name: 'Nexus Runner', icon: '🏃', color: 'from-orange-600 to-amber-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', tier: 'free', players: '3.4k', rating: '92%', image: 'https://picsum.photos/seed/runner/800/600' },
-    { id: 'jump', name: 'Neon Jump', icon: '🚀', color: 'from-cyan-600 to-blue-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '90%', image: 'https://picsum.photos/seed/jump/800/600' },
-    { id: 'dodge', name: 'Data Dodge', icon: '🛡️', color: 'from-yellow-600 to-amber-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', tier: 'free', players: '2.3k', rating: '93%', image: 'https://picsum.photos/seed/dodge/800/600' },
-    { id: 'quiz', name: 'Vibe Quiz', icon: '❓', color: 'from-pink-600 to-rose-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', tier: 'free', players: '900', rating: '85%', image: 'https://picsum.photos/seed/quiz/800/600' },
-    { id: 'stack', name: 'Block Stack', icon: '🧱', color: 'from-indigo-600 to-purple-400', desc: 'Empilez les blocs de données.', difficulty: 'Easy', tier: 'free', players: '1.1k', rating: '87%', image: 'https://picsum.photos/seed/stack/800/600' },
-    { id: 'aim', name: 'Aim Trainer', icon: '🎯', color: 'from-red-600 to-rose-400', desc: 'Améliorez vos réflexes.', difficulty: 'Hard', tier: 'free', players: '2.5k', rating: '91%', image: 'https://picsum.photos/seed/aim/800/600' },
-    { id: 'color', name: 'Color Match', icon: '🎨', color: 'from-teal-600 to-emerald-400', desc: 'Associez les couleurs du Nexus.', difficulty: 'Medium', tier: 'free', players: '1.4k', rating: '89%', image: 'https://picsum.photos/seed/color/800/600' },
-    { id: 'tap', name: 'Fast Tap', icon: '👆', color: 'from-purple-600 to-fuchsia-400', desc: 'Tapez le plus vite possible.', difficulty: 'Easy', tier: 'free', players: '3.1k', rating: '95%', image: 'https://picsum.photos/seed/tap/800/600' },
-    { id: 'memory', name: 'Neuro Memory', icon: '🧠', color: 'from-blue-500 to-indigo-400', desc: 'Testez votre mémoire visuelle.', difficulty: 'Medium', tier: 'free', players: '1.8k', rating: '92%', image: 'https://picsum.photos/seed/memory/800/600' },
-    { id: 'bricks', name: 'Cyber Bricks', icon: '🧱', color: 'from-orange-500 to-red-400', desc: 'Cassez les briques du Nexus.', difficulty: 'Easy', tier: 'free', players: '2.2k', rating: '90%', image: 'https://picsum.photos/seed/bricks/800/600' },
-    { id: 'flappy', name: 'Vibe Bird', icon: '🐦', color: 'from-yellow-500 to-orange-400', desc: 'Volez à travers les serveurs.', difficulty: 'Hard', tier: 'free', players: '4.5k', rating: '88%', image: 'https://picsum.photos/seed/flappy/800/600' },
-    { id: 'tetris', name: 'Nexus Blocks', icon: '🧊', color: 'from-indigo-500 to-blue-400', desc: 'Alignez les blocs de données.', difficulty: 'Hard', tier: 'free', players: '3.9k', rating: '94%', image: 'https://picsum.photos/seed/tetris/800/600' },
+    // FREE GAMES (16)
+    { id: 'clicker', name: 'Synth Clicker 3D', icon: '⚡', color: 'from-blue-600 to-cyan-400', desc: 'Générez des Novas via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%', image: 'https://picsum.photos/seed/clicker/800/600' },
+    { id: 'snake', name: 'Neural Snake 3D', icon: '🐍', color: 'from-emerald-600 to-teal-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', tier: 'free', players: '850', rating: '88%', image: 'https://picsum.photos/seed/snake/800/600' },
+    { id: 'runner', name: 'Nexus Runner 3D', icon: '🏃', color: 'from-orange-600 to-amber-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', tier: 'free', players: '3.4k', rating: '92%', image: 'https://picsum.photos/seed/runner/800/600' },
+    { id: 'jump', name: 'Neon Jump 3D', icon: '🚀', color: 'from-cyan-600 to-blue-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '90%', image: 'https://picsum.photos/seed/jump/800/600' },
+    { id: 'dodge', name: 'Data Dodge 3D', icon: '🛡️', color: 'from-yellow-600 to-amber-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', tier: 'free', players: '2.3k', rating: '93%', image: 'https://picsum.photos/seed/dodge/800/600' },
+    { id: 'quiz', name: 'Vibe Quiz 3D', icon: '❓', color: 'from-pink-600 to-rose-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', tier: 'free', players: '900', rating: '85%', image: 'https://picsum.photos/seed/quiz/800/600' },
+    { id: 'stack', name: 'Block Stack 3D', icon: '🧱', color: 'from-indigo-600 to-purple-400', desc: 'Empilez les blocs de données.', difficulty: 'Easy', tier: 'free', players: '1.1k', rating: '87%', image: 'https://picsum.photos/seed/stack/800/600' },
+    { id: 'aim', name: 'Aim Trainer 3D', icon: '🎯', color: 'from-red-600 to-rose-400', desc: 'Améliorez vos réflexes.', difficulty: 'Hard', tier: 'free', players: '2.5k', rating: '91%', image: 'https://picsum.photos/seed/aim/800/600' },
+    { id: 'color', name: 'Color Match 3D', icon: '🎨', color: 'from-teal-600 to-emerald-400', desc: 'Associez les couleurs du Nexus.', difficulty: 'Medium', tier: 'free', players: '1.4k', rating: '89%', image: 'https://picsum.photos/seed/color/800/600' },
+    { id: 'tap', name: 'Fast Tap 3D', icon: '👆', color: 'from-purple-600 to-fuchsia-400', desc: 'Tapez le plus vite possible.', difficulty: 'Easy', tier: 'free', players: '3.1k', rating: '95%', image: 'https://picsum.photos/seed/tap/800/600' },
+    { id: 'memory', name: 'Neuro Memory 3D', icon: '🧠', color: 'from-blue-500 to-indigo-400', desc: 'Testez votre mémoire visuelle.', difficulty: 'Medium', tier: 'free', players: '1.8k', rating: '92%', image: 'https://picsum.photos/seed/memory/800/600' },
+    { id: 'bricks', name: 'Cyber Bricks 3D', icon: '🧱', color: 'from-orange-500 to-red-400', desc: 'Cassez les briques du Nexus.', difficulty: 'Easy', tier: 'free', players: '2.2k', rating: '90%', image: 'https://picsum.photos/seed/bricks/800/600' },
+    { id: 'flappy', name: 'Vibe Bird 3D', icon: '🐦', color: 'from-yellow-500 to-orange-400', desc: 'Volez à travers les serveurs.', difficulty: 'Hard', tier: 'free', players: '4.5k', rating: '88%', image: 'https://picsum.photos/seed/flappy/800/600' },
+    { id: 'tetris', name: 'Nexus Blocks 3D', icon: '🧊', color: 'from-indigo-500 to-blue-400', desc: 'Alignez les blocs de données.', difficulty: 'Hard', tier: 'free', players: '3.9k', rating: '94%', image: 'https://picsum.photos/seed/tetris/800/600' },
+    { id: 'helix', name: 'Helix Drop 3D', icon: '🌀', color: 'from-pink-500 to-orange-400', desc: 'Descendez la tour infinie.', difficulty: 'Medium', tier: 'free', players: '2.8k', rating: '91%', image: 'https://picsum.photos/seed/helix/800/600' },
+    { id: 'gravity', name: 'Zero G 3D', icon: '🌑', color: 'from-slate-600 to-slate-900', desc: 'Sautez en gravité zéro.', difficulty: 'Hard', tier: 'free', players: '1.4k', rating: '89%', image: 'https://picsum.photos/seed/zerog/800/600' },
 
-    // ULTIMATE GAMES (5)
-    { id: 'matrix', name: 'Memory Matrix', icon: '💠', color: 'from-purple-600 to-indigo-600', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%', image: 'https://picsum.photos/seed/matrix/800/600' },
-    { id: 'math', name: 'Fast Math', icon: '🧮', color: 'from-rose-600 to-pink-600', desc: 'Résolvez les équations du Nexus.', difficulty: 'Medium', tier: 'ultimate', players: '2.1k', rating: '96%', image: 'https://picsum.photos/seed/math/800/600' },
-    { id: 'battle', name: 'Aura Battle', icon: '⚔️', color: 'from-indigo-600 to-blue-600', desc: 'Combattez dans l\'arène Aura.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%', image: 'https://picsum.photos/seed/battle/800/600' },
-    { id: 'tower', name: 'Aura Tower', icon: '🏰', color: 'from-violet-600 to-purple-600', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%', image: 'https://picsum.photos/seed/tower/800/600' },
-    { id: 'space', name: 'Space Void', icon: '🌌', color: 'from-slate-800 to-slate-600', desc: 'Explorez le vide spatial.', difficulty: 'Medium', tier: 'ultimate', players: '750', rating: '92%', image: 'https://picsum.photos/seed/space/800/600' },
+    // ULTIMATE GAMES (8)
+    { id: 'matrix', name: 'Memory Matrix 3D', icon: '💠', color: 'from-purple-600 to-indigo-600', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%', image: 'https://picsum.photos/seed/matrix/800/600' },
+    { id: 'math', name: 'Fast Math Pro 3D', icon: '🧮', color: 'from-rose-600 to-pink-600', desc: 'Résolvez les équations du Nexus.', difficulty: 'Medium', tier: 'ultimate', players: '2.1k', rating: '96%', image: 'https://picsum.photos/seed/math/800/600' },
+    { id: 'battle', name: 'Aura Battle 3D', icon: '⚔️', color: 'from-indigo-600 to-blue-600', desc: 'Combattez dans l\'arène Aura.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%', image: 'https://picsum.photos/seed/battle/800/600' },
+    { id: 'tower', name: 'Aura Tower 3D', icon: '🏰', color: 'from-violet-600 to-purple-600', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%', image: 'https://picsum.photos/seed/tower/800/600' },
+    { id: 'space', name: 'Space Void 3D', icon: '🌌', color: 'from-slate-800 to-slate-600', desc: 'Explorez le vide spatial.', difficulty: 'Medium', tier: 'ultimate', players: '750', rating: '92%', image: 'https://picsum.photos/seed/space/800/600' },
+    { id: 'neon_rider', name: 'Neon Rider 3D', icon: '🏍️', color: 'from-cyan-400 to-purple-600', desc: 'Course de motos futuristes.', difficulty: 'Hard', tier: 'ultimate', players: '5.2k', rating: '96%', image: 'https://picsum.photos/seed/neonr/800/600' },
+    { id: 'cube_surf', name: 'Cube Surf 3D', icon: '🏄', color: 'from-yellow-400 to-red-500', desc: 'Surfez sur des cubes.', difficulty: 'Medium', tier: 'ultimate', players: '1.9k', rating: '90%', image: 'https://picsum.photos/seed/cubesurf/800/600' },
+    { id: 'nexus_royale', name: 'Nexus Royale 3D', icon: '👑', color: 'from-orange-600 to-red-700', desc: 'Le Battle Royale du Nexus.', difficulty: 'Expert', tier: 'ultimate', players: '12.4k', rating: '97%', image: 'https://picsum.photos/seed/br/800/600' },
 
-    // ULTIMATE+ GAMES (5)
-    { id: 'god', name: 'Nexus God', icon: '👑', color: 'from-amber-500 to-yellow-400', desc: 'Devenez le dieu du Nexus.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '99%', image: 'https://picsum.photos/seed/god/800/600' },
-    { id: 'hack', name: 'Core Hacker', icon: '💻', color: 'from-lime-500 to-green-400', desc: 'Hackez le noyau central.', difficulty: 'Hard', tier: 'ultimate_plus', players: '300', rating: '97%', image: 'https://picsum.photos/seed/hack/800/600' },
-    { id: 'time', name: 'Time Warp', icon: '⏳', color: 'from-cyan-500 to-blue-400', desc: 'Manipulez le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '220', rating: '94%', image: 'https://picsum.photos/seed/time/800/600' },
-    { id: 'void', name: 'Void Walker', icon: '🚶', color: 'from-black to-slate-800', desc: 'Marchez dans le néant.', difficulty: 'Hard', tier: 'ultimate_plus', players: '180', rating: '96%', image: 'https://picsum.photos/seed/void/800/600' },
-    { id: 'infinity', name: 'Infinity Loop', icon: '♾️', color: 'from-fuchsia-500 to-pink-400', desc: 'Boucle infinie de données.', difficulty: 'Expert', tier: 'ultimate_plus', players: '400', rating: '98%', image: 'https://picsum.photos/seed/infinity/800/600' },
-    
-    // COMING SOON
-    { id: 'racer', name: 'Vibe Racer', icon: '🏎️', color: 'from-slate-700 to-slate-500', desc: 'Course de vitesse.', difficulty: 'Medium', tier: 'free', players: '0', rating: 'N/A', comingSoon: true, image: 'https://picsum.photos/seed/racer/800/600' },
-    { id: 'rpg', name: 'Nexus RPG', icon: '🛡️', color: 'from-slate-700 to-slate-500', desc: 'Aventure épique.', difficulty: 'Hard', tier: 'ultimate', players: '0', rating: 'N/A', comingSoon: true, image: 'https://picsum.photos/seed/rpg/800/600' },
+    // ULTIMATE+ GAMES (8)
+    { id: 'god', name: 'Nexus God 3D', icon: '👑', color: 'from-amber-500 to-yellow-400', desc: 'Devenez le dieu du Nexus.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '99%', image: 'https://picsum.photos/seed/god/800/600' },
+    { id: 'hack', name: 'Core Hacker 3D', icon: '💻', color: 'from-lime-500 to-green-400', desc: 'Hackez le noyau central.', difficulty: 'Hard', tier: 'ultimate_plus', players: '300', rating: '97%', image: 'https://picsum.photos/seed/hack/800/600' },
+    { id: 'time', name: 'Time Warp 3D', icon: '⏳', color: 'from-cyan-500 to-blue-400', desc: 'Manipulez le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '220', rating: '94%', image: 'https://picsum.photos/seed/time/800/600' },
+    { id: 'void', name: 'Void Walker 3D', icon: '🚶', color: 'from-black to-slate-800', desc: 'Marchez dans le néant.', difficulty: 'Hard', tier: 'ultimate_plus', players: '180', rating: '96%', image: 'https://picsum.photos/seed/void/800/600' },
+    { id: 'infinity', name: 'Infinity Loop 3D', icon: '♾️', color: 'from-fuchsia-500 to-pink-400', desc: 'Boucle infinie de données.', difficulty: 'Expert', tier: 'ultimate_plus', players: '400', rating: '98%', image: 'https://picsum.photos/seed/infinity/800/600' },
+    { id: 'singularity', name: 'Singularity 3D', icon: '🕳️', color: 'from-slate-900 to-black', desc: 'Entrez dans le trou noir.', difficulty: 'Expert', tier: 'ultimate_plus', players: '45', rating: '100%', image: 'https://picsum.photos/seed/sing/800/600' },
+    { id: 'aura_supreme', name: 'Aura Supreme 3D', icon: '🔮', color: 'from-amber-400 to-indigo-900', desc: 'L\'expérience Aura ultime.', difficulty: 'Expert', tier: 'ultimate_plus', players: '120', rating: '99%', image: 'https://picsum.photos/seed/aura/800/600' },
+    { id: 'omega_point', name: 'Omega Point 3D', icon: '📍', color: 'from-red-600 to-black', desc: 'La fin de toute chose.', difficulty: 'Expert', tier: 'ultimate_plus', players: '30', rating: '100%', image: 'https://picsum.photos/seed/omega/800/600' },
   ];
 
   const categories = [
@@ -104,8 +108,8 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
                         <span className="px-2 py-1 bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-md">Nouveau</span>
                         <span className="text-white/80 text-xs font-bold">Jeu de la semaine</span>
                      </div>
-                     <h2 className="text-3xl md:text-5xl font-black text-white mb-2">Nexus Runner 2.0</h2>
-                     <p className="text-white/70 font-medium max-w-md hidden md:block">La suite très attendue avec de nouveaux niveaux, des graphismes améliorés et un mode multijoueur.</p>
+                     <h2 className="text-3xl md:text-5xl font-black text-white mb-2">Nexus Runner 3.0</h2>
+                     <p className="text-white/70 font-medium max-w-md hidden md:block">Maintenant avec des graphismes 3D révolutionnaires et une physique ultra-réaliste.</p>
                   </div>
                   <button className="px-6 py-3 bg-white text-black rounded-xl font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg flex items-center justify-center gap-2 shrink-0">
                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -140,9 +144,9 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
                     onClick={() => handleGameSelect(game)}
                     className="group cursor-pointer flex flex-col gap-3"
                   >
-                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-200 dark:bg-[#25272D] shadow-sm group-hover:shadow-xl transition-all duration-300">
+                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-200 dark:bg-[#25272D] shadow-sm group-hover:shadow-xl transition-all duration-300 transform group-active:scale-95 group-hover:rotate-1">
                        <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-20 group-hover:opacity-40 transition-opacity`}></div>
-                       <div className="absolute inset-0 flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-500">
+                       <div className="absolute inset-0 flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-2xl">
                          {game.icon}
                        </div>
                        
@@ -154,8 +158,8 @@ const Games: React.FC<{ user: User }> = ({ user }) => {
                          {game.tier === 'ultimate_plus' && (
                            <span className="px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded text-[8px] font-black text-white uppercase tracking-widest shadow-sm">Elite</span>
                          )}
-                         {game.comingSoon && (
-                           <span className="px-1.5 py-0.5 bg-black/50 backdrop-blur-md rounded text-[8px] font-black text-white uppercase tracking-widest shadow-sm">Bientôt</span>
+                         {game.name.includes('3D') && (
+                           <span className="px-1.5 py-0.5 bg-blue-500/20 backdrop-blur-md rounded text-[8px] font-black text-blue-500 uppercase tracking-widest shadow-sm border border-blue-500/30">3D Enabled</span>
                          )}
                        </div>
                        

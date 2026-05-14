@@ -17,6 +17,12 @@
             sans: ['Inter', 'Plus Jakarta Sans', 'sans-serif'],
           },
           colors: {
+            vibe: {
+              blue: '#4facfe',
+              purple: '#8a2be2',
+              pink: '#f093fb',
+              orange: '#f6d365',
+            },
             blue: {
               400: 'rgb(var(--vibe-accent) / <alpha-value>)',
               500: 'rgb(var(--vibe-accent) / <alpha-value>)',
@@ -34,8 +40,12 @@
   </script>
   <style>
     :root {
-      --vibe-accent: #1d9bf0; /* X Blue */
-      --glass-bg: rgba(0, 0, 0, 0.6);
+      --vibe-accent: 59 130 246;
+      --vibe-blue: #4facfe;
+      --vibe-purple: #8a2be2;
+      --vibe-pink: #f093fb;
+      --vibe-orange: #f6d365;
+      --glass-bg: rgba(0, 0, 0, 0.4);
       --glass-border: rgba(255, 255, 255, 0.1);
     }
     body { 
@@ -45,39 +55,41 @@
       overflow: hidden;
       margin: 0;
     }
-    .vibe-logo { font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: -0.05em; }
+    .vibe-logo { font-family: 'Inter', sans-serif; font-weight: 800; text-transform: none; letter-spacing: -0.02em; }
     
+    .logo-vibe-text {
+      background: linear-gradient(to right, var(--vibe-blue), var(--vibe-purple), var(--vibe-pink), var(--vibe-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .liquid-glass {
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+      background: rgba(15, 15, 15, 0.7);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
     }
     
-    .liquid-glass-blue {
-      background: rgba(29, 155, 240, 0.05);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--vibe-glow);
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    .vibe-gradient-bg {
+      background: 
+        radial-gradient(circle at 10% 10%, rgba(79, 172, 254, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(240, 147, 251, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 60%),
+        radial-gradient(circle at 50% 90%, rgba(246, 211, 101, 0.05) 0%, transparent 40%),
+        #000000;
+      background-attachment: fixed;
     }
 
-    .cyber-glow {
-      filter: drop-shadow(0 0 10px var(--vibe-accent));
-      text-shadow: 0 0 8px var(--vibe-accent);
-    }
-
-    @keyframes neural-pulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.05); opacity: 0.4; }
-      100% { transform: scale(1.15); opacity: 0; }
-    }
-    .animate-neural-pulse {
-      animation: neural-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    .logo-glow {
-      filter: drop-shadow(0 0 15px rgb(var(--vibe-accent)));
+    .atmosphere {
+      background:
+        radial-gradient(circle at 50% 30%, rgba(138, 43, 226, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 10% 80%, rgba(79, 172, 254, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(246, 211, 101, 0.08) 0%, transparent 50%);
+      filter: blur(80px);
+      opacity: 0.8;
+      pointer-events: none;
     }
 
     ::-webkit-scrollbar { width: 4px; }

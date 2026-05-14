@@ -54,122 +54,128 @@ const Settings: React.FC<{ user: User, onUpdate: (user: User) => void }> = ({ us
   };
 
   return (
-    <div className="px-4 py-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-40 relative" style={{ perspective: '1200px' }}>
-      <div className="flex flex-col gap-2 relative z-10">
-        <h2 className="vibe-logo text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 tracking-tighter drop-shadow-xl">PARAMÈTRES</h2>
-        <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.4em] drop-shadow-md">Configuration Système</p>
+    <div className="px-6 py-12 space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-48 relative" style={{ perspective: '2000px' }}>
+      <div className="flex flex-col gap-2 relative z-10" style={{ transform: 'translateZ(100px)' }}>
+        <h2 className="vibe-logo text-5xl md:text-7xl font-black text-white tracking-tighter drop-shadow-2xl">
+           PARAMÈTRES
+        </h2>
+        <div className="flex items-center gap-4">
+           <div className="h-1 w-20 bg-vibe-blue rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" />
+           <p className="text-vibe-blue text-[10px] font-black uppercase tracking-[0.5em]">Nexus Core Config v4.2</p>
+        </div>
       </div>
 
       {/* Account Section */}
-      <section className="space-y-4 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(20px)' }}>
-        <h3 className="vibe-logo text-[10px] text-blue-400 font-black tracking-widest uppercase ml-1 drop-shadow-md">Identité & Statut</h3>
-        <div className="bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 p-6 space-y-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl hover:border-white/30 transition-all duration-500">
+      <section className="space-y-6 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(5deg) rotateY(-2deg)' }}>
+        <h3 className="text-[10px] text-slate-500 font-black tracking-[0.4em] uppercase ml-2 opacity-50">Noyau d'Identité</h3>
+        <div className="liquid-glass rounded-[2rem] border border-white/10 p-8 space-y-8 shadow-4xl hover:border-vibe-blue/30 transition-all duration-700" style={{ transform: 'translateZ(30px)' }}>
           <div className="flex items-center justify-between group">
-            <div className="space-y-1">
-              <h4 className="font-black text-white text-lg drop-shadow-md group-hover:text-blue-300 transition-colors">Abonnement</h4>
-              <p className="text-slate-400 text-xs font-medium">
-                {user.isUltimatePlus ? 'Ultimate+' : user.isUltimate ? 'Ultimate' : 'Gratuit'}
+            <div className="space-y-2">
+              <h4 className="font-black text-white text-xl tracking-tight group-hover:text-vibe-blue transition-colors">Abonnement Spectral</h4>
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest leading-none">
+                {user.isUltimatePlus ? 'Vibe Ultimate+' : user.isUltimate ? 'Vibe Ultimate' : 'Initié Standard'}
               </p>
             </div>
-            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black vibe-logo uppercase shadow-lg ${user.isUltimate ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border border-blue-400/50' : 'bg-white/10 text-slate-400 border border-white/10'}`}>
-                {user.isUltimate ? 'Actif' : 'Standard'}
-            </span>
+            <div className={`px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all ${user.isUltimate ? 'bg-gradient-to-r from-vibe-blue to-vibe-purple text-white shadow-vibe-blue/20' : 'bg-white/5 text-slate-500 border border-white/10'}`}>
+                {user.isUltimate ? 'Séquence Active' : 'Upgrade Requis'}
+            </div>
           </div>
           
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="h-px bg-white/5 w-full" />
           
           <div className="flex items-center justify-between group">
-            <div className="space-y-1">
-              <h4 className="font-black text-white text-lg drop-shadow-md group-hover:text-emerald-300 transition-colors">Sauvegarde</h4>
-              <p className="text-slate-400 text-xs font-medium">Dernière synchro : {new Date().toLocaleTimeString()}</p>
+            <div className="space-y-2">
+              <h4 className="font-black text-white text-xl tracking-tight group-hover:text-vibe-green transition-colors">Nexus Cloud Sync</h4>
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest leading-none">Dernier Upload : {new Date().toLocaleTimeString()}</p>
             </div>
-            <span className="text-emerald-400 text-[10px] font-black vibe-logo uppercase px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">Connecté</span>
+            <div className="flex items-center gap-2 px-4 py-2 bg-vibe-green/5 rounded-2xl border border-vibe-green/20">
+               <div className="w-1.5 h-1.5 bg-vibe-green rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+               <span className="text-vibe-green text-[10px] font-black uppercase tracking-widest">Connecté</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Options Section */}
-      <section className="space-y-4 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(10px)' }}>
-        <h3 className="vibe-logo text-[10px] text-blue-400 font-black tracking-widest uppercase ml-1 drop-shadow-md">Options de l'Application</h3>
-        <div className="bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 p-6 space-y-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl hover:border-white/30 transition-all duration-500">
+      <section className="space-y-6 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(-5deg) rotateY(2deg)' }}>
+        <h3 className="text-[10px] text-slate-500 font-black tracking-[0.4em] uppercase ml-2 opacity-50">Interface & Flux</h3>
+        <div className="liquid-glass rounded-[2rem] border border-white/10 p-8 space-y-8 shadow-4xl hover:border-vibe-purple/30 transition-all duration-700" style={{ transform: 'translateZ(50px)' }}>
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h4 className="font-black text-white text-lg drop-shadow-md">Économie d'énergie</h4>
-              <p className="text-slate-400 text-xs font-medium">Réduire les animations et effets 3D</p>
+            <div className="space-y-2">
+              <h4 className="font-black text-white text-xl tracking-tight">Mode Essence (Éco)</h4>
+              <p className="text-slate-500 text-xs font-medium uppercase tracking-wider">Optimiser les cycles 3D & Fluence</p>
             </div>
             <button 
               onClick={() => updateSettings('powerSave', !powerSave)}
-              className={`w-14 h-7 rounded-full transition-all duration-300 relative shadow-inner border ${powerSave ? 'bg-gradient-to-r from-emerald-500 to-teal-500 border-emerald-400/50 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-800 border-slate-700'}`}
+              className={`w-16 h-8 rounded-full transition-all duration-500 p-1 border shadow-inner ${powerSave ? 'bg-vibe-green/20 border-vibe-green/30' : 'bg-black/40 border-white/10'}`}
             >
-              <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform duration-300 shadow-md ${powerSave ? 'left-8' : 'left-1'}`} />
+              <div className={`w-6 h-6 rounded-xl transition-all duration-500 shadow-xl ${powerSave ? 'translate-x-8 bg-vibe-green rotate-180' : 'translate-x-0 bg-white/20'}`} />
             </button>
           </div>
 
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="h-px bg-white/5 w-full" />
           
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h4 className="font-black text-white text-lg drop-shadow-md">Notifications Push</h4>
-              <p className="text-slate-400 text-xs font-medium">Recevoir des alertes pour les Novas et Quêtes</p>
+            <div className="space-y-2">
+              <h4 className="font-black text-white text-xl tracking-tight">Résonances Push</h4>
+              <p className="text-slate-500 text-xs font-medium uppercase tracking-wider">Signaux de Novas & Chroniques</p>
             </div>
             <button 
               onClick={() => updateSettings('notifications', !notifications)}
-              className={`w-14 h-7 rounded-full transition-all duration-300 relative shadow-inner border ${notifications ? 'bg-gradient-to-r from-blue-500 to-indigo-500 border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.4)]' : 'bg-slate-800 border-slate-700'}`}
+              className={`w-16 h-8 rounded-full transition-all duration-500 p-1 border shadow-inner ${notifications ? 'bg-vibe-blue/20 border-vibe-blue/30' : 'bg-black/40 border-white/10'}`}
             >
-              <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform duration-300 shadow-md ${notifications ? 'left-8' : 'left-1'}`} />
+              <div className={`w-6 h-6 rounded-xl transition-all duration-500 shadow-xl ${notifications ? 'translate-x-8 bg-vibe-blue' : 'translate-x-0 bg-white/20'}`} />
             </button>
           </div>
         </div>
       </section>
 
       {/* Theme Section */}
-      <section className="space-y-4 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(15px)' }}>
-        <h3 className="vibe-logo text-[10px] text-blue-400 font-black tracking-widest uppercase ml-1 drop-shadow-md">Thèmes</h3>
-        <div className="bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {themes.map(t => {
-              const isUnlocked = user.unlockedThemes?.includes(t.id) || t.id === 'default';
-              return (
-                <button 
-                  key={t.id}
-                  onClick={() => toggleTheme(t.id)}
-                  className={`flex items-center justify-between p-4 rounded-2xl transition-all duration-300 border ${user.activeTheme === t.id ? 'bg-white/10 border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)] scale-[1.02]' : 'bg-black/40 border-white/5 hover:border-white/20 hover:bg-white/5'} ${!isUnlocked ? 'opacity-50 grayscale hover:scale-100' : ''}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-8 h-8 rounded-xl ${t.color} shadow-lg border border-white/20`} />
-                    <div className="text-left">
-                      <span className={`font-black text-sm block drop-shadow-md ${user.activeTheme === t.id ? 'text-white' : 'text-slate-300'}`}>{t.label}</span>
-                      {!isUnlocked && <span className="text-[8px] text-rose-400 font-black uppercase tracking-widest">Verrouillé</span>}
-                    </div>
+      <section className="space-y-6 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(40px)' }}>
+        <h3 className="text-[10px] text-slate-500 font-black tracking-[0.4em] uppercase ml-2 opacity-50">Skins de Réalité</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {themes.map((t, idx) => {
+            const isUnlocked = user.unlockedThemes?.includes(t.id) || t.id === 'default';
+            return (
+              <button 
+                key={t.id}
+                onClick={() => toggleTheme(t.id)}
+                style={{ transform: `translateZ(${idx * 5}px)` }}
+                className={`flex items-center justify-between p-6 rounded-3xl transition-all duration-500 border-2 ${user.activeTheme === t.id ? 'bg-white/10 border-vibe-blue shadow-vibe-blue/10' : 'bg-black/60 border-white/5 hover:border-white/20 hover:bg-white/5'} ${!isUnlocked ? 'opacity-30 grayscale saturate-0' : ''}`}
+              >
+                <div className="flex items-center gap-5">
+                  <div className={`w-12 h-12 rounded-2xl ${t.color} shadow-2xl relative overflow-hidden group/swatch`}>
+                     <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover/swatch:opacity-100 transition-opacity" />
                   </div>
-                  {user.activeTheme === t.id && (
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-400/50 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
-                      <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" /></svg>
-                    </div>
-                  )}
-                  {!isUnlocked && (
-                    <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center border border-white/10">
-                      <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                  <div className="text-left space-y-1">
+                    <span className={`font-black text-base block uppercase tracking-tighter ${user.activeTheme === t.id ? 'text-white' : 'text-slate-400'}`}>{t.label}</span>
+                    {!isUnlocked && <span className="text-[8px] text-vibe-pink font-black uppercase tracking-[0.3em]">Code Lock</span>}
+                  </div>
+                </div>
+                {user.activeTheme === t.id && (
+                  <div className="w-10 h-10 rounded-2xl bg-vibe-blue/10 flex items-center justify-center border border-vibe-blue/30 shadow-vibe-blue/20">
+                    <svg className="w-6 h-6 text-vibe-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" /></svg>
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </div>
       </section>
 
       {/* Danger Zone */}
-      <section className="space-y-4 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'translateZ(5px)' }}>
-        <h3 className="vibe-logo text-[10px] text-rose-500 font-black tracking-widest uppercase ml-1 drop-shadow-md">Zone Critique</h3>
-        <div className="bg-gradient-to-br from-rose-900/20 to-black/40 rounded-3xl border border-rose-500/30 p-6 space-y-4 shadow-[0_20px_40px_-15px_rgba(225,29,72,0.3)] backdrop-blur-xl">
+      <section className="space-y-6 relative z-10" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(10deg)' }}>
+        <div className="liquid-glass-danger rounded-[2rem] border border-rose-500/20 p-8 space-y-6 shadow-4xl backdrop-blur-3xl">
           <button 
             onClick={handleLogout}
-            className="w-full py-4 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white rounded-2xl font-black vibe-logo text-sm uppercase tracking-widest transition-all border border-rose-400/50 shadow-[0_0_20px_rgba(225,29,72,0.4)] hover:shadow-[0_0_30px_rgba(225,29,72,0.6)] hover:scale-[1.02] active:scale-95"
+            className="w-full py-5 bg-gradient-to-r from-rose-600 to-rose-400 hover:from-rose-500 hover:to-rose-300 text-white rounded-3xl font-black text-sm uppercase tracking-[0.3em] transition-all shadow-vibe-pink/20 hover:scale-[1.02] active:scale-95 border border-white/10"
           >
-            Déconnexion
+            Terminer la Session
           </button>
-          <p className="text-center text-[10px] text-rose-500/50 font-black uppercase tracking-widest">Version 4.1.0 • Build 1042</p>
+          <div className="flex flex-col items-center gap-2 opacity-30">
+             <p className="text-[10px] text-white font-black uppercase tracking-[0.5em]">VibeOS Revision 5.0.0</p>
+             <p className="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Digital Nexus Authority • All rights reserved</p>
+          </div>
         </div>
       </section>
     </div>
