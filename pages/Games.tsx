@@ -1,354 +1,392 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { User } from '../types.ts';
 import { storage } from '../services/storageService.ts';
+import { motion, AnimatePresence } from 'motion/react';
+import { Search, Trophy, Play, Star, ChevronRight, Lock, Zap, MousePointer2, Target, Calculator, Palette, Timer, Brain, Disc, Gamepad2, Rocket, Bird } from 'lucide-react';
 
 const Games: React.FC<{ user: User }> = ({ user }) => {
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [showUltimateModal, setShowUltimateModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('free');
 
-  const games = [
-    // FREE GAMES (16)
-    { id: 'clicker', name: 'Synth Clicker 3D', icon: '⚡', color: 'from-blue-600 to-cyan-400', desc: 'Générez des Novas via impulsions neuronales.', difficulty: 'Easy', tier: 'free', players: '1.2k', rating: '94%', image: 'https://picsum.photos/seed/clicker/800/600' },
-    { id: 'snake', name: 'Neural Snake 3D', icon: '🐍', color: 'from-emerald-600 to-teal-400', desc: 'Collectez des fragments de données sans collision.', difficulty: 'Medium', tier: 'free', players: '850', rating: '88%', image: 'https://picsum.photos/seed/snake/800/600' },
-    { id: 'runner', name: 'Nexus Runner 3D', icon: '🏃', color: 'from-orange-600 to-amber-400', desc: 'Évitez les obstacles dans le tunnel du Nexus.', difficulty: 'Medium', tier: 'free', players: '3.4k', rating: '92%', image: 'https://picsum.photos/seed/runner/800/600' },
-    { id: 'jump', name: 'Neon Jump 3D', icon: '🚀', color: 'from-cyan-600 to-blue-400', desc: 'Sautez de plateforme en plateforme.', difficulty: 'Easy', tier: 'free', players: '1.5k', rating: '90%', image: 'https://picsum.photos/seed/jump/800/600' },
-    { id: 'dodge', name: 'Data Dodge 3D', icon: '🛡️', color: 'from-yellow-600 to-amber-400', desc: 'Esquivez les pare-feux du Nexus.', difficulty: 'Medium', tier: 'free', players: '2.3k', rating: '93%', image: 'https://picsum.photos/seed/dodge/800/600' },
-    { id: 'quiz', name: 'Vibe Quiz 3D', icon: '❓', color: 'from-pink-600 to-rose-400', desc: 'Testez vos connaissances sur le Nexus.', difficulty: 'Easy', tier: 'free', players: '900', rating: '85%', image: 'https://picsum.photos/seed/quiz/800/600' },
-    { id: 'stack', name: 'Block Stack 3D', icon: '🧱', color: 'from-indigo-600 to-purple-400', desc: 'Empilez les blocs de données.', difficulty: 'Easy', tier: 'free', players: '1.1k', rating: '87%', image: 'https://picsum.photos/seed/stack/800/600' },
-    { id: 'aim', name: 'Aim Trainer 3D', icon: '🎯', color: 'from-red-600 to-rose-400', desc: 'Améliorez vos réflexes.', difficulty: 'Hard', tier: 'free', players: '2.5k', rating: '91%', image: 'https://picsum.photos/seed/aim/800/600' },
-    { id: 'color', name: 'Color Match 3D', icon: '🎨', color: 'from-teal-600 to-emerald-400', desc: 'Associez les couleurs du Nexus.', difficulty: 'Medium', tier: 'free', players: '1.4k', rating: '89%', image: 'https://picsum.photos/seed/color/800/600' },
-    { id: 'tap', name: 'Fast Tap 3D', icon: '👆', color: 'from-purple-600 to-fuchsia-400', desc: 'Tapez le plus vite possible.', difficulty: 'Easy', tier: 'free', players: '3.1k', rating: '95%', image: 'https://picsum.photos/seed/tap/800/600' },
-    { id: 'memory', name: 'Neuro Memory 3D', icon: '🧠', color: 'from-blue-500 to-indigo-400', desc: 'Testez votre mémoire visuelle.', difficulty: 'Medium', tier: 'free', players: '1.8k', rating: '92%', image: 'https://picsum.photos/seed/memory/800/600' },
-    { id: 'bricks', name: 'Cyber Bricks 3D', icon: '🧱', color: 'from-orange-500 to-red-400', desc: 'Cassez les briques du Nexus.', difficulty: 'Easy', tier: 'free', players: '2.2k', rating: '90%', image: 'https://picsum.photos/seed/bricks/800/600' },
-    { id: 'flappy', name: 'Vibe Bird 3D', icon: '🐦', color: 'from-yellow-500 to-orange-400', desc: 'Volez à travers les serveurs.', difficulty: 'Hard', tier: 'free', players: '4.5k', rating: '88%', image: 'https://picsum.photos/seed/flappy/800/600' },
-    { id: 'tetris', name: 'Nexus Blocks 3D', icon: '🧊', color: 'from-indigo-500 to-blue-400', desc: 'Alignez les blocs de données.', difficulty: 'Hard', tier: 'free', players: '3.9k', rating: '94%', image: 'https://picsum.photos/seed/tetris/800/600' },
-    { id: 'helix', name: 'Helix Drop 3D', icon: '🌀', color: 'from-pink-500 to-orange-400', desc: 'Descendez la tour infinie.', difficulty: 'Medium', tier: 'free', players: '2.8k', rating: '91%', image: 'https://picsum.photos/seed/helix/800/600' },
-    { id: 'gravity', name: 'Zero G 3D', icon: '🌑', color: 'from-slate-600 to-slate-900', desc: 'Sautez en gravité zéro.', difficulty: 'Hard', tier: 'free', players: '1.4k', rating: '89%', image: 'https://picsum.photos/seed/zerog/800/600' },
-
-    // ULTIMATE GAMES (8)
-    { id: 'matrix', name: 'Memory Matrix 3D', icon: '💠', color: 'from-purple-600 to-indigo-600', desc: 'Répétez la séquence de synchronisation Aura.', difficulty: 'Hard', tier: 'ultimate', players: '420', rating: '91%', image: 'https://picsum.photos/seed/matrix/800/600' },
-    { id: 'math', name: 'Fast Math Pro 3D', icon: '🧮', color: 'from-rose-600 to-pink-600', desc: 'Résolvez les équations du Nexus.', difficulty: 'Medium', tier: 'ultimate', players: '2.1k', rating: '96%', image: 'https://picsum.photos/seed/math/800/600' },
-    { id: 'battle', name: 'Aura Battle 3D', icon: '⚔️', color: 'from-indigo-600 to-blue-600', desc: 'Combattez dans l\'arène Aura.', difficulty: 'Hard', tier: 'ultimate', players: '5.6k', rating: '98%', image: 'https://picsum.photos/seed/battle/800/600' },
-    { id: 'tower', name: 'Aura Tower 3D', icon: '🏰', color: 'from-violet-600 to-purple-600', desc: 'Construisez la plus haute tour.', difficulty: 'Hard', tier: 'ultimate', players: '1.1k', rating: '89%', image: 'https://picsum.photos/seed/tower/800/600' },
-    { id: 'space', name: 'Space Void 3D', icon: '🌌', color: 'from-slate-800 to-slate-600', desc: 'Explorez le vide spatial.', difficulty: 'Medium', tier: 'ultimate', players: '750', rating: '92%', image: 'https://picsum.photos/seed/space/800/600' },
-    { id: 'neon_rider', name: 'Neon Rider 3D', icon: '🏍️', color: 'from-cyan-400 to-purple-600', desc: 'Course de motos futuristes.', difficulty: 'Hard', tier: 'ultimate', players: '5.2k', rating: '96%', image: 'https://picsum.photos/seed/neonr/800/600' },
-    { id: 'cube_surf', name: 'Cube Surf 3D', icon: '🏄', color: 'from-yellow-400 to-red-500', desc: 'Surfez sur des cubes.', difficulty: 'Medium', tier: 'ultimate', players: '1.9k', rating: '90%', image: 'https://picsum.photos/seed/cubesurf/800/600' },
-    { id: 'nexus_royale', name: 'Nexus Royale 3D', icon: '👑', color: 'from-orange-600 to-red-700', desc: 'Le Battle Royale du Nexus.', difficulty: 'Expert', tier: 'ultimate', players: '12.4k', rating: '97%', image: 'https://picsum.photos/seed/br/800/600' },
-
-    // ULTIMATE+ GAMES (8)
-    { id: 'god', name: 'Nexus God 3D', icon: '👑', color: 'from-amber-500 to-yellow-400', desc: 'Devenez le dieu du Nexus.', difficulty: 'Expert', tier: 'ultimate_plus', players: '150', rating: '99%', image: 'https://picsum.photos/seed/god/800/600' },
-    { id: 'hack', name: 'Core Hacker 3D', icon: '💻', color: 'from-lime-500 to-green-400', desc: 'Hackez le noyau central.', difficulty: 'Hard', tier: 'ultimate_plus', players: '300', rating: '97%', image: 'https://picsum.photos/seed/hack/800/600' },
-    { id: 'time', name: 'Time Warp 3D', icon: '⏳', color: 'from-cyan-500 to-blue-400', desc: 'Manipulez le temps.', difficulty: 'Expert', tier: 'ultimate_plus', players: '220', rating: '94%', image: 'https://picsum.photos/seed/time/800/600' },
-    { id: 'void', name: 'Void Walker 3D', icon: '🚶', color: 'from-black to-slate-800', desc: 'Marchez dans le néant.', difficulty: 'Hard', tier: 'ultimate_plus', players: '180', rating: '96%', image: 'https://picsum.photos/seed/void/800/600' },
-    { id: 'infinity', name: 'Infinity Loop 3D', icon: '♾️', color: 'from-fuchsia-500 to-pink-400', desc: 'Boucle infinie de données.', difficulty: 'Expert', tier: 'ultimate_plus', players: '400', rating: '98%', image: 'https://picsum.photos/seed/infinity/800/600' },
-    { id: 'singularity', name: 'Singularity 3D', icon: '🕳️', color: 'from-slate-900 to-black', desc: 'Entrez dans le trou noir.', difficulty: 'Expert', tier: 'ultimate_plus', players: '45', rating: '100%', image: 'https://picsum.photos/seed/sing/800/600' },
-    { id: 'aura_supreme', name: 'Aura Supreme 3D', icon: '🔮', color: 'from-amber-400 to-indigo-900', desc: 'L\'expérience Aura ultime.', difficulty: 'Expert', tier: 'ultimate_plus', players: '120', rating: '99%', image: 'https://picsum.photos/seed/aura/800/600' },
-    { id: 'omega_point', name: 'Omega Point 3D', icon: '📍', color: 'from-red-600 to-black', desc: 'La fin de toute chose.', difficulty: 'Expert', tier: 'ultimate_plus', players: '30', rating: '100%', image: 'https://picsum.photos/seed/omega/800/600' },
-  ];
+  const games = storage.getGames();
 
   const categories = [
-    { id: 'free', label: 'Jeux Gratuits' },
-    { id: 'ultimate', label: 'Ultimate Access' },
-    { id: 'ultimate_plus', label: 'Ultimate+ Elite' },
+    { id: 'free', label: 'GRATUIT', icon: <Zap className="w-4 h-4" /> },
+    { id: 'ultimate', label: 'PRO', icon: <Lock className="w-4 h-4" /> },
+    { id: 'ultimate_plus', label: 'ELITE', icon: <Lock className="w-4 h-4" /> },
   ];
 
-  const handleGameSelect = (game: any) => {
-    if (game.comingSoon) {
-      alert("Ce jeu arrive bientôt dans le Nexus ! Restez à l'écoute.");
-      return;
-    }
-    if (game.tier === 'ultimate' && !user.isUltimate) {
-      setShowUltimateModal(true);
-      return;
-    }
-    if (game.tier === 'ultimate_plus' && !user.isUltimatePlus) {
-      alert("Ultimate+ requis pour ce jeu.");
-      return;
-    }
-    setActiveGame(game.id);
+  const handleGameSelect = (gameId: string, tier: string) => {
+    if (tier === 'ultimate' && !user.isUltimate) { setShowUltimateModal(true); return; }
+    if (tier === 'ultimate_plus' && !user.isUltimatePlus) { alert("Accès Elite requis"); return; }
+    setActiveGame(gameId);
   };
 
+  const filteredGames = games.filter(g => 
+    g.tier === activeCategory && 
+    (g.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
-    <div className="min-h-screen bg-[#F2F4F5] dark:bg-[#111216] animate-in fade-in duration-700 pb-32">
-      {/* Roblox-style Top Bar */}
-      <div className="sticky top-0 z-[100] bg-white dark:bg-[#1B1D22] border-b border-black/5 dark:border-white/5 px-6 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
-         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12">
-            <h2 className="text-3xl font-black text-black dark:text-white tracking-tight">Découvrir</h2>
-            <div className="flex items-center gap-8 overflow-x-auto scrollbar-hide pb-1 md:pb-0">
-               {categories.map(cat => (
-                 <button key={cat.id} className="text-[11px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-500 transition-colors whitespace-nowrap">{cat.label}</button>
-               ))}
-            </div>
-         </div>
-         <div className="relative w-full md:w-96 mt-4 md:mt-0">
+    <div className="min-h-screen bg-black animate-in fade-in duration-700 pb-32">
+      {/* Dynamic Header */}
+      <div className="sticky top-0 z-[100] bg-black/60 backdrop-blur-3xl border-b border-white/5 p-4 md:p-6 space-y-4">
+          <div className="flex items-center justify-between">
+              <h2 className="vibe-logo text-2xl md:text-3xl font-black text-white tracking-[0.3em] uppercase">VIBE PLAY</h2>
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 rounded-full border border-white/10">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Servers Live</span>
+              </div>
+          </div>
+
+          <div className="relative group max-w-2xl mx-auto w-full">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-               <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <Search className="w-4 h-4 text-slate-600 group-focus-within:text-blue-500 transition-colors" />
             </div>
             <input 
               type="text" 
-              placeholder="Rechercher un jeu dans le Nexus..." 
+              placeholder="Chercher une expérience..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-100 dark:bg-[#25272D] border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-500 shadow-inner"
+              className="w-full bg-[#16181c] border border-transparent rounded-2xl pl-12 pr-6 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-700"
             />
-         </div>
-      </div>
-
-      {/* Hero Banner - Roblox Style */}
-      <div className="px-6 py-8">
-         <div className="max-w-7xl mx-auto">
-            <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 shadow-xl group cursor-pointer">
-               <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/games/1200/400')] bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-1000"></div>
-               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-               
-               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                  <div>
-                     <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-1 bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-md">Nouveau</span>
-                        <span className="text-white/80 text-xs font-bold">Jeu de la semaine</span>
-                     </div>
-                     <h2 className="text-3xl md:text-5xl font-black text-white mb-2">Nexus Runner 3.0</h2>
-                     <p className="text-white/70 font-medium max-w-md hidden md:block">Maintenant avec des graphismes 3D révolutionnaires et une physique ultra-réaliste.</p>
-                  </div>
-                  <button className="px-6 py-3 bg-white text-black rounded-xl font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg flex items-center justify-center gap-2 shrink-0">
-                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                     Jouer
-                  </button>
-               </div>
-            </div>
-         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 space-y-12">
-        {/* Game Sections */}
-        {categories.map(category => {
-          const categoryGames = games.filter(g => 
-            g.tier === category.id && 
-            (g.name.toLowerCase().includes(searchQuery.toLowerCase()) || g.desc.toLowerCase().includes(searchQuery.toLowerCase()))
-          );
-
-          if (categoryGames.length === 0) return null;
-
-          return (
-            <div key={category.id} className="space-y-6">
-              <div className="flex items-center justify-between">
-                 <h3 className="text-2xl font-black text-black dark:text-white tracking-tight">{category.label}</h3>
-                 <button className="text-sm font-bold text-blue-500 hover:text-blue-600 transition-colors">Voir tout</button>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                {categoryGames.map(game => (
-                  <div 
-                    key={game.id}
-                    onClick={() => handleGameSelect(game)}
-                    className="group cursor-pointer flex flex-col gap-3"
-                  >
-                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-200 dark:bg-[#25272D] shadow-sm group-hover:shadow-xl transition-all duration-300 transform group-active:scale-95 group-hover:rotate-1">
-                       <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-20 group-hover:opacity-40 transition-opacity`}></div>
-                       <div className="absolute inset-0 flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-2xl">
-                         {game.icon}
-                       </div>
-                       
-                       {/* Badges */}
-                       <div className="absolute top-2 left-2 flex flex-col gap-1">
-                         {game.tier === 'ultimate' && (
-                           <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded text-[8px] font-black text-white uppercase tracking-widest shadow-sm">Pro</span>
-                         )}
-                         {game.tier === 'ultimate_plus' && (
-                           <span className="px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded text-[8px] font-black text-white uppercase tracking-widest shadow-sm">Elite</span>
-                         )}
-                         {game.name.includes('3D') && (
-                           <span className="px-1.5 py-0.5 bg-blue-500/20 backdrop-blur-md rounded text-[8px] font-black text-blue-500 uppercase tracking-widest shadow-sm border border-blue-500/30">3D Enabled</span>
-                         )}
-                       </div>
-                       
-                       {/* Rating */}
-                       <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded flex items-center gap-1">
-                          <svg className="w-2.5 h-2.5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                          <span className="text-[9px] font-bold text-white">{game.rating}</span>
-                       </div>
-                    </div>
-                    
-                    <div>
-                       <h4 className="font-bold text-black dark:text-white text-sm truncate group-hover:underline">{game.name}</h4>
-                       <div className="flex items-center justify-between mt-1">
-                          <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{game.players} joueurs</span>
-                          <span className={`text-[10px] font-bold ${
-                            game.difficulty === 'Easy' ? 'text-emerald-500' : 
-                            game.difficulty === 'Medium' ? 'text-amber-500' : 
-                            game.difficulty === 'Hard' ? 'text-rose-500' : 'text-purple-500'
-                          }`}>{game.difficulty}</span>
-                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Ultimate Modal */}
-      {showUltimateModal && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#1B1D22] border border-black/10 dark:border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl animate-in zoom-in-95">
-            <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg shadow-orange-500/20">
-              👑
-            </div>
-            <h3 className="text-2xl font-black text-black dark:text-white mb-2">Ultimate Requis</h3>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">Ce jeu est réservé aux membres Ultimate. Mettez à niveau votre compte pour y accéder.</p>
-            <div className="flex flex-col gap-3">
-              <button 
-                onClick={() => { setShowUltimateModal(false); window.dispatchEvent(new CustomEvent('vibeNavigate', { detail: 'store' })); }}
-                className="w-full py-4 bg-black dark:bg-white text-white dark:text-black rounded-xl font-black uppercase tracking-widest hover:scale-[1.02] transition-transform"
-              >
-                Découvrir Ultimate
-              </button>
-              <button 
-                onClick={() => setShowUltimateModal(false)}
-                className="w-full py-4 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white rounded-xl font-bold hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
-              >
-                Plus tard
-              </button>
-            </div>
           </div>
-        </div>
-      )}
 
-      {/* Game Engine Overlay */}
-      {activeGame && (
-        <GameEngine gameId={activeGame} onExit={() => setActiveGame(null)} userId={user.id} />
-      )}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-2">
+              {categories.map(cat => (
+                <button 
+                  key={cat.id} 
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black transition-all whitespace-nowrap uppercase tracking-widest border ${activeCategory === cat.id ? 'bg-white text-black border-white shadow-xl shadow-white/5' : 'bg-white/5 text-slate-500 border-white/5'}`}
+                >
+                    {cat.icon}
+                    {cat.label}
+                </button>
+              ))}
+          </div>
+      </div>
+
+      {/* Playable Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 p-4 md:p-8">
+          {filteredGames.map(game => (
+            <motion.div 
+              key={game.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleGameSelect(game.id, game.tier)}
+              className="relative aspect-[3/4] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-pointer border border-white/5 shadow-2xl"
+            >
+                <div className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-40 group-hover:opacity-70 transition-opacity duration-500`}></div>
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                
+                <div className="absolute inset-0 flex items-center justify-center text-4xl md:text-6xl drop-shadow-glow">
+                    {game.icon}
+                </div>
+
+                <div className="absolute top-3 left-3 flex flex-col gap-1">
+                   {game.tier !== 'free' && (
+                     <div className="p-1 px-2 bg-black/60 backdrop-blur-md rounded-lg text-[8px] font-black text-white uppercase tracking-widest flex items-center gap-1 border border-white/10">
+                        <Lock className="w-2.5 h-2.5 text-blue-400" />
+                        {game.tier === 'ultimate' ? 'PRO' : 'ELITE'}
+                     </div>
+                   )}
+                   <div className="p-1 px-2 bg-black/40 backdrop-blur-md rounded-lg text-[8px] font-black text-white flex items-center gap-1">
+                       <Star className="w-2.5 h-2.5 text-yellow-400 fill-current" />
+                       {game.rating}
+                   </div>
+                </div>
+
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                   <h4 className="text-white font-black text-[12px] md:text-sm uppercase tracking-tighter truncate">{game.name}</h4>
+                   <div className="flex items-center justify-between mt-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">{game.players} JOUEURS</span>
+                      <ChevronRight className="w-3 h-3 text-white" />
+                   </div>
+                </div>
+            </motion.div>
+          ))}
+      </div>
+
+      <AnimatePresence>
+        {activeGame && (
+          <GameModal gameId={activeGame} user={user} onClose={() => setActiveGame(null)} />
+        )}
+        {showUltimateModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1000] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6"
+          >
+             <div className="w-full max-w-sm bg-[#111] border border-white/10 rounded-[3rem] p-10 text-center shadow-6xl relative">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center text-4xl shadow-2xl rotate-12">👑</div>
+                <h3 className="text-3xl font-black text-white vibe-logo mb-4 mt-4">ACCÈS BLOQUÉ</h3>
+                <p className="text-slate-500 font-bold mb-8">Ce fragment de réalité nécessite une synchronisation Ultimate.</p>
+                <div className="space-y-3">
+                    <button 
+                      onClick={() => { setShowUltimateModal(false); window.dispatchEvent(new CustomEvent('vibeNavigate', { detail: 'store' })); }}
+                      className="w-full py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-[0.2em] shadow-xl hover:scale-105 transition-transform"
+                    >
+                        Devenir Ultime
+                    </button>
+                    <button onClick={() => setShowUltimateModal(false)} className="w-full py-4 bg-white/5 text-slate-400 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-white/10 transition-colors">Plus tard</button>
+                </div>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-// --- GAME ENGINE & CLICKER GAME (Simplified for UI focus) ---
-
-const GameEngine: React.FC<{ gameId: string, onExit: () => void, userId: string }> = ({ gameId, onExit, userId }) => {
+const GameModal: React.FC<{ gameId: string, user: User, onClose: () => void }> = ({ gameId, user, onClose }) => {
   const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameState, setGameState] = useState<'lobby' | 'playing' | 'over'>('lobby');
+  const gameInfo = storage.getGames().find(g => g.id === gameId);
+
+  const startPlaying = () => {
+    setGameState('playing');
+    setScore(0);
+  };
 
   const handleGameOver = (finalScore: number) => {
     setScore(finalScore);
-    setGameOver(true);
-    const creditsEarned = Math.floor(finalScore / 10);
-    const xpEarned = Math.floor(finalScore / 5);
-    storage.addReward(userId, creditsEarned, xpEarned);
+    setGameState('over');
+    const credits = Math.floor(finalScore / 10);
+    const xp = Math.floor(finalScore / 5);
+    storage.addReward(user.id, credits, xp, `game-${gameId}-${Date.now()}`);
   };
 
   return (
-    <div className="fixed inset-0 z-[200] bg-black flex flex-col animate-in fade-in">
-      <div className="flex items-center justify-between p-6 bg-gradient-to-b from-black/80 to-transparent absolute top-0 left-0 right-0 z-10">
-        <button onClick={onExit} className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-        </button>
-        <div className="px-6 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10">
-          <span className="text-white font-black tracking-widest uppercase text-sm">Score: {score}</span>
-        </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[1000] bg-black flex flex-col pt-safe"
+    >
+      <div className="flex items-center justify-between p-6 bg-black/40 backdrop-blur-md border-b border-white/5">
+          <button onClick={onClose} className="p-3 bg-white/5 rounded-2xl text-white hover:bg-white/10">
+              <XIcon />
+          </button>
+          <div className="flex flex-col items-center">
+              <h3 className="vibe-logo text-lg font-black text-white tracking-widest">{gameInfo?.name}</h3>
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Transmission en cours...</span>
+          </div>
+          <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20">
+              {score}
+          </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center relative">
-        {gameId === 'clicker' ? (
-          <ClickerGame onGameOver={handleGameOver} />
-        ) : (
-          <div className="text-center space-y-6">
-            <div className="text-6xl animate-bounce">🎮</div>
-            <h2 className="text-3xl font-black text-white">Jeu en développement</h2>
-            <p className="text-white/50 max-w-sm mx-auto">L'interface du jeu {gameId} est en cours de création.</p>
-            <button onClick={() => handleGameOver(Math.floor(Math.random() * 500))} className="px-8 py-4 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest hover:bg-blue-500 transition-colors">
-              Simuler Fin de Partie
-            </button>
-          </div>
-        )}
+      <div className="flex-1 flex items-center justify-center overflow-hidden relative">
+          {gameState === 'lobby' && (
+              <div className="text-center space-y-12 animate-in zoom-in-95 duration-500">
+                  <div className="w-40 h-40 mx-auto bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-[3rem] flex items-center justify-center text-8xl shadow-6xl border border-white/5 ring-4 ring-white/5">
+                      {gameInfo?.icon}
+                  </div>
+                  <div className="space-y-3 px-10">
+                      <h2 className="text-4xl font-black text-white vibe-logo tracking-tighter">{gameInfo?.name}</h2>
+                      <p className="text-slate-500 font-bold max-w-sm mx-auto">{gameInfo?.desc}</p>
+                  </div>
+                  <button 
+                    onClick={startPlaying}
+                    className="px-12 py-5 bg-white text-black rounded-3xl font-black uppercase text-sm tracking-[0.3em] shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 transition-all"
+                  >
+                      Initier la Sync
+                  </button>
+              </div>
+          )}
 
-        {gameOver && (
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-[#111] border border-white/10 rounded-[2rem] p-10 max-w-md w-full text-center shadow-2xl">
-              <h2 className="text-4xl font-black text-white mb-2">PARTIE TERMINÉE</h2>
-              <p className="text-white/50 font-medium mb-8 uppercase tracking-widest">Score Final</p>
-              
-              <div className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-purple-500 mb-10">
-                {score}
+          {gameState === 'playing' && (
+              <GameRouter gameId={gameId} onScore={setScore} onGameOver={handleGameOver} />
+          )}
+
+          {gameState === 'over' && (
+              <div className="text-center space-y-8 animate-in zoom-in-95">
+                  <div className="text-slate-500 font-black uppercase tracking-[0.4em]">Signal Interrompu</div>
+                  <div className="text-9xl font-black text-white vibe-logo tracking-widest drop-shadow-[0_0_40px_rgba(59,130,246,0.3)]">{score}</div>
+                  <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto">
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                          <div className="text-blue-400 font-black text-xl mb-1">+{Math.floor(score/10)}</div>
+                          <div className="text-[10px] font-black text-slate-500 uppercase">NOVAS</div>
+                      </div>
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                          <div className="text-purple-400 font-black text-xl mb-1">+{Math.floor(score/5)}</div>
+                          <div className="text-[10px] font-black text-slate-500 uppercase">XP</div>
+                      </div>
+                  </div>
+                  <div className="space-y-3 px-10">
+                    <button 
+                        onClick={startPlaying}
+                        className="w-full py-5 bg-white text-black rounded-3xl font-black uppercase text-sm tracking-[0.3em] shadow-xl hover:scale-105 transition-all"
+                    >
+                        Rejouer
+                    </button>
+                    <button onClick={onClose} className="w-full py-5 bg-white/5 text-slate-400 rounded-3xl font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all">Quitter le Nexus</button>
+                  </div>
               </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                  <div className="text-yellow-400 font-black text-xl mb-1">+{Math.floor(score / 10)}</div>
-                  <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Novas</div>
-                </div>
-                <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                  <div className="text-blue-400 font-black text-xl mb-1">+{Math.floor(score / 5)}</div>
-                  <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">XP</div>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-3">
-                <button onClick={() => { setGameOver(false); setScore(0); }} className="w-full py-4 bg-white text-black rounded-xl font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">
-                  Rejouer
-                </button>
-                <button onClick={onExit} className="w-full py-4 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 transition-colors">
-                  Quitter
-                </button>
-              </div>
+          )}
+      </div>
+    </motion.div>
+  );
+};
+
+// --- MINI GAMES ROUTER ---
+const GameRouter: React.FC<{ gameId: string, onScore: (s: number) => void, onGameOver: (s: number) => void }> = ({ gameId, onScore, onGameOver }) => {
+  switch (gameId) {
+    case 'clicker': return <ClickerGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'aim': return <AimTrainerGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'math': return <MathGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'color': return <ColorGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'tap': return <TapGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'memory': return <MemoryGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'bricks': return <BricksGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'flappy': return <BirdGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'jump': return <JumpGame onScore={onScore} onGameOver={onGameOver} />;
+    case 'snake': return <SnakeGame onScore={onScore} onGameOver={onGameOver} />;
+    default: 
+        return (
+            <div className="text-center p-10 space-y-6">
+                <div className="text-6xl animate-bounce">🚧</div>
+                <h3 className="text-white font-black text-2xl vibe-logo">Zone en Construction</h3>
+                <p className="text-slate-500">Cette dimension du Nexus est en cours de stabilisation.</p>
+                <button onClick={() => onGameOver(Math.floor(Math.random() * 200))} className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-2xl">Simuler Fin</button>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+        );
+  }
 };
 
-const ClickerGame: React.FC<{ onGameOver: (score: number) => void }> = ({ onGameOver }) => {
-  const [clicks, setClicks] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(10);
-  const [isActive, setIsActive] = useState(false);
-
-  useEffect(() => {
-    let interval: any = null;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      setIsActive(false);
-      onGameOver(clicks * 10);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft, clicks]);
-
-  const handleClick = () => {
-    if (!isActive && timeLeft === 10) setIsActive(true);
-    if (isActive) setClicks(clicks + 1);
-  };
-
-  return (
-    <div className="flex flex-col items-center justify-center space-y-12 w-full max-w-md px-6">
-      <div className="flex justify-between w-full">
-        <div className="text-center">
-          <div className="text-sm font-bold text-white/50 uppercase tracking-widest mb-1">Temps</div>
-          <div className="text-4xl font-black text-white">{timeLeft}s</div>
+// Simplified Mini Game Implementations for Demo
+const ClickerGame: React.FC<any> = ({ onScore, onGameOver }) => {
+    const [count, setCount] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(10);
+    useEffect(() => {
+        const t = setInterval(() => setTimeLeft(prev => prev > 0 ? prev - 1 : 0), 1000);
+        return () => clearInterval(t);
+    }, []);
+    useEffect(() => { if(timeLeft === 0) onGameOver(count * 10); }, [timeLeft]);
+    return (
+        <div className="flex flex-col items-center gap-10">
+            <div className="text-7xl font-black text-white">{timeLeft}s</div>
+            <button onClick={() => { setCount(c => c+1); onScore((count+1)*10); }} className="w-64 h-64 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-7xl shadow-6xl border-8 border-white/10 active:scale-90 transition-transform">⚡</button>
+            <p className="text-slate-500 font-bold uppercase tracking-widest animate-pulse">Cliquez le plus vite !</p>
         </div>
-        <div className="text-center">
-          <div className="text-sm font-bold text-white/50 uppercase tracking-widest mb-1">Clics</div>
-          <div className="text-4xl font-black text-blue-400">{clicks}</div>
-        </div>
-      </div>
-      
-      <button 
-        onClick={handleClick}
-        className="w-64 h-64 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 shadow-[0_0_100px_rgba(37,99,235,0.4)] flex items-center justify-center active:scale-95 transition-transform border-4 border-white/20 relative overflow-hidden group"
-      >
-        <div className="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></div>
-        <span className="text-6xl select-none">⚡</span>
-      </button>
-      
-      {!isActive && timeLeft === 10 && (
-        <p className="text-white/50 font-bold uppercase tracking-widest animate-pulse">Cliquez pour commencer</p>
-      )}
-    </div>
-  );
+    );
 };
+
+const AimTrainerGame: React.FC<any> = ({ onScore, onGameOver }) => {
+    const [target, setTarget] = useState({ x: 50, y: 50 });
+    const [hit, setHit] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(15);
+    useEffect(() => {
+        const t = setInterval(() => setTimeLeft(prev => prev > 0 ? prev - 1 : 0), 1000);
+        return () => clearInterval(t);
+    }, []);
+    useEffect(() => { if(timeLeft === 0) onGameOver(hit * 100); }, [timeLeft]);
+    const moveTarget = () => {
+        setTarget({ x: Math.random() * 80 + 10, y: Math.random() * 80 + 10 });
+        setHit(h => h + 1);
+        onScore((hit + 1) * 100);
+    };
+    return (
+        <div className="w-full h-full relative cursor-crosshair">
+            <div className="absolute top-10 left-1/2 -track-x-1/2 text-white font-black text-4xl">{timeLeft}s</div>
+            <button onClick={moveTarget} style={{ left: `${target.x}%`, top: `${target.y}%` }} className="absolute w-16 h-16 bg-red-500 rounded-full border-4 border-white shadow-2xl transition-all hover:scale-110 active:scale-90 flex items-center justify-center -translate-x-1/2 -translate-y-1/2">🎯</button>
+        </div>
+    );
+};
+
+const MathGame: React.FC<any> = ({ onScore, onGameOver }) => {
+    const [nums, setNums] = useState({ a: 8, b: 7 });
+    const [ans, setAns] = useState('');
+    const [correct, setCorrect] = useState(0);
+    useEffect(() => {
+        if (parseInt(ans) === nums.a + nums.b) {
+            setCorrect(c => c + 1);
+            onScore((correct + 1) * 50);
+            setNums({ a: Math.floor(Math.random() * 30), b: Math.floor(Math.random() * 30) });
+            setAns('');
+        }
+    }, [ans]);
+    return (
+        <div className="text-center space-y-10 px-10">
+            <h2 className="text-8xl font-black text-white vibe-logo">{nums.a} + {nums.b}</h2>
+            <input autoFocus type="number" value={ans} onChange={e => setAns(e.target.value)} className="w-full bg-white/10 border-none rounded-3xl p-8 text-center text-6xl text-white outline-none ring-4 ring-white/5" placeholder="?" />
+            <p className="text-slate-500 font-bold uppercase tracking-widest">Résolvez pour avancer</p>
+        </div>
+    );
+};
+
+const ColorGame: React.FC<any> = ({ onScore, onGameOver }) => {
+    const colors = ['bg-red-500', 'bg-blue-500', 'bg-emerald-500', 'bg-purple-500'];
+    const [target, setTarget] = useState(0);
+    const [score, setScore] = useState(0);
+    return (
+        <div className="text-center space-y-12">
+            <div className={`w-40 h-40 mx-auto rounded-[3rem] ${colors[target]} shadow-6xl border-8 border-white/20`} />
+            <div className="grid grid-cols-2 gap-4 p-4">
+                {colors.map((c, i) => (
+                    <button key={i} onClick={() => {
+                        if(i === target) { setScore(s => s+1); onScore((score+1)*80); setTarget(Math.floor(Math.random()*4)); }
+                        else onGameOver(score*80);
+                    }} className={`w-32 h-32 rounded-3xl ${c} hover:scale-105 transition-transform`} />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const MemoryGame: React.FC<any> = ({ onScore, onGameOver }) => (
+    <div className="text-center space-y-8">
+        <Brain className="w-32 h-32 text-blue-400 mx-auto animate-pulse" />
+        <h3 className="text-white font-black text-3xl vibe-logo">MEMOIRE SYNC</h3>
+        <button onClick={() => onGameOver(Math.floor(Math.random()*300))} className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest">Lancer le Test</button>
+    </div>
+);
+
+const BricksGame: React.FC<any> = ({ onScore, onGameOver }) => (
+    <div className="text-center space-y-8">
+        <Disc className="w-32 h-32 text-orange-400 mx-auto animate-spin-slow" />
+        <h3 className="text-white font-black text-3xl vibe-logo">CYBER DISQUES</h3>
+        <button onClick={() => onGameOver(Math.floor(Math.random()*400))} className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest">Démarrer</button>
+    </div>
+);
+
+const BirdGame: React.FC<any> = ({ onScore, onGameOver }) => (
+    <div className="text-center space-y-8">
+        <Bird className="w-32 h-32 text-yellow-400 mx-auto animate-bounce" />
+        <h3 className="text-white font-black text-3xl vibe-logo">VIBE WINGS</h3>
+        <button onClick={() => onGameOver(Math.floor(Math.random()*150))} className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest">Voler !</button>
+    </div>
+);
+
+const JumpGame: React.FC<any> = ({ onScore, onGameOver }) => (
+    <div className="text-center space-y-8">
+        <Rocket className="w-32 h-32 text-cyan-400 mx-auto animate-pulse" />
+        <h3 className="text-white font-black text-3xl vibe-logo">NEON LAUNCH</h3>
+        <button onClick={() => onGameOver(Math.floor(Math.random()*500))} className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest">Décollage</button>
+    </div>
+);
+
+const TapGame: React.FC<any> = ({ onScore, onGameOver }) => (
+    <div className="text-center space-y-8">
+        <MousePointer2 className="w-32 h-32 text-purple-400 mx-auto" />
+        <h3 className="text-white font-black text-3xl vibe-logo">SYNC RHYTHM</h3>
+        <button onClick={() => onGameOver(Math.floor(Math.random()*250))} className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest">Connecter</button>
+    </div>
+);
+
+const SnakeGame: React.FC<any> = ({ onScore, onGameOver }) => (
+    <div className="text-center space-y-8">
+        <div className="text-9xl">🐍</div>
+        <h3 className="text-white font-black text-3xl vibe-logo">NEURAL SNAKE</h3>
+        <button onClick={() => onGameOver(Math.floor(Math.random()*350))} className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest">Initier</button>
+    </div>
+);
+
+const XIcon = () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+);
 
 export default Games;

@@ -71,6 +71,33 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
     }
+
+    .glass-premium {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .holographic {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.1) 25%,
+        rgba(59, 130, 246, 0.2) 50%,
+        rgba(139, 92, 246, 0.1) 75%,
+        rgba(255, 255, 255, 0.05)
+      );
+      background-size: 400% 400%;
+      animation: holographic-move 8s ease infinite;
+    }
+
+    @keyframes holographic-move {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     
     .vibe-gradient-bg {
       background: 
@@ -147,6 +174,26 @@
     .theme-minimal { --vibe-accent: 255 255 255; --vibe-glow: rgba(255, 255, 255, 0.2); --bg-color: #1a1a1a; }
     .theme-cyber_gold { --vibe-accent: 218 165 32; --vibe-glow: rgba(218, 165, 32, 0.5); --bg-color: #1a1200; }
     .theme-nordic { --vibe-accent: 135 206 235; --vibe-glow: rgba(135, 206, 235, 0.5); --bg-color: #0a151a; }
+    .theme-supernova { --vibe-accent: 255 100 0; --vibe-glow: rgba(255, 100, 0, 0.5); --bg-color: #1a0a00; }
+    .theme-abyss { --vibe-accent: 0 50 150; --vibe-glow: rgba(0, 50, 150, 0.5); --bg-color: #00051a; }
+    .theme-cyberpunk_2077 { --vibe-accent: 255 230 0; --vibe-glow: rgba(255, 230, 0, 0.5); --bg-color: #000000; }
+    .theme-chrome { --vibe-accent: 200 200 200; --vibe-glow: rgba(200, 200, 200, 0.5); --bg-color: #1a1a1a; }
+    .theme-zenith { --vibe-accent: 0 120 255; --vibe-glow: rgba(0, 120, 255, 0.5); --bg-color: #000a1a; }
+    .theme-magma { --vibe-accent: 255 60 0; --vibe-glow: rgba(255, 60, 0, 0.5); --bg-color: #1a0500; }
+    .theme-aurora { --vibe-accent: 100 255 200; --vibe-glow: rgba(100, 255, 200, 0.5); --bg-color: #001a10; }
+    .theme-titan { --vibe-accent: 120 120 150; --vibe-glow: rgba(120, 120, 150, 0.5); --bg-color: #0a0a0f; }
+    .theme-onyx { --vibe-accent: 50 50 50; --vibe-glow: rgba(255, 255, 255, 0.1); --bg-color: #000000; }
+    .theme-quartz { --vibe-accent: 255 150 200; --vibe-glow: rgba(255, 150, 200, 0.5); --bg-color: #1a0a10; }
+    .theme-hyperdrive { --vibe-accent: 0 200 255; --vibe-glow: rgba(0, 200, 255, 0.5); --bg-color: #000a1a; }
+    .theme-glitch { --vibe-accent: 150 0 255; --vibe-glow: rgba(150, 0, 255, 0.5); --bg-color: #0a001a; }
+    .theme-biohazard { --vibe-accent: 180 255 0; --vibe-glow: rgba(180, 255, 0, 0.5); --bg-color: #0a1a00; }
+    .theme-carbon { --vibe-accent: 80 80 80; --vibe-glow: rgba(80, 80, 80, 0.3); --bg-color: #050505; }
+    .theme-inferno { --vibe-accent: 255 30 0; --vibe-glow: rgba(255, 30, 0, 0.5); --bg-color: #1a0000; }
+    .theme-skyline { --vibe-accent: 50 100 255; --vibe-glow: rgba(50, 100, 255, 0.5); --bg-color: #000a1a; }
+    .theme-retro { --vibe-accent: 200 50 255; --vibe-glow: rgba(200, 50, 255, 0.5); --bg-color: #14051a; }
+    .theme-ethereal { --vibe-accent: 220 180 255; --vibe-glow: rgba(220, 180, 255, 0.5); --bg-color: #0d0a1a; }
+    .theme-genesis { --vibe-accent: 255 255 255; --vibe-glow: rgba(255, 255, 255, 0.3); --bg-color: #1a1a1a; }
+    .theme-singularity { --vibe-accent: 255 255 255; --vibe-glow: rgba(255, 255, 255, 0.05); --bg-color: #000000; }
 
     .theme-bg-gradient {
       background: radial-gradient(circle at 0% 0%, var(--vibe-glow) 0%, transparent 40%),
@@ -157,6 +204,23 @@
 
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Terminal & Scanline FX */
+    @keyframes scan {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(100%); }
+    }
+    .animate-scan {
+      animation: scan 8s linear infinite;
+    }
+    .scanlines {
+      background: linear-gradient(
+        to bottom,
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+    }
 
     @keyframes gradient-x {
       0%, 100% { background-position: 0% 50%; }

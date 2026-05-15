@@ -84,7 +84,7 @@ export const storage = {
     const networkPower = (friendsCount * 500);
     const premiumMultiplier = user.isUltimatePlus ? 2.0 : (user.isUltimate ? 1.5 : 1.0);
 
-    const newScore = Math.floor((levelPower + engagementPower + activityPower + networkPower) * premiumMultiplier);
+    const newScore = Math.floor(((levelPower + engagementPower + activityPower + networkPower) * premiumMultiplier) / 3);
 
     // Metrics calculation (0-100)
     const newMetrics = {
@@ -402,6 +402,33 @@ export const storage = {
     }
   },
 
+  deletePost: (postId: string) => {
+    const posts = storage.getPosts();
+    // Delete the post and all its copies/reposts
+    const filtered = posts.filter(p => p.id !== postId && p.repostOf !== postId);
+    storage.savePosts(filtered);
+    
+    // Also remove from any user's saved posts
+    const users = storage.getUsers();
+    const updatedUsers = users.map(u => ({
+      ...u,
+      savedPosts: u.savedPosts?.filter(id => id !== postId)
+    }));
+    storage.saveUsers(updatedUsers);
+
+    // Update current user if they had it saved
+    const current = storage.getCurrentUser();
+    if (current) {
+      const updatedCurrent = {
+        ...current,
+        savedPosts: current.savedPosts?.filter(id => id !== postId)
+      };
+      storage.setCurrentUser(updatedCurrent);
+    }
+    
+    window.dispatchEvent(new CustomEvent('vibePostDeleted', { detail: postId }));
+  },
+
   addComment: (postId: string, comment: Comment) => {
     const posts = storage.getPosts();
     const post = posts.find(p => p.id === postId);
@@ -575,35 +602,35 @@ export const storage = {
   initialize: () => {
     if (!localStorage.getItem(USERS_KEY)) {
       const auraBot: User = {
-        id: 'aura_bot',
-        username: 'vibe_official',
-        name: 'Vibe HQ',
-        bio: 'Bienvenue sur Vibe AI. Vidéos, Jeux, et Vibea AI 3 : Le futur du Nexus est ici.',
-        avatar: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=200&h=200',
-        email: 'contact@vibe.ai',
-        credits: 100000, xp: 0, level: 100,
-        activeTheme: 'default', isInfinite: true, isUltimate: true, isUltimatePlus: true, lastBoosts: [],
+        id: 'vibe_official',
+        username: 'vibe',
+        name: 'Vibe',
+        bio: 'Compte Officiel Vibe. Technologie Aura Pro, Vibeos et IA Créative.',
+        avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIiByeD0iMTUwIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNMTMwIDE1MEwyNTAgMzcwTDM3MCAxNTAiIHN0cm9rZT0idXJsKCNwYWludDBfbGluZWFyKSIgc3Ryb2tlLXdpZHRoPSI3MCIgc3Ryb2tlLWxpbmVjYXM9InJvdW5kIiwgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyIiB4MT0iMTMwIiB5MT0iMTUwIiB4Mj0iMzcwIiB5Mj0iMzcwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiMzQjg2RjYiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjOEI1Q0Y2Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+', // Fancy Gradient V
+        email: 'nexus@vibe.ai',
+        credits: 999999, xp: 0, level: 100,
+        activeTheme: 'cyber_gold', isInfinite: true, isUltimate: true, isUltimatePlus: true, lastBoosts: [],
         friends: [],
         savedPosts: [],
-        unlockedThemes: ['default'],
+        unlockedThemes: ['default', 'cyber_gold'],
         claimedLevelRewards: [],
         rewardedActions: [],
         completedQuests: [],
-        boostLimit: 100,
+        boostLimit: 999,
         dailyBoostsCount: 0,
         lastBoostReset: new Date().setHours(0, 0, 0, 0),
-        vibeScore: 9999,
-        vibeRank: 'Fondateur du Nexus',
-        vibeMetrics: { energy: 99, flow: 99, impact: 99 },
+        vibeScore: 7777777,
+        vibeRank: 'FONDATEUR',
+        vibeMetrics: { energy: 100, flow: 100, impact: 100 },
         isCertified: true
       };
       storage.saveUsers([auraBot]);
       
       const sampleVids: Post[] = [
-        { id: 'v1', userId: 'aura_bot', content: 'UPDATE 3.0: Le Nexus évolue. Nouveau design, Ultimate Shop, et plus encore ! #Vibe3.0', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-city-at-night-with-neon-lights-2189-large.mp4', mediaType: 'video', createdAt: Date.now(), likes: [], boosts: [], reposts: [], comments: [], views: 15400, savedBy: [] },
-        { id: 'v2', userId: 'aura_bot', content: 'Nouveau flux visuel - Vibe v3.0 Alpha', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-flowing-teal-and-pink-colors-1100-large.mp4', mediaType: 'video', createdAt: Date.now() - 5000, likes: [], boosts: [], reposts: [], comments: [], views: 8200, savedBy: [] },
-        { id: 'vp1', userId: 'aura_bot', content: 'EXCLUSIF ULTIMATE: Voyage au cœur de l\'application.', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4', mediaType: 'video', createdAt: Date.now() - 10000, likes: [], boosts: [], reposts: [], comments: [], views: 500, isPremium: true, savedBy: [] },
-        { id: 'vp2', userId: 'aura_bot', content: 'MASTERCLASS: Maîtriser l\'IA Vibe.', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-man-working-on-a-computer-in-a-dark-room-4245-large.mp4', mediaType: 'video', createdAt: Date.now() - 20000, likes: [], boosts: [], reposts: [], comments: [], views: 300, isPremium: true, savedBy: [] },
+        { id: 'v1', userId: 'vibe_official', content: 'VIBEOS 2.0: La révolution visuelle est là. Infinite scroll, IA Video Gen et interactions sociales immersives. #VibeOS #Tech', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-city-at-night-with-neon-lights-2189-large.mp4', mediaType: 'video', createdAt: Date.now(), likes: [], boosts: [], reposts: [], comments: [], views: 154780, savedBy: [] },
+        { id: 'v2', userId: 'vibe_official', content: 'Aura Pro: Le futur de la recherche est IA. Essayez notre nouveau moteur de recherche directement dans votre flux.', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-flowing-teal-and-pink-colors-1100-large.mp4', mediaType: 'video', createdAt: Date.now() - 3600000, likes: [], boosts: [], reposts: [], comments: [], views: 92450, savedBy: [] },
+        { id: 'v3', userId: 'vibe_official', content: 'VibePass: Le passe ultime pour débloquer tout le potentiel du Nexus. #LevelUp', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4', mediaType: 'video', createdAt: Date.now() - 7200000, likes: [], boosts: [], reposts: [], comments: [], views: 82100, savedBy: [] },
+        { id: 'v4', userId: 'vibe_official', content: 'Comment générer des vidéos avec l\'IA sur Vibe? Un tutoriel rapide pour nos créateurs. ✨', mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hand-gestures-in-a-futuristic-digital-interface-4251-large.mp4', mediaType: 'video', createdAt: Date.now() - 14400000, likes: [], boosts: [], reposts: [], comments: [], views: 125000, savedBy: [] },
       ];
       storage.savePosts(sampleVids);
     }

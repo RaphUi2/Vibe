@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Post, User, Comment, AIService } from '../types.ts';
 import { storage } from '../services/storageService.ts';
 import { gemini } from '../services/geminiService.ts';
+import { motion, AnimatePresence } from 'motion/react';
+import { Trash2 } from 'lucide-react';
 import Boost from './Boost';
 import VibeScore from '../components/VibeScore';
 import Logo from '../components/Logo';
@@ -49,17 +51,20 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
     <div className="mb-4 md:mb-8 animate-in slide-in-from-top-4 duration-700 max-w-2xl mx-auto w-full px-2 md:px-0">
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-orange rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-        
-        <div className="relative liquid-glass rounded-[2.5rem] p-4 md:p-6 border border-white/10 shadow-4xl overflow-hidden">
-          <div className="flex items-center justify-between mb-6">
-             <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-vibe-blue to-vibe-purple rounded-xl flex items-center justify-center shadow-2xl">
-                    <svg className="w-5 h-5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+               <div className="relative liquid-glass rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-6 border border-white/10 shadow-4xl overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+             <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-vibe-blue to-vibe-purple rounded-2xl flex items-center justify-center shadow-2xl relative overflow-hidden group/star">
+                    <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                    <svg className="w-6 h-6 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 </div>
-                <h3 className="vibe-logo text-sm font-black text-white tracking-[0.2em] uppercase opacity-80">Aura Pro</h3>
+                <div>
+                   <h3 className="vibe-logo text-xs md:text-sm font-black text-white tracking-[0.2em] uppercase">VIBEA AI</h3>
+                   <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Nexus Neural Link</p>
+                </div>
              </div>
              
-             <div className="flex bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+             <div className="flex bg-black/40 p-1 rounded-2xl border border-white/5 backdrop-blur-sm w-full sm:w-auto">
                 {[
                   { id: AIService.CHAT, icon: '💬', label: 'Chat' },
                   { id: AIService.SEARCH, icon: '🔍', label: 'Search' },
@@ -68,68 +73,94 @@ const AuraProWidget: React.FC<{ user: User }> = ({ user }) => {
                   <button 
                     key={m.id}
                     onClick={() => setActiveMode(m.id)}
-                    className={`px-4 py-2 flex items-center gap-2 rounded-lg transition-all ${activeMode === m.id ? 'bg-white text-black shadow-lg shadow-white/10' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                    className={`flex-1 sm:flex-none px-4 py-2 flex items-center justify-center gap-2 rounded-xl transition-all ${activeMode === m.id ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white'}`}
                   >
                     <span className="text-xs">{m.icon}</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">{m.label}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest hidden xs:block">{m.label}</span>
                   </button>
                 ))}
              </div>
           </div>
 
-          <div className="relative">
+          <div className="relative group/input">
              <input 
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAuraAction()}
-              placeholder={activeMode === AIService.CHAT ? "Demandez n'importe quoi..." : activeMode === AIService.SEARCH ? "Explorez le Web..." : "Imaginez un visuel..."}
-              className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] px-6 py-4 text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-vibe-blue/20 transition-all placeholder:text-slate-700 pr-16"
+              placeholder={activeMode === AIService.CHAT ? "Sync avec Vibea..." : activeMode === AIService.SEARCH ? "Scan du Nexus..." : "Génération de vision..."}
+              className="w-full bg-[#16181c]/60 border border-white/5 rounded-2xl px-6 py-5 text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-vibe-blue/30 transition-all placeholder:text-slate-700 pr-20"
              />
-             <button 
-              onClick={handleAuraAction}
-              disabled={loading || !input.trim()}
-              className={`absolute right-2 top-2 bottom-2 px-4 rounded-xl flex items-center justify-center transition-all ${loading || !input.trim() ? 'opacity-30' : 'bg-white text-black hover:scale-[1.02] active:scale-95 shadow-xl'}`}
-             >
-               {loading ? (
-                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-               ) : (
-                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
-               )}
-             </button>
+             <div className="absolute right-2 top-2 bottom-2 flex items-center gap-1">
+                {input && (
+                  <button onClick={() => setInput('')} className="p-2 text-slate-500 hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
+                <button 
+                  onClick={handleAuraAction}
+                  disabled={loading || !input.trim()}
+                  className={`px-5 py-3 rounded-xl flex items-center justify-center transition-all ${loading || !input.trim() ? 'opacity-30' : 'bg-gradient-to-r from-vibe-blue to-vibe-purple text-white hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-500/20'}`}
+                >
+                  {loading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 5l7 7-7 7" /></svg>
+                  )}
+                </button>
+             </div>
           </div>
 
-          {result && (
-            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10 animate-in zoom-in-95 slide-in-from-top-4 duration-500 relative group/res">
-               <button onClick={() => setResult(null)} className="absolute top-4 right-4 p-2 bg-white/5 rounded-full text-slate-500 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover/res:opacity-100">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-               </button>
-               
-               {result.type === 'image' ? (
-                  <div className="relative group">
-                    <img src={result.mediaUrl} className="w-full rounded-2xl border border-white/10 shadow-5xl transition-transform group-hover:scale-[1.01] duration-700" />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                      <button className="bg-white text-black px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest shadow-2xl">Enregistrer</button>
+          <AnimatePresence>
+            {result && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 bg-black/40 rounded-3xl border border-white/5 overflow-hidden relative group/res max-h-[60vh] overflow-y-auto custom-scrollbar"
+              >
+                 <div className="p-5 md:p-8 space-y-6">
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2">
+                         <div className="w-2 h-2 rounded-full bg-vibe-blue animate-pulse"></div>
+                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Résultat Synaptique</span>
+                       </div>
+                       <button onClick={() => setResult(null)} className="p-2 bg-white/5 rounded-full text-slate-500 hover:text-white transition-all">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                       </button>
                     </div>
-                  </div>
-               ) : (
-                 <div className="space-y-4">
-                   <div className="flex items-center gap-2">
-                     <div className="w-2 h-2 rounded-full bg-vibe-blue animate-pulse"></div>
-                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Réponse d'Aura</span>
-                   </div>
-                   <p className="text-sm font-medium text-slate-100 leading-relaxed tracking-wide">{result.text}</p>
-                   {result.grounding?.length > 0 && (
-                     <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
-                        {result.grounding.map((g: any, i: number) => (
-                          <a key={i} href={g.uri} target="_blank" className="px-3 py-1 bg-vibe-blue/10 border border-vibe-blue/20 rounded-full text-[8px] font-black uppercase text-vibe-blue hover:bg-vibe-blue hover:text-white transition-all transform hover:-translate-y-0.5">{g.title}</a>
-                        ))}
-                     </div>
-                   )}
+                    
+                    {result.type === 'image' ? (
+                       <div className="relative group overflow-hidden rounded-2xl border border-white/5 shadow-2xl">
+                         <img src={result.mediaUrl} className="w-full transition-transform group-hover:scale-[1.02] duration-1000" />
+                         <div className="absolute top-4 right-4 flex gap-2">
+                           <button className="bg-white/10 backdrop-blur-md p-3 rounded-xl text-white hover:bg-white/20 transition-all border border-white/10"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg></button>
+                         </div>
+                       </div>
+                    ) : (
+                      <div className="space-y-6">
+                        <div className="text-sm font-medium text-slate-100 leading-relaxed tracking-wide prose prose-invert prose-sm max-w-none">
+                           {result.text}
+                        </div>
+                        {result.grounding?.length > 0 && (
+                          <div className="space-y-3 pt-4 border-t border-white/5">
+                             <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Sources Vérifiées</span>
+                             <div className="flex flex-wrap gap-2">
+                                {result.grounding.map((g: any, i: number) => (
+                                  <a key={i} href={g.uri} target="_blank" className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                                     <div className="w-1 h-1 rounded-full bg-blue-500"></div>
+                                     {g.title}
+                                  </a>
+                                ))}
+                             </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                  </div>
-               )}
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
@@ -140,6 +171,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
   const [posts, setPosts] = useState<Post[]>([]);
   const [feedType, setFeedType] = useState<'for-you' | 'following'>(initialFeedType);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMedia, setSelectedMedia] = useState<{url: string, type: string} | null>(null);
 
   const refresh = () => {
     let all = storage.getPosts();
@@ -160,20 +192,25 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
   useEffect(() => {
     refresh();
     const handleRef = () => refresh();
+    const handleDeleted = (e: any) => {
+        setPosts(prev => prev.filter(p => p.id !== e.detail && p.repostOf !== e.detail));
+    };
     window.addEventListener('refreshFeed', handleRef);
     window.addEventListener('vibeUserUpdated', handleRef);
+    window.addEventListener('vibePostDeleted', handleDeleted);
     return () => {
       window.removeEventListener('refreshFeed', handleRef);
       window.removeEventListener('vibeUserUpdated', handleRef);
+      window.removeEventListener('vibePostDeleted', handleDeleted);
     };
   }, [feedType, searchQuery, user.friends]);
 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-700 h-full">
       {/* Search & Header - Balanced Glassmorphism */}
-      <div className="sticky top-0 z-[500] bg-black/40 backdrop-blur-3xl border-b border-white/5 p-2 md:p-4 space-y-4">
-        <div className="relative group max-w-2xl mx-auto">
-           <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+      <div className="sticky top-0 z-[500] bg-black/40 backdrop-blur-3xl border-b border-white/5 p-3 md:p-6 space-y-4 md:space-y-6">
+        <div className="relative group max-w-2xl mx-auto pt-10 md:pt-6">
+           <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none mt-10 md:mt-6">
               <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
            </div>
            <input 
@@ -194,7 +231,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
         </div>
 
         <div className="flex justify-center">
-          <div className="flex bg-[#16181c]/50 p-1 rounded-full border border-white/5 backdrop-blur-md">
+          <div className="flex bg-[#16181c]/50 p-0.5 md:p-1 rounded-full border border-white/5 backdrop-blur-md">
                {[
                  { id: 'for-you', label: 'Pour vous' },
                  { id: 'following', label: 'Suivis' }
@@ -202,7 +239,7 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
                  <button 
                   key={tab.id}
                   onClick={() => setFeedType(tab.id as any)}
-                  className={`px-10 py-2.5 rounded-full text-xs font-black transition-all whitespace-nowrap ${
+                  className={`px-6 md:px-10 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-black transition-all whitespace-nowrap ${
                     feedType === tab.id 
                     ? 'bg-white text-black shadow-xl' 
                     : 'text-slate-500 hover:text-white hover:bg-white/5'
@@ -219,10 +256,10 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
         <div className="p-4 space-y-6">
           {feedType === 'for-you' && !searchQuery && (
             <>
-              <VibeScore user={user} />
+              <VibeScore user={user} compact />
             </>
           )}
-          {posts.map(post => <PostCard key={post.id} post={post} user={user} refresh={refresh} />)}
+          {posts.map(post => <PostCard key={post.id} post={post} user={user} refresh={refresh} onMediaClick={(url, type) => setSelectedMedia({url, type})} />)}
           {posts.length === 0 && (
             <div className="py-32 text-center space-y-4">
                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto opacity-20">
@@ -233,11 +270,74 @@ const Home: React.FC<{ user: User, initialFeedType?: 'for-you' | 'following' }> 
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {selectedMedia && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4"
+            onClick={() => setSelectedMedia(null)}
+          >
+             <div className="absolute top-6 right-6 flex gap-4 z-[1001]">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const link = document.createElement('a');
+                    link.href = selectedMedia.url;
+                    link.download = `vibe-media-${Date.now()}`;
+                    link.click();
+                  }}
+                  className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-xl"
+                  title="Télécharger"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'Média Vibe',
+                            url: selectedMedia.url
+                        });
+                    }
+                  }}
+                  className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-xl"
+                  title="Partager"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                </button>
+                <button 
+                  onClick={() => setSelectedMedia(null)}
+                  className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-xl"
+                  title="Fermer"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+             </div>
+
+             <motion.div 
+               initial={{ scale: 0.9, y: 20 }}
+               animate={{ scale: 1, y: 0 }}
+               className="relative max-w-5xl w-full max-h-[85vh] flex items-center justify-center overflow-hidden rounded-3xl shadow-6xl"
+               onClick={(e) => e.stopPropagation()}
+             >
+                {selectedMedia.type === 'video' ? (
+                    <video src={selectedMedia.url} controls autoPlay className="w-full h-full object-contain" />
+                ) : (
+                    <img src={selectedMedia.url} className="w-full h-full object-contain" />
+                )}
+             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ post, user, refresh }) => {
+const PostCard: React.FC<{ post: Post, user: User, refresh: () => void, onMediaClick: (url: string, type: string) => void }> = ({ post, user, refresh, onMediaClick }) => {
   const [commenting, setCommenting] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isBoosting, setIsBoosting] = useState(false);
@@ -297,7 +397,7 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
   };
   
   return (
-    <div className="p-3 md:p-8 hover:bg-white/[0.04] transition-all cursor-pointer group mb-4 liquid-glass rounded-[2rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl" onClick={() => {}}>
+    <div className="p-3 md:p-6 hover:bg-white/[0.04] transition-all cursor-pointer group mb-3 liquid-glass rounded-[1.8rem] border border-white/5 hover:border-vibe-blue/30 shadow-2xl" onClick={() => {}}>
       {post.repostOf && (
         <div className="flex items-center gap-2 mb-4 ml-6 md:ml-12 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
            <svg className="w-3.5 h-3.5 logo-vibe-text" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -329,16 +429,40 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
               <span className="text-slate-800 text-[10px]">•</span>
               <span className="text-vibe-purple text-[10px] font-black uppercase tracking-widest">{Math.floor((Date.now() - originalPost.createdAt) / 60000)}m</span>
             </div>
-            <button onClick={handleSave} className={`p-2.5 rounded-2xl transition-all ${saved ? 'text-vibe-orange bg-vibe-orange/10 shadow-lg shadow-vibe-orange/20' : 'text-slate-600 hover:text-white hover:bg-white/10'}`}>
-               <svg className="w-4 h-4" fill={saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
-            </button>
+            <div className="flex items-center gap-1">
+              {post.userId === user.id && (
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    if (confirm("Supprimer cette diffusion ?")) {
+                      storage.deletePost(post.id);
+                      refresh();
+                    }
+                  }} 
+                  className="p-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl transition-all shadow-lg"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              )}
+              <button onClick={handleSave} className={`p-2.5 rounded-2xl transition-all ${saved ? 'text-vibe-orange bg-vibe-orange/10 shadow-lg shadow-vibe-orange/20' : 'text-slate-600 hover:text-white hover:bg-white/10'}`}>
+                <svg className="w-4 h-4" fill={saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+              </button>
+            </div>
           </div>
           
           <p className="text-slate-100 text-[16px] leading-relaxed whitespace-pre-wrap font-medium tracking-tight overflow-hidden text-ellipsis">{originalPost.content}</p>
 
           {originalPost.mediaUrl && (
-            <div className="mt-4 rounded-[2.5rem] overflow-hidden border border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.5)] bg-black/40 min-h-[100px] flex items-center justify-center relative group/media">
-               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/media:opacity-100 transition-opacity z-10"></div>
+            <div 
+                className="mt-4 rounded-[2.5rem] overflow-hidden border border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.5)] bg-black/40 min-h-[100px] flex items-center justify-center relative group/media"
+                onClick={(e) => { e.stopPropagation(); onMediaClick(originalPost.mediaUrl!, originalPost.mediaType!); }}
+            >
+               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/media:opacity-100 transition-opacity z-10 flex items-center justify-center">
+                  <div className="p-4 bg-white/10 backdrop-blur-md rounded-full border border-white/20 transform scale-90 group-hover:scale-100 transition-transform">
+                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </div>
+               </div>
                {originalPost.mediaType === 'video' ? (
                  <video 
                   src={originalPost.mediaUrl} 
@@ -420,6 +544,5 @@ const PostCard: React.FC<{ post: Post, user: User, refresh: () => void }> = ({ p
     </div>
   );
 };
-
 
 export default Home;

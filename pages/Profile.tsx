@@ -18,7 +18,8 @@ import {
   Award,
   Plus,
   Search,
-  ChevronRight
+  ChevronRight,
+  Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -52,7 +53,9 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
     setEditBanner(target.bannerUrl || '');
     
     setFollowersCount(storage.getFollowers(viewUserId).length);
+  }, [viewUserId, user]);
 
+  const refreshProfilePosts = () => {
     const all = storage.getPosts();
     let filtered: Post[] = [];
     switch (activeTab) {
@@ -64,6 +67,16 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       default: filtered = [];
     }
     setProfilePosts(filtered);
+  };
+
+  useEffect(() => {
+    refreshProfilePosts();
+
+    const handleDeleted = () => refreshProfilePosts();
+    window.addEventListener('vibePostDeleted', handleDeleted);
+    return () => {
+      window.removeEventListener('vibePostDeleted', handleDeleted);
+    };
   }, [activeTab, viewUserId, user]);
 
   const toggleFollow = () => {
@@ -111,7 +124,7 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
   return (
     <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-32">
       {/* Cinematic Banner */}
-      <div className="relative h-64 md:h-96 w-full">
+      <div className="relative h-32 md:h-64 w-full">
         <div className="absolute inset-0 bg-black overflow-hidden">
           {profileUser.bannerUrl ? (
             <img src={profileUser.bannerUrl} className="w-full h-full object-cover opacity-60 scale-105 blur-[2px]" />
@@ -126,20 +139,20 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
         </div>
 
         {/* Action Buttons */}
-        <div className="absolute top-10 right-10 flex gap-3 z-30">
+        <div className="absolute top-4 md:top-10 right-4 md:right-10 flex gap-1.5 md:gap-3 z-30">
             {isSelf ? (
               <>
-                <button onClick={() => setIsEditing(true)} className="p-4 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 backdrop-blur-3xl transition-all">
-                  <Edit3 className="w-6 h-6" />
+                <button onClick={() => setIsEditing(true)} className="p-1.5 md:p-4 bg-white/5 border border-white/10 rounded-lg md:rounded-2xl text-white hover:bg-white/10 backdrop-blur-3xl transition-all">
+                  <Edit3 className="w-4 h-4 md:w-6 md:h-6" />
                 </button>
-                <button onClick={() => handleNavigate('settings')} className="p-4 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 backdrop-blur-3xl transition-all">
-                  <SettingsIcon className="w-6 h-6" />
+                <button onClick={() => handleNavigate('settings')} className="p-1.5 md:p-4 bg-white/5 border border-white/10 rounded-lg md:rounded-2xl text-white hover:bg-white/10 backdrop-blur-3xl transition-all">
+                  <SettingsIcon className="w-4 h-4 md:w-6 md:h-6" />
                 </button>
               </>
             ) : (
               <button 
                 onClick={toggleFollow}
-                className={`px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${user.friends.includes(viewUserId) ? 'bg-white text-black' : 'bg-blue-600 text-white shadow-3xl'}`}
+                className={`px-4 md:px-8 py-1.5 md:py-3 rounded-lg md:rounded-2xl font-black uppercase tracking-widest text-[8px] md:text-xs transition-all ${user.friends.includes(viewUserId) ? 'bg-white text-black' : 'bg-blue-600 text-white shadow-3xl'}`}
               >
                 {user.friends.includes(viewUserId) ? 'Abonné' : 'Suivre'}
               </button>
@@ -148,30 +161,30 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
       </div>
 
       {/* Avatar & Basic Info Overlap */}
-      <div className="px-6 md:px-12 -mt-16 md:-mt-24 relative z-20">
-         <div className="flex flex-col md:flex-row items-end gap-8">
+      <div className="px-4 md:px-12 -mt-8 md:-mt-20 relative z-20">
+         <div className="flex flex-col md:flex-row items-center md:items-end gap-3 md:gap-6">
             <div className="relative group">
-               <div className="absolute -inset-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-pink rounded-[3rem] blur opacity-40 group-hover:opacity-100 transition duration-1000" />
-               <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-[2.8rem] bg-black border-[6px] border-[#020617] overflow-hidden shadow-4xl mb-2">
+               <div className="absolute -inset-1 bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-pink rounded-[2rem] md:rounded-[2.5rem] blur opacity-40 group-hover:opacity-100 transition duration-1000" />
+               <div className="relative w-16 h-16 md:w-40 md:h-40 rounded-2xl md:rounded-[2.4rem] bg-black border-[2px] md:border-[4px] border-[#020617] overflow-hidden shadow-4xl mb-1 md:mb-2">
                   <img src={profileUser.avatar} className="w-full h-full object-cover scale-110" />
                </div>
                {profileUser.isCertified && (
-                 <div className="absolute bottom-2 right-2 w-10 h-10 bg-white rounded-2xl flex items-center justify-center border-4 border-[#020617] shadow-xl">
-                    <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <CheckCircle className="w-4 h-4 text-white" />
+                 <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-6 h-6 md:w-8 md:h-8 bg-white rounded-lg md:rounded-xl flex items-center justify-center border-2 md:border-4 border-[#020617] shadow-xl">
+                    <div className="w-4 h-4 md:w-5 md:h-5 bg-blue-600 rounded-md flex items-center justify-center">
+                        <CheckCircle className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
                     </div>
                  </div>
                )}
             </div>
             
-            <div className="space-y-2 mb-6 text-center md:text-left">
-               <div className="flex items-center justify-center md:justify-start gap-4">
-                  <h1 className="text-4xl md:text-6xl font-black vibe-logo tracking-tighter text-white drop-shadow-2xl">
+            <div className="space-y-0.5 mb-2 md:mb-4 text-center md:text-left">
+               <div className="flex items-center justify-center md:justify-start gap-2 md:gap-3">
+                  <h1 className="text-xl md:text-5xl font-black vibe-logo tracking-tighter text-white drop-shadow-2xl">
                     {profileUser.name}
                   </h1>
-                  <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-blue-400">Lv. {profileUser.level}</span>
+                  <span className="px-1.5 py-0.5 bg-blue-500/20 border border-blue-500/30 rounded-md text-[7px] md:text-[9px] font-black uppercase tracking-widest text-blue-400 whitespace-nowrap">Lv. {profileUser.level}</span>
                </div>
-               <p className="text-slate-400 font-bold tracking-widest opacity-80">@{profileUser.username}</p>
+               <p className="text-slate-400 text-[10px] md:text-sm font-bold tracking-widest opacity-80">@{profileUser.username}</p>
             </div>
          </div>
       </div>
@@ -181,21 +194,21 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
 
         
         {/* Sidebar Info */}
-        <div className="lg:col-span-4 space-y-8">
-           <div className="p-8 liquid-glass rounded-[2.5rem] border border-white/5 space-y-6">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Signature Digitale</h3>
-              <p className="text-slate-300 text-lg leading-relaxed font-medium">
+        <div className="lg:col-span-4 space-y-6 md:space-y-8">
+           <div className="p-6 md:p-8 liquid-glass rounded-[2rem] md:rounded-[2.5rem] border border-white/5 space-y-4 md:space-y-6">
+              <h3 className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Signature Digitale</h3>
+              <p className="text-slate-300 text-sm md:text-lg leading-relaxed font-medium">
                 {profileUser.bio || "Aucune signature détectée dans ce flux."}
               </p>
               
-              <div className="flex gap-8 pt-4">
+              <div className="flex gap-6 md:gap-8 pt-2 md:pt-4">
                  <div className="space-y-1">
-                    <div className="text-2xl font-black text-white">{profileUser.friends?.length || 0}</div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Abonnements</div>
+                    <div className="text-lg md:text-2xl font-black text-white">{profileUser.friends?.length || 0}</div>
+                    <div className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest">Abonnements</div>
                  </div>
                  <div className="space-y-1">
-                    <div className="text-2xl font-black text-white">{followersCount}</div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Abonnés</div>
+                    <div className="text-lg md:text-2xl font-black text-white">{followersCount}</div>
+                    <div className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest">Abonnés</div>
                  </div>
               </div>
            </div>
@@ -221,20 +234,20 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
 
         {/* Main Feed Area */}
         <div className="lg:col-span-8 space-y-8">
-            <div className="flex bg-[#111216] rounded-2xl p-1 border border-white/5 shadow-inner sticky top-6 z-40 backdrop-blur-3xl overflow-x-auto scrollbar-hide">
+            <div className="flex bg-[#111216] rounded-xl md:rounded-2xl p-0.5 md:p-1 border border-white/5 shadow-inner sticky top-0 z-40 backdrop-blur-3xl overflow-x-auto scrollbar-hide">
               {[
-                { id: 'posts', label: 'Signaux', icon: <Grid className="w-4 h-4" /> },
-                { id: 'reposts', label: 'Echos', icon: <Share2 className="w-4 h-4" /> },
-                { id: 'media', label: 'Reliques', icon: <ImageIcon className="w-4 h-4" /> },
-                { id: 'likes', label: 'Résonances', icon: <Heart className="w-4 h-4" /> },
-                { id: 'saved', label: 'Archives', icon: <Bookmark className="w-4 h-4" /> },
-                { id: 'wall', label: 'Mur', icon: <MessageCircle className="w-4 h-4" /> },
-                { id: 'friends', label: 'Amis', icon: <Users className="w-4 h-4" /> }
+                { id: 'posts', label: 'Signaux', icon: <Grid className="w-3.5 h-3.5 md:w-4 md:h-4" /> },
+                { id: 'reposts', label: 'Echos', icon: <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" /> },
+                { id: 'media', label: 'Reliques', icon: <ImageIcon className="w-3.5 h-3.5 md:w-4 md:h-4" /> },
+                { id: 'likes', label: 'Résonances', icon: <Heart className="w-3.5 h-3.5 md:w-4 md:h-4" /> },
+                { id: 'saved', label: 'Archives', icon: <Bookmark className="w-3.5 h-3.5 md:w-4 md:h-4" /> },
+                { id: 'wall', label: 'Mur', icon: <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" /> },
+                { id: 'friends', label: 'Amis', icon: <Users className="w-3.5 h-3.5 md:w-4 md:h-4" /> }
               ].map(tab => (
                 <button 
                   key={tab.id} 
                   onClick={() => setActiveTab(tab.id as any)} 
-                  className={`px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-3 shrink-0 ${activeTab === tab.id ? 'bg-white text-black shadow-xl' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                  className={`px-3 md:px-6 py-2.5 md:py-4 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-1.5 md:gap-3 shrink-0 ${activeTab === tab.id ? 'bg-white text-black shadow-xl' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                 >
                   {tab.icon}
                   {tab.label}
@@ -400,7 +413,7 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
                  </div>
                ) : (
                  <div className="grid grid-cols-1 gap-6">
-                    {profilePosts.map(p => <PostEntry key={p.id} post={p} user={user} />)}
+                    {profilePosts.map(p => <PostEntry key={p.id} post={p} user={user} onDeleted={refreshProfilePosts} />)}
                     {profilePosts.length === 0 && (
                         <div className="py-32 text-center space-y-4">
                            <div className="w-20 h-20 bg-white/2 rounded-[2rem] flex items-center justify-center mx-auto border border-white/5 opacity-50">
@@ -572,7 +585,7 @@ const Profile: React.FC<{ user: User, viewUserId: string, onUpdate: (user: User)
   );
 };
 
-const PostEntry: React.FC<{ post: Post, user: User }> = ({ post, user }) => {
+const PostEntry: React.FC<{ post: Post, user: User, onDeleted?: () => void }> = ({ post, user, onDeleted }) => {
   const originalPost = post.repostOf ? storage.getPosts().find(p => p.id === post.repostOf) : post;
   if (!originalPost) return null;
   const author = storage.getUsers().find(u => u.id === post.userId);
@@ -598,7 +611,24 @@ const PostEntry: React.FC<{ post: Post, user: User }> = ({ post, user }) => {
                   {originalAuthor?.isCertified && <div className="w-4 h-4 bg-blue-500 rounded-lg flex items-center justify-center text-[10px] text-white">V</div>}
                   <span className="text-slate-500 text-xs truncate font-bold">@{originalAuthor?.username}</span>
                 </div>
-                <span className="text-vibe-purple text-[10px] font-black uppercase tracking-widest bg-vibe-purple/10 px-3 py-1 rounded-full">{new Date(originalPost.createdAt).toLocaleDateString()}</span>
+                <div className="flex items-center gap-3">
+                  {post.userId === user.id && (
+                    <button 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        if (confirm("Supprimer cette diffusion ?")) {
+                          storage.deletePost(post.id);
+                          if (onDeleted) onDeleted();
+                        }
+                      }} 
+                      className="p-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-lg"
+                      title="Supprimer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                  <span className="text-vibe-purple text-[10px] font-black uppercase tracking-widest bg-vibe-purple/10 px-3 py-1 rounded-full">{new Date(originalPost.createdAt).toLocaleDateString()}</span>
+                </div>
              </div>
              
              <p className="text-slate-200 text-lg leading-relaxed font-medium tracking-tight whitespace-pre-wrap">{originalPost.content}</p>
@@ -606,7 +636,24 @@ const PostEntry: React.FC<{ post: Post, user: User }> = ({ post, user }) => {
              {originalPost.mediaUrl && (
                <div className="mt-6 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-5xl bg-black relative">
                   {originalPost.mediaType === 'video' ? (
-                     <video src={originalPost.mediaUrl} className="w-full max-h-[500px] object-cover" autoPlay loop muted playsInline />
+                     originalPost.mediaUrl ? (
+                         <video 
+                           src={originalPost.mediaUrl} 
+                           className="w-full max-h-[500px] object-cover" 
+                           autoPlay 
+                           loop 
+                           muted 
+                           playsInline 
+                           onError={(e) => {
+                             const target = e.target as HTMLVideoElement;
+                             target.style.display = 'none';
+                           }}
+                         />
+                     ) : (
+                         <div className="w-full h-40 bg-white/5 flex items-center justify-center">
+                             <VideoIcon className="w-8 h-8 text-slate-700" />
+                         </div>
+                     )
                   ) : (
                      <img src={originalPost.mediaUrl} className="w-full max-h-[500px] object-cover transition-transform duration-[2s] group-hover:scale-105" />
                   )}

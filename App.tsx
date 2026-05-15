@@ -8,7 +8,7 @@ import AIHub from './pages/AIHub.tsx';
 import Login from './pages/Login.tsx';
 import Profile from './pages/Profile.tsx';
 import Games from './pages/Games.tsx';
-import Store from './pages/Store.tsx';
+import Boutique from './pages/Boutique.tsx';
 import LevelPassPage from './pages/LevelPass.tsx';
 import Quests from './pages/Quests.tsx';
 import Settings from './pages/Settings.tsx';
@@ -18,6 +18,7 @@ import AILogo from './components/AILogo.tsx';
 import Vibeos from './pages/Vibeos.tsx';
 import Plus from './pages/Plus.tsx';
 import { AnimatePresence, motion } from 'motion/react';
+import { Home as HomeIcon, Video, Zap, ShieldCheck, Menu, User as UserIcon, Plus as PlusIcon } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -86,7 +87,38 @@ const App: React.FC = () => {
     setActiveTab('home');
   };
 
-  if (loading) return <div className="h-screen bg-slate-950 flex flex-col items-center justify-center text-blue-500 font-black tracking-[1em] animate-pulse">VIBE INITIALIZING</div>;
+  if (loading) return (
+    <div className="h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 atmosphere opacity-30"></div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1 }}
+        className="relative z-10 flex flex-col items-center"
+      >
+        <div className="relative mb-8">
+           <div className="absolute inset-0 bg-blue-500/20 blur-[100px] rounded-full animate-pulse"></div>
+           <Logo size="lg" className="animate-float" />
+        </div>
+        <div className="flex flex-col items-center gap-4">
+           <h1 className="vibe-logo text-4xl md:text-6xl font-black text-white tracking-[0.5em] uppercase">VIBEA</h1>
+           <div className="flex items-center gap-6">
+              <div className="h-0.5 w-12 md:w-20 bg-gradient-to-r from-transparent to-vibe-blue" />
+              <p className="text-vibe-blue text-[10px] md:text-xs font-black uppercase tracking-[1em] animate-pulse">Synchronisation Nexus</p>
+              <div className="h-0.5 w-12 md:w-20 bg-gradient-to-l from-transparent to-vibe-blue" />
+           </div>
+        </div>
+        <div className="mt-12 w-48 h-1 bg-white/5 rounded-full overflow-hidden border border-white/5">
+           <motion.div 
+             initial={{ width: 0 }}
+             animate={{ width: "100%" }}
+             transition={{ duration: 2, ease: "easeInOut" }}
+             className="h-full bg-gradient-to-r from-vibe-blue via-vibe-purple to-vibe-pink"
+           />
+        </div>
+      </motion.div>
+    </div>
+  );
   if (!currentUser) return <Login onLogin={handleLogin} />;
 
   const handleProfileNav = () => {
@@ -95,12 +127,12 @@ const App: React.FC = () => {
   };
 
   const navItems = [
-    { id: 'home', label: 'ACCUEIL', icon: <Logo size="sm" className="scale-75" /> },
-    { id: 'vibeos', label: 'VIBEOS', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg> },
-    { id: 'ia', label: 'VIBEA AI', icon: <AILogo size="sm" className="scale-125" /> },
-    { id: 'levelpass', label: 'VIBE PASS', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg> },
-    { id: 'plus', label: 'PLUS', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg> },
-    { id: 'profile', label: 'PROFIL', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
+    { id: 'home', label: 'ACCUEIL', icon: <HomeIcon className="w-6 h-6" /> },
+    { id: 'vibeos', label: 'VIBEOS', icon: <Video className="w-6 h-6" /> },
+    { id: 'ia', label: 'VIBEA AI', icon: <Zap className="w-6 h-6" /> },
+    { id: 'levelpass', label: 'LE PASS', icon: <ShieldCheck className="w-6 h-6" /> },
+    { id: 'plus', label: 'MENU', icon: <Menu className="w-6 h-6" /> },
+    { id: 'profile', label: 'PROFIL', icon: <UserIcon className="w-6 h-6" /> },
   ];
 
   const renderPage = () => {
@@ -116,7 +148,7 @@ const App: React.FC = () => {
             onUpdate={(u) => setCurrentUser(u)} 
           />
       );
-      case 'store': return <Store user={currentUser} onUpdate={(u) => setCurrentUser(u)} />;
+      case 'store': return <Boutique user={currentUser} onUpdate={(u) => setCurrentUser(u)} />;
       case 'games': return <Games user={currentUser} />;
       case 'levelpass': return <LevelPassPage user={currentUser} onUpdate={(u) => setCurrentUser(u)} />;
       case 'quests': return <Quests user={currentUser} onUpdate={(u) => setCurrentUser(u)} />;
@@ -155,16 +187,21 @@ const App: React.FC = () => {
           
           <nav className="flex-1 space-y-3">
             {navItems.map(item => (
-              <button
+              <motion.button
                 key={item.id}
+                whileHover={{ x: 8, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(item.id as any)}
                 className={`w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group ${activeTab === item.id ? 'font-black text-white bg-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
               >
-                <div className={`${activeTab === item.id ? 'logo-vibe-text drop-shadow-[0_0_10px_rgba(138,43,226,0.5)]' : 'group-hover:text-vibe-pink'} transition-colors`}>
+                <motion.div 
+                  animate={activeTab === item.id ? { scale: [1, 1.2, 1], rotate: [0, 5, 0] } : {}}
+                  className={`${activeTab === item.id ? 'logo-vibe-text drop-shadow-[0_0_10px_rgba(138,43,226,0.5)]' : 'group-hover:text-vibe-pink'} transition-colors`}
+                >
                   {item.icon}
-                </div>
+                </motion.div>
                 <span className="text-xl hidden xl:block">{item.label}</span>
-              </button>
+              </motion.button>
             ))}
           </nav>
 
@@ -198,8 +235,8 @@ const App: React.FC = () => {
 
         {/* Right Sidebar (Desktop) */}
         <aside className="hidden lg:flex flex-col w-[350px] sticky top-0 h-screen px-6 py-12 space-y-6 overflow-y-auto z-[50]">
-          <div className="relative group pt-4">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <div className="relative group pt-8">
+            <div className="absolute inset-y-0 left-4 top-8 flex items-center pointer-events-none">
               <svg className="w-4 h-4 text-slate-500 group-focus-within:text-vibe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
             <input 
@@ -240,51 +277,65 @@ const App: React.FC = () => {
         </aside>
 
         {/* Bottom Navigation (Mobile) */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/80 backdrop-blur-3xl border-t border-white/10 px-6 py-4 pb-10 flex justify-between items-center shadow-4xl">
-          {[
-            { id: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-            { id: 'vibeos', icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z' },
-            { id: 'ia', icon: <AILogo size="sm" className="scale-110" />, isLogo: true },
-            { id: 'levelpass', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
-            { id: 'plus', icon: 'M4 6h16M4 12h16M4 18h16' },
-            { id: 'profile', avatar: currentUser.avatar }
-          ].map(btn => (
-            <button 
-              key={btn.id} 
-              onClick={(e) => {
-                e.preventDefault();
-                if (btn.id === 'profile') {
-                  handleProfileNav();
-                } else {
-                  setActiveTab(btn.id as any);
-                }
-              }} 
-              className={`flex flex-col items-center justify-center transition-all flex-1 ${activeTab === btn.id && (btn.id !== 'profile' || !viewingProfileId) ? 'scale-110' : 'opacity-60 hover:opacity-100'}`}
-            >
-              {btn.avatar ? (
-                <div className={`relative p-0.5 rounded-2xl ${activeTab === 'profile' && !viewingProfileId ? 'bg-gradient-to-tr from-vibe-blue to-vibe-pink' : 'bg-white/5'}`}>
-                  <img src={btn.avatar} className="w-8 h-8 rounded-2xl border border-black/20 transition-all object-cover" />
-                </div>
-              ) : btn.isLogo ? (
-                <div className={`p-2 rounded-xl transition-all ${activeTab === btn.id ? 'bg-white shadow-vibe-blue shadow-lg' : ''}`}>
-                   {btn.icon}
-                </div>
-              ) : (
-                <div className={`p-2 rounded-xl transition-all ${activeTab === btn.id ? 'bg-white text-black shadow-vibe-blue shadow-lg' : 'text-white'}`}>
-                   <svg className="w-6 h-6 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={btn.icon as string} /></svg>
-                </div>
-              )}
-            </button>
-          ))}
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/80 backdrop-blur-3xl border-t border-white/10 px-4 py-3 pb-8 flex justify-between items-center shadow-4xl">
+          {navItems.map((btn: any) => {
+            const isProfile = btn.id === 'profile';
+            const avatar = isProfile ? currentUser.avatar : null;
+            const isAI = btn.id === 'ia';
+            
+            // Re-mapping icons for mobile nav to match the original structure's icon paths if needed, 
+            // but let's stick to the ones defined in App.tsx or use the component versions
+            return (
+              <motion.button 
+                key={btn.id} 
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (btn.id === 'profile') {
+                    handleProfileNav();
+                  } else {
+                    setActiveTab(btn.id as any);
+                  }
+                }} 
+                className={`flex flex-col items-center justify-center transition-all flex-1 ${activeTab === btn.id && (btn.id !== 'profile' || !viewingProfileId) ? 'scale-110' : 'opacity-60 hover:opacity-100'}`}
+              >
+                {avatar ? (
+                  <motion.div 
+                    animate={activeTab === 'profile' && !viewingProfileId ? { scale: 1.1 } : {}}
+                    className={`relative p-0.5 rounded-xl ${activeTab === 'profile' && !viewingProfileId ? 'bg-gradient-to-tr from-vibe-blue to-vibe-pink' : 'bg-white/5'}`}
+                  >
+                    <img src={avatar as string} className="w-7 h-7 rounded-xl border border-black/20 transition-all object-cover" />
+                  </motion.div>
+                ) : isAI ? (
+                  <motion.div 
+                    animate={activeTab === btn.id ? { scale: [1, 1.2, 1], rotate: [0, 10, 0] } : {}}
+                    className={`p-1 rounded-lg transition-all ${activeTab === btn.id ? 'bg-white shadow-vibe-blue shadow-lg' : 'bg-white/5'}`}
+                  >
+                     <AILogo size="sm" />
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    animate={activeTab === btn.id ? { scale: [1, 1.2, 1] } : {}}
+                    className={`p-1.5 rounded-lg transition-all ${activeTab === btn.id ? 'bg-white text-black shadow-vibe-blue shadow-lg' : 'text-white'}`}
+                  >
+                     <div className="w-5 h-5 flex items-center justify-center">
+                        {btn.icon}
+                     </div>
+                  </motion.div>
+                )}
+              </motion.button>
+            )
+          })}
         </nav>
 
         {/* Floating Post Button (Mobile) */}
         <div className="lg:hidden fixed bottom-28 right-6 z-[200]">
            <button 
              onClick={() => setIsPostModalOpen(true)}
-             className="w-16 h-16 bg-gradient-to-tr from-vibe-blue to-vibe-pink text-white rounded-2xl flex items-center justify-center shadow-4xl animate-bounce-slow"
+             className="w-12 h-12 bg-gradient-to-tr from-vibe-blue to-vibe-pink text-white rounded-2xl flex items-center justify-center shadow-4xl animate-bounce-slow"
            >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
            </button>
         </div>
       </div>
@@ -297,12 +348,7 @@ const App: React.FC = () => {
                   <button onClick={() => setIsPostModalOpen(false)} className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
-                  <button 
-                    onClick={() => window.dispatchEvent(new CustomEvent('vibeTriggerPost'))} 
-                    className="px-10 py-3 bg-gradient-to-r from-vibe-blue to-vibe-pink text-white rounded-full font-black text-sm shadow-2xl hover:scale-[1.02] active:scale-95 transition-all"
-                  >
-                    Post
-                  </button>
+                  <div className="vibe-logo text-xl font-black text-white tracking-widest uppercase">Nouveau Signal</div>
               </div>
               <PostCreator user={currentUser} onCreated={() => { setIsPostModalOpen(false); window.dispatchEvent(new CustomEvent('refreshFeed')); }} />
            </div>
@@ -320,10 +366,8 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
   const [showAiTools, setShowAiTools] = useState(false);
 
   useEffect(() => {
-    const handleTrigger = () => handleCreate();
-    window.addEventListener('vibeTriggerPost', handleTrigger);
-    return () => window.removeEventListener('vibeTriggerPost', handleTrigger);
-  }, [content, mediaUrl, mediaType]);
+    // Removed event listener for header button to simplify
+  }, []);
 
   const handleAiAction = async (type: 'grammar' | 'hashtags' | 'style' | 'image') => {
     if (!content.trim() && type !== 'image') return;
@@ -346,7 +390,7 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
   };
 
   const handleCreate = () => {
-    if (!content.trim()) return;
+    if (!content.trim() && !mediaUrl) return;
     storage.addPost({
       id: Math.random().toString(36).substr(2, 9),
       userId: user.id,
@@ -365,35 +409,18 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
     const file = e.target.files?.[0];
     if (file) {
-      if (type === 'video') {
-        const video = document.createElement('video');
-        video.preload = 'metadata';
-        video.onloadedmetadata = () => {
-          window.URL.revokeObjectURL(video.src);
-          if (video.duration > 60) {
-            alert("La vidéo ne doit pas dépasser 60 secondes.");
-            return;
-          }
-          if (video.videoWidth > video.videoHeight) {
-            alert("La vidéo doit être au format vertical (ex: 9:16).");
-            return;
-          }
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setMediaUrl(reader.result as string);
-            setMediaType(type);
-          };
-          reader.readAsDataURL(file);
-        };
-        video.src = URL.createObjectURL(file);
-      } else {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setMediaUrl(reader.result as string);
-          setMediaType(type);
-        };
-        reader.readAsDataURL(file);
+      // Storage limit warning for localStorage
+      if (file.size > (type === 'video' ? 200 * 1024 * 1024 : 10 * 1024 * 1024)) {
+        alert("Fichier trop lourd (Max 200MB Vidéo / 10MB Image).");
+        return;
       }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMediaUrl(reader.result as string);
+        setMediaType(type);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -466,7 +493,17 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
                 {mediaType === 'video' ? (
-                  <video src={mediaUrl} className="w-full max-h-72 object-cover" controls />
+                  <video 
+                    src={mediaUrl} 
+                    className="w-full max-h-72 object-cover rounded-[1.5rem]" 
+                    controls 
+                    muted
+                    playsInline
+                    onError={(e) => {
+                      const target = e.target as HTMLVideoElement;
+                      target.style.display = 'none';
+                    }}
+                  />
                 ) : (
                   <img src={mediaUrl} className="w-full max-h-72 object-cover" />
                 )}
@@ -474,20 +511,27 @@ const PostCreator: React.FC<{ user: User, onCreated: () => void }> = ({ user, on
         )}
 
         <div className="flex items-center justify-between pt-6 border-t border-white/5">
-            <div className="flex gap-4">
+            <div className="flex gap-2">
                 <label className="p-3 text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all cursor-pointer flex items-center gap-2">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Image</span>
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'image')} />
                 </label>
                 <label className="p-3 text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all cursor-pointer flex items-center gap-2">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Vidéo</span>
                     <input type="file" accept="video/*" className="hidden" onChange={(e) => handleFileChange(e, 'video')} />
                 </label>
             </div>
-            <div className="text-[10px] font-black vibe-logo tracking-widest text-slate-500">
-                {content.length}/280
+            <div className="flex items-center gap-4">
+               <div className="text-[10px] font-black vibe-logo tracking-widest text-slate-500 mr-2">
+                  {content.length}/280
+               </div>
+               <button 
+                  onClick={handleCreate}
+                  disabled={!content.trim()}
+                  className="px-10 py-3 bg-gradient-to-r from-vibe-blue to-vibe-pink text-white rounded-full font-black text-sm shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                >
+                  Synchroniser
+                </button>
             </div>
         </div>
       </div>
